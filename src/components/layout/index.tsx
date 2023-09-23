@@ -8,9 +8,9 @@ import {
   CalendarIcon,
   ChartPieIcon,
   DocumentDuplicateIcon,
-  FolderIcon,
   HomeIcon,
   UsersIcon,
+  UserGroupIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 
@@ -19,7 +19,7 @@ import classNames from "~/utils/classNames";
 const navigation = [
   { name: "Dashboard", href: "/", icon: HomeIcon, current: true },
   { name: "Team", href: "/team", icon: UsersIcon, current: false },
-  { name: "Projects", href: "#", icon: FolderIcon, current: false },
+  { name: "Pelamar", href: "/pelamar", icon: UserGroupIcon, current: false },
   { name: "Calendar", href: "#", icon: CalendarIcon, current: false },
   { name: "Documents", href: "#", icon: DocumentDuplicateIcon, current: false },
   { name: "Reports", href: "#", icon: ChartPieIcon, current: false },
@@ -34,8 +34,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   }
 
   if (!data) return;
-
-  console.log(data.user.image);
 
   return (
     <>
@@ -188,7 +186,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       width={32}
                       height={32}
                       src={data.user.image}
-                      alt={data.user.username}
+                      alt={"PP"}
                     />
                     <button
                       onClick={() => signOut()}
@@ -222,7 +220,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               width={32}
               height={32}
               src={data.user.image}
-              alt={data.user.username}
+              alt={"PP"}
             />
           </a>
         </div>
