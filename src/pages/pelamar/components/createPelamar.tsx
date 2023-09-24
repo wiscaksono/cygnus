@@ -15,7 +15,8 @@ export const CreatePelamar = ({ refetch }: { refetch: () => void }) => {
   const cancelButtonRef = useRef(null);
 
   const mutation = api.pelamar.create.useMutation({
-    onSuccess: ({ message }) => {
+    onSuccess: ({ message, status }) => {
+      if (status !== 201) return toast.error(message);
       refetch();
       closeModal();
       reset();

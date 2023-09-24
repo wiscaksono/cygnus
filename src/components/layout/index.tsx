@@ -17,7 +17,7 @@ import classNames from "~/utils/classNames";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: HomeIcon },
-  { name: "Team", href: "/team", icon: UsersIcon },
+  { name: "Teams", href: "/teams", icon: UsersIcon },
   { name: "Pelamar", href: "/pelamar", icon: UserGroupIcon },
   { name: "Profile", href: "/profile", icon: UserCircleIcon },
 ];

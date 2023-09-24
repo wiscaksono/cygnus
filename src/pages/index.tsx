@@ -1,10 +1,10 @@
 import React from "react";
 import Head from "next/head";
-import { getServerSession } from "next-auth";
-import { api } from "~/utils/api";
-import { authOptions } from "~/server/auth";
 
-import type { GetServerSideProps, GetServerSidePropsContext } from "next";
+import { api } from "~/utils/api";
+import { getServerAuthSession } from "~/server/auth";
+
+import type { GetServerSideProps } from "next";
 
 export default () => {
   const { data } = api.user.getSelf.useQuery();
@@ -22,11 +22,8 @@ export default () => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context: {
-  req: GetServerSidePropsContext["req"];
-  res: GetServerSidePropsContext["res"];
-}) => {
-  const session = await getServerSession(context.req, context.res, authOptions);
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await getServerAuthSession(context);
 
   if (!session) {
     return {

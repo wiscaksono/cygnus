@@ -1,4 +1,3 @@
-import { TRPCError } from "@trpc/server";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 
@@ -8,6 +7,7 @@ import {
   protectedProcedure,
 } from "~/server/api/trpc";
 import {
+  filterPelamarSchema,
   createPelamarSchema,
   deletePelamarSchema,
   updatePelamarSchema,
@@ -17,9 +17,35 @@ import { sendMessage } from "~/schema/whatsApp";
 import whatsApp from "~/server/whatsApp";
 
 export const pelamarRouter = createTRPCRouter({
-  getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.pelamar.findMany();
-  }),
+  getAll: publicProcedure
+    .input(filterPelamarSchema)
+    .query(async ({ ctx, input }) => {
+      const where = input;
+      const pelamar = ctx.prisma.pelamar.findMany({
+        where: {
+          name: {
+            contains: where?.name,
+            mode: "insensitive",
+          },
+        },
+      });
+      const count = ctx.prisma.pelamar.count({
+        where,
+      });
+
+      return ctx.prisma
+        .$transaction([pelamar, count])
+        .then(([pelamar, count]) => {
+          return {
+            status: 200,
+            message: "Berhasil mendapatkan data pelamar",
+            result: {
+              pelamar,
+              count,
+            },
+          };
+        });
+    }),
 
   create: protectedProcedure
     .input(createPelamarSchema)
@@ -31,10 +57,10 @@ export const pelamarRouter = createTRPCRouter({
       });
 
       if (phoneExists) {
-        throw new TRPCError({
-          code: "CONFLICT",
-          message: "Phone already exists.",
-        });
+        return {
+          status: 400,
+          message: "Nomor telepon sudah terdaftar",
+        };
       }
 
       const { onwhatsapp } = await whatsApp.checkNumber(phone);
@@ -63,7 +89,19 @@ export const pelamarRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const { id, name, email, phone, position, interviewDate } = input;
 
+      const phoneExists = await ctx.prisma.pelamar.findFirst({
+        where: { phone },
+      });
+
+      if (phoneExists) {
+        return {
+          status: 400,
+          message: "Nomor telepon sudah terdaftar",
+        };
+      }
+
       let haveWhatsapp = false;
+
       if (phone) {
         const { onwhatsapp } = await whatsApp.checkNumber(phone);
         haveWhatsapp = onwhatsapp === "true";

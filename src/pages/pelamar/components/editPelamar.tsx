@@ -30,13 +30,11 @@ export const EditPelamar = ({ refetch, person }: IEditPelamar) => {
   });
 
   const mutation = api.pelamar.update.useMutation({
-    onSuccess: ({ message }) => {
+    onSuccess: ({ message, status }) => {
+      if (status !== 201) return toast.error(message);
       refetch();
       closeModal();
       toast.success(message);
-    },
-    onError: (error) => {
-      toast.error(error.message);
     },
   });
 
