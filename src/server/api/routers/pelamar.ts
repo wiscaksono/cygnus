@@ -1,4 +1,6 @@
 import { TRPCError } from "@trpc/server";
+import { format } from "date-fns";
+import { id } from "date-fns/locale";
 
 import {
   createTRPCRouter,
@@ -111,9 +113,36 @@ export const pelamarRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const { number, message } = input;
 
+      const pelamar = await ctx.prisma.pelamar.findFirst({
+        where: {
+          phone: number,
+        },
+      });
+
+      if (!pelamar) {
+        return {
+          status: 404,
+          message: "Pelamar tidak ditemukan",
+        };
+      }
+
+      const templateMessage = message
+        .replace(/{{name}}/g, pelamar.name)
+        .replace(/{{position}}/g, pelamar.position)
+        .replace(
+          /{{interviewTime}}/g,
+          format(pelamar.interviewDate, "hh:mm", { locale: id })
+        )
+        .replace(
+          /{{interviewDate}}/g,
+          format(pelamar.interviewDate, "EEEE, dd MMMM yyyy", {
+            locale: id,
+          })
+        );
+
       const response = await whatsApp.sendMessage({
         number,
-        message,
+        message: templateMessage,
       });
 
       if (response.status !== "sent") {

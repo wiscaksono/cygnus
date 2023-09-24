@@ -91,7 +91,7 @@ export default () => {
                     ].map((item, i) => (
                       <th
                         scope="col"
-                        className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                        className="whitespace-nowrap px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                         key={i}
                       >
                         {item}

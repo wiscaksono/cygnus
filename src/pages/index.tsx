@@ -18,7 +18,6 @@ export default () => {
         <meta name="description" content="Cygnus" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <p>{data.templateWhatsApp}</p>
     </>
   );
 };
