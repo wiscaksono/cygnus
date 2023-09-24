@@ -48,6 +48,17 @@ class whatsApp {
       body: urlEncoded,
     });
   }
+
+  checkNumber(number: string) {
+    const urlEncoded = new URLSearchParams();
+    urlEncoded.append("number", number);
+    urlEncoded.append("token", this.token);
+
+    return this.request("/check_number", {
+      method: "POST",
+      body: urlEncoded,
+    });
+  }
 }
 
 export default new whatsApp();

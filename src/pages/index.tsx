@@ -1,7 +1,7 @@
 import React from "react";
 import Head from "next/head";
 import { getServerSession } from "next-auth";
-import { toast } from "react-toastify";
+import { api } from "~/utils/api";
 
 import whatsApp from "~/server/whatsApp";
 import { authOptions } from "~/server/auth";
@@ -9,13 +9,8 @@ import { authOptions } from "~/server/auth";
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
 
 export default () => {
-  const sendWhatsapp = async () => {
-    const { message } = await whatsApp.sendMessage({
-      number: "082293256385",
-      message: "TESTING",
-    });
-    toast.success(message);
-  };
+  const { data } = api.user.getSelf.useQuery();
+  console.log(data);
 
   return (
     <>
@@ -24,8 +19,11 @@ export default () => {
         <meta name="description" content="Cygnus" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <h1 className="text-5xl font-extrabold tracking-tight">duar memek</h1>
-      <button onClick={sendWhatsapp}>Send whatsapp</button>
+      <code className="whitespace-pre-line font-mono">
+        {data?.templateWhatsApp}
+      </code>
+
+      <p className="whitespace-pre-line">test \n\n aaa</p>
     </>
   );
 };

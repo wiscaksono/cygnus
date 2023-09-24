@@ -6,13 +6,11 @@ import { useRouter } from "next/router";
 import { useSession, signOut } from "next-auth/react";
 import {
   Bars3Icon,
-  CalendarIcon,
-  ChartPieIcon,
-  DocumentDuplicateIcon,
   HomeIcon,
   UsersIcon,
   UserGroupIcon,
   XMarkIcon,
+  UserCircleIcon,
 } from "@heroicons/react/24/outline";
 
 import classNames from "~/utils/classNames";
@@ -21,14 +19,12 @@ const navigation = [
   { name: "Dashboard", href: "/", icon: HomeIcon },
   { name: "Team", href: "/team", icon: UsersIcon },
   { name: "Pelamar", href: "/pelamar", icon: UserGroupIcon },
-  { name: "Calendar", href: "#", icon: CalendarIcon },
-  { name: "Documents", href: "#", icon: DocumentDuplicateIcon },
-  { name: "Reports", href: "#", icon: ChartPieIcon },
+  { name: "Profile", href: "/profile", icon: UserCircleIcon },
 ];
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { pathname } = useRouter()
+  const { pathname } = useRouter();
   const { data, status } = useSession();
 
   if (status === "unauthenticated") {

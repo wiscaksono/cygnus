@@ -39,12 +39,15 @@ export const pelamarRouter = createTRPCRouter({
         });
       }
 
+      const { onwhatsapp } = await whatsApp.checkNumber(phone);
+
       const result = await ctx.prisma.pelamar.create({
         data: {
           name,
           email,
           phone,
           position,
+          hasWhatsapp: onwhatsapp === "true",
           interviewDate,
           userId: ctx.session?.user.id,
         },
@@ -62,6 +65,12 @@ export const pelamarRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const { id, name, email, phone, position, interviewDate } = input;
 
+      let haveWhatsapp = false;
+      if (phone) {
+        const { onwhatsapp } = await whatsApp.checkNumber(phone);
+        haveWhatsapp = onwhatsapp === "true";
+      }
+
       const result = await ctx.prisma.pelamar.update({
         where: {
           id,
@@ -70,6 +79,7 @@ export const pelamarRouter = createTRPCRouter({
           name,
           email,
           phone,
+          hasWhatsapp: haveWhatsapp,
           position,
           interviewDate,
         },
