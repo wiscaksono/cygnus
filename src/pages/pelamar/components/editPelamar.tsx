@@ -3,6 +3,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
 import { Pelamar } from "@prisma/client";
+import { PencilIcon } from "@heroicons/react/24/outline";
 
 import { useModal } from "~/hooks";
 import { api } from "~/utils/api";
@@ -11,24 +12,22 @@ import type { IDeletePelamar, IUpdatePelamar } from "~/schema/pelamar";
 
 interface IEditPelamar {
   refetch: () => void;
-  data: Pelamar;
+  person: Pelamar;
 }
 
-export const EditPelamar = ({ refetch, data }: IEditPelamar) => {
+export const EditPelamar = ({ refetch, person }: IEditPelamar) => {
   const cancelButtonRef = useRef(null);
   const { openModal, isOpen, closeModal } = useModal();
-  const { register, handleSubmit, watch } = useForm<IUpdatePelamar>({
+  const { register, handleSubmit } = useForm<IUpdatePelamar>({
     values: {
-      id: data.id,
-      name: data.name,
-      email: data.email,
-      phone: data.phone,
-      position: data.position,
-      interviewDate: convertToDateTimeLocalString(data.interviewDate),
+      id: person.id,
+      name: person.name,
+      email: person.email,
+      phone: person.phone,
+      position: person.position,
+      interviewDate: convertToDateTimeLocalString(person.interviewDate),
     },
   });
-
-
 
   const mutation = api.pelamar.update.useMutation({
     onSuccess: ({ message }) => {
@@ -59,14 +58,12 @@ export const EditPelamar = ({ refetch, data }: IEditPelamar) => {
 
   return (
     <>
-      <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-        <button
-          onClick={openModal}
-          className="inline text-indigo-600 hover:text-indigo-900"
-        >
-          Edit<span className="sr-only">, {0}</span>
-        </button>
-      </div>
+      <button
+        onClick={openModal}
+        className="inline text-indigo-600 hover:text-indigo-900"
+      >
+        <PencilIcon className="h-4 w-4" />
+      </button>
 
       <Transition.Root show={isOpen} as={Fragment}>
         <Dialog
@@ -208,7 +205,7 @@ export const EditPelamar = ({ refetch, data }: IEditPelamar) => {
                       Ubah
                     </button>
                     <button
-                      onClick={() => onDelete(data)}
+                      onClick={() => onDelete(person)}
                       className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-red-500 hover:text-white hover:ring-red-500 sm:ml-3 sm:mt-0 sm:w-auto"
                     >
                       Hapus

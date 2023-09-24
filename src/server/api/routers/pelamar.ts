@@ -1,15 +1,18 @@
+import { TRPCError } from "@trpc/server";
+
 import {
   createTRPCRouter,
   publicProcedure,
   protectedProcedure,
 } from "~/server/api/trpc";
-import { TRPCError } from "@trpc/server";
-
 import {
   createPelamarSchema,
   deletePelamarSchema,
   updatePelamarSchema,
 } from "~/schema/pelamar";
+import { sendMessage } from "~/schema/whatsApp";
+
+import whatsApp from "~/server/whatsApp";
 
 export const pelamarRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
@@ -94,6 +97,38 @@ export const pelamarRouter = createTRPCRouter({
         status: 200,
         message: "Berhasil menghapus pelamar",
         result: result,
+      };
+    }),
+
+  sendWhatsApp: protectedProcedure
+    .input(sendMessage)
+    .mutation(async ({ input, ctx }) => {
+      const { number, message } = input;
+
+      const response = await whatsApp.sendMessage({
+        number,
+        message,
+      });
+
+      if (response.status !== "sent") {
+        return {
+          status: 500,
+          message: "Gagal mengirim pesan",
+        };
+      }
+
+      await ctx.prisma.pelamar.update({
+        where: {
+          phone: number,
+        },
+        data: {
+          invitedByWhatsapp: true,
+        },
+      });
+
+      return {
+        status: 200,
+        message: "Berhasil mengirim pesan",
       };
     }),
 });

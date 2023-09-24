@@ -4,6 +4,7 @@ import { api } from "~/utils/api";
 import { convertDateToID } from "~/utils/convertDateToID";
 import { CreatePelamar } from "./components/createPelamar";
 import { EditPelamar } from "./components/editPelamar";
+import { SendWhatsApp } from "./components/sendWhatsapp";
 
 export default () => {
   const { data: pelamar, isLoading, refetch } = api.pelamar.getAll.useQuery();
@@ -89,8 +90,10 @@ export default () => {
                           <XCircleIcon className="h-5 w-5 text-red-500" />
                         )}
                       </td>
-                      <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                        <EditPelamar refetch={refetch} data={person} />
+
+                      <td className="relative space-x-2 whitespace-nowrap py-4 pl-3 pr-4 text-right sm:pr-6">
+                        <SendWhatsApp refetch={refetch} person={person} />
+                        <EditPelamar refetch={refetch} person={person} />
                       </td>
                     </tr>
                   ))}
