@@ -32,14 +32,18 @@ export default () => {
 
   function toggleAll() {
     if (!pelamar) return;
-    setSelectedPelamar(checked || indeterminate ? [] : pelamar);
+    setSelectedPelamar(
+      checked || indeterminate
+        ? []
+        : pelamar
+          .filter((p) => !p.invitedByWhatsapp)
+          .filter((p) => p.hasWhatsapp)
+    );
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
   }
 
   if (isLoading || !pelamar) return <div>Loading...</div>;
-
-  console.log(pelamar);
 
   return (
     <div className="px-4 sm:px-0">
@@ -113,6 +117,9 @@ export default () => {
                           className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
                           value={person.email}
                           checked={selectedPelamar.includes(person)}
+                          disabled={
+                            person.invitedByWhatsapp || !person.hasWhatsapp
+                          }
                           onChange={(e) =>
                             setSelectedPelamar(
                               e.target.checked

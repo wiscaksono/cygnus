@@ -16,11 +16,7 @@ import whatsApp from "~/server/whatsApp";
 
 export const pelamarRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.pelamar.findMany({
-      where: {
-        userId: ctx.session?.user.id,
-      },
-    });
+    return ctx.prisma.pelamar.findMany();
   }),
 
   create: protectedProcedure

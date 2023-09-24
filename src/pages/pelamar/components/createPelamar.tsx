@@ -175,10 +175,11 @@ export const CreatePelamar = ({ refetch }: { refetch: () => void }) => {
                   <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                     <button
                       type="submit"
-                      className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:ml-3"
+                      className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-70 sm:ml-3"
                       onClick={handleSubmit(onSubmit)}
+                      disabled={mutation.isLoading}
                     >
-                      Tambah
+                      {mutation.isLoading ? "Loading..." : "Tambah"}
                     </button>
                     <button
                       type="button"

@@ -2,15 +2,14 @@ import React from "react";
 import Head from "next/head";
 import { getServerSession } from "next-auth";
 import { api } from "~/utils/api";
-
-import whatsApp from "~/server/whatsApp";
 import { authOptions } from "~/server/auth";
 
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
 
 export default () => {
   const { data } = api.user.getSelf.useQuery();
-  console.log(data);
+
+  if (!data) return <p>Loading...</p>;
 
   return (
     <>
@@ -19,11 +18,7 @@ export default () => {
         <meta name="description" content="Cygnus" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <code className="whitespace-pre-line font-mono">
-        {data?.templateWhatsApp}
-      </code>
-
-      <p className="whitespace-pre-line">test \n\n aaa</p>
+      <p>{data.templateWhatsApp}</p>
     </>
   );
 };

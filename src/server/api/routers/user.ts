@@ -1,11 +1,36 @@
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { updateSelf } from "~/schema/user";
 
 export const userRouter = createTRPCRouter({
-  getSelf: publicProcedure.query(({ ctx }) => {
+  getSelf: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.user.findUnique({
       where: {
         id: ctx.session?.user.id,
       },
     });
   }),
+
+  updateSelf: protectedProcedure
+    .input(updateSelf)
+    .mutation(async ({ input, ctx }) => {
+      const { email, username, password, templateWhatsApp } = input;
+
+      const result = await ctx.prisma.user.update({
+        where: {
+          id: ctx.session?.user.id,
+        },
+        data: {
+          username,
+          email,
+          password,
+          templateWhatsApp,
+        },
+      });
+
+      return {
+        status: 200,
+        message: "Berhasil mengubah profile",
+        result: result,
+      };
+    }),
 });

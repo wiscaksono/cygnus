@@ -1,12 +1,33 @@
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { toast } from "react-toastify";
 import { api } from "~/utils/api";
+
+import type { IUpdateSelf } from "~/schema/user";
 
 export default () => {
   const { data, isLoading } = api.user.getSelf.useQuery();
+  const { register, handleSubmit } = useForm<IUpdateSelf>({
+    values: {
+      username: data?.username,
+      email: data?.email,
+      templateWhatsApp: data?.templateWhatsApp || "",
+    },
+  });
+
+  const mutation = api.user.updateSelf.useMutation({
+    onSuccess: ({ message }) => {
+      toast.success(message);
+    },
+  });
+
+  const onSubmit: SubmitHandler<IUpdateSelf> = async (data) => {
+    await mutation.mutateAsync(data);
+  };
 
   if (isLoading || !data) return <p>Loading...</p>;
 
   return (
-    <form>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <div className="space-y-12">
         <div className="border-b border-gray-900/10 pb-12">
           <h2 className="text-base font-semibold leading-7 text-gray-900">
@@ -28,11 +49,10 @@ export default () => {
               <div className="mt-2">
                 <input
                   type="text"
-                  name="username"
                   id="username"
                   autoComplete="given-name"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={data.username}
+                  {...register("username", { required: true })}
                 />
               </div>
             </div>
@@ -47,28 +67,26 @@ export default () => {
               <div className="mt-2">
                 <input
                   type="email"
-                  name="email"
                   id="email"
                   autoComplete="email"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={data.email}
+                  {...register("email", { required: true })}
                 />
               </div>
             </div>
 
             <div className="col-span-full">
               <label
-                htmlFor="about"
+                htmlFor="template"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
                 Template WhatsApp
               </label>
               <textarea
-                id="about"
-                name="about"
-                rows={10}
+                id="template"
+                rows={15}
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                value={data.templateWhatsApp || ""}
+                {...register("templateWhatsApp", { required: true })}
               />
             </div>
           </div>

@@ -62,7 +62,7 @@ export const EditPelamar = ({ refetch, person }: IEditPelamar) => {
         onClick={openModal}
         className="inline text-indigo-600 hover:text-indigo-900"
       >
-        <PencilIcon className="h-4 w-4" />
+        <PencilIcon className="h-6 w-6" />
       </button>
 
       <Transition.Root show={isOpen} as={Fragment}>
