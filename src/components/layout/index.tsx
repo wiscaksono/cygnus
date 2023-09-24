@@ -2,6 +2,7 @@ import { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { useSession, signOut } from "next-auth/react";
 import {
   Bars3Icon,
@@ -17,16 +18,17 @@ import {
 import classNames from "~/utils/classNames";
 
 const navigation = [
-  { name: "Dashboard", href: "/", icon: HomeIcon, current: true },
-  { name: "Team", href: "/team", icon: UsersIcon, current: false },
-  { name: "Pelamar", href: "/pelamar", icon: UserGroupIcon, current: false },
-  { name: "Calendar", href: "#", icon: CalendarIcon, current: false },
-  { name: "Documents", href: "#", icon: DocumentDuplicateIcon, current: false },
-  { name: "Reports", href: "#", icon: ChartPieIcon, current: false },
+  { name: "Dashboard", href: "/", icon: HomeIcon },
+  { name: "Team", href: "/team", icon: UsersIcon },
+  { name: "Pelamar", href: "/pelamar", icon: UserGroupIcon },
+  { name: "Calendar", href: "#", icon: CalendarIcon },
+  { name: "Documents", href: "#", icon: DocumentDuplicateIcon },
+  { name: "Reports", href: "#", icon: ChartPieIcon },
 ];
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { pathname } = useRouter()
   const { data, status } = useSession();
 
   if (status === "unauthenticated") {
@@ -108,7 +110,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                 <Link
                                   href={item.href}
                                   className={classNames(
-                                    item.current
+                                    pathname === item.href
                                       ? "bg-gray-50 text-indigo-600"
                                       : "text-gray-700 hover:bg-gray-50 hover:text-indigo-600",
                                     "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6"
@@ -116,7 +118,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                 >
                                   <item.icon
                                     className={classNames(
-                                      item.current
+                                      pathname === item.href
                                         ? "text-indigo-600"
                                         : "text-gray-400 group-hover:text-indigo-600",
                                       "h-6 w-6 shrink-0"
@@ -158,7 +160,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                         <Link
                           href={item.href}
                           className={classNames(
-                            item.current
+                            pathname === item.href
                               ? "bg-gray-50 text-indigo-600"
                               : "text-gray-700 hover:bg-gray-50 hover:text-indigo-600",
                             "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6"
@@ -166,7 +168,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                         >
                           <item.icon
                             className={classNames(
-                              item.current
+                              pathname === item.href
                                 ? "text-indigo-600"
                                 : "text-gray-400 group-hover:text-indigo-600",
                               "h-6 w-6 shrink-0"

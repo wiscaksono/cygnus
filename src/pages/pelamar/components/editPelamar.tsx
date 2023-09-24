@@ -17,7 +17,7 @@ interface IEditPelamar {
 export const EditPelamar = ({ refetch, data }: IEditPelamar) => {
   const cancelButtonRef = useRef(null);
   const { openModal, isOpen, closeModal } = useModal();
-  const { register, handleSubmit } = useForm<IUpdatePelamar>({
+  const { register, handleSubmit, watch } = useForm<IUpdatePelamar>({
     values: {
       id: data.id,
       name: data.name,
@@ -27,6 +27,8 @@ export const EditPelamar = ({ refetch, data }: IEditPelamar) => {
       interviewDate: convertToDateTimeLocalString(data.interviewDate),
     },
   });
+
+
 
   const mutation = api.pelamar.update.useMutation({
     onSuccess: ({ message }) => {
