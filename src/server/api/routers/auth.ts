@@ -28,6 +28,7 @@ export const authRouter = createTRPCRouter({
           email,
           password,
           image,
+          templateWhatsApp: "Tempalte whatsapp",
         },
       });
 

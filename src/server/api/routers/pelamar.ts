@@ -193,12 +193,12 @@ export const pelamarRouter = createTRPCRouter({
           })
         );
 
-      const response = await whatsApp.sendMessage({
+      const { status } = (await whatsApp.sendMessage({
         number,
         message: templateMessage,
-      });
+      })) as { status: string };
 
-      if (response.status !== "sent") {
+      if (status !== "sent") {
         return {
           status: 500,
           message: "Gagal mengirim pesan",

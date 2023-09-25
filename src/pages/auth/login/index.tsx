@@ -8,7 +8,12 @@ import type { ILogin } from "~/schema/auth";
 import type { GetServerSideProps } from "next";
 
 export default () => {
-  const { register, handleSubmit } = useForm<ILogin>();
+  const { register, handleSubmit } = useForm<ILogin>({
+    values: {
+      email: "wwicaksono96@gmail.com",
+      password: "Wisnuajjh123",
+    },
+  });
 
   const onSubmit: SubmitHandler<ILogin> = async (data) => {
     await signIn("credentials", {
@@ -32,7 +37,7 @@ export default () => {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" onSubmit={() => handleSubmit(onSubmit)}>
+          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <div>
               <label
                 htmlFor="email"
