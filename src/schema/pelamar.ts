@@ -8,6 +8,8 @@ export const filterPelamarSchema = z
     position: z.string().optional(),
     take: z.number().optional(),
     skip: z.number().optional(),
+    invitedByWhatsapp: z.boolean().optional(),
+    hasWhatsapp: z.boolean().optional(),
   })
   .optional();
 
