@@ -8,12 +8,7 @@ import type { ILogin } from "~/schema/auth";
 import type { GetServerSideProps } from "next";
 
 export default function Login() {
-  const { register, handleSubmit } = useForm<ILogin>({
-    values: {
-      email: "wwicaksono96@gmail.com",
-      password: "Wisnuajjh123",
-    },
-  });
+  const { register, handleSubmit } = useForm<ILogin>({});
 
   const onSubmit: SubmitHandler<ILogin> = async (data) => {
     await signIn("credentials", {
