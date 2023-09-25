@@ -25,6 +25,7 @@ export const pelamarRouter = createTRPCRouter({
         take: where?.take,
         skip: where?.skip,
         where: {
+          userId: ctx.session?.user.id,
           invitedByWhatsapp: where?.invitedByWhatsapp,
           hasWhatsapp: where?.hasWhatsapp,
           name: {
@@ -35,6 +36,7 @@ export const pelamarRouter = createTRPCRouter({
       });
       const count = ctx.prisma.pelamar.count({
         where: {
+          userId: ctx.session?.user.id,
           invitedByWhatsapp: where?.invitedByWhatsapp,
           hasWhatsapp: where?.hasWhatsapp,
           name: {
