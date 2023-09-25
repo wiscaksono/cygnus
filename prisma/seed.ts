@@ -19,13 +19,13 @@ async function isPhoneUnique(phone: string) {
 async function main() {
   await prisma.pelamar.deleteMany({});
 
-  const amountOfUsers = 200;
+  const amountOfUsers = 1000;
   const pelamars: createPelamarInput[] = [];
 
   for (let i = 0; i < amountOfUsers; i++) {
     let phone: string;
     do {
-      const randomFourDigitNumber = Math.floor(Math.random() * 1000000);
+      const randomFourDigitNumber = Math.floor(Math.random() * 10000000);
       phone = `087885${randomFourDigitNumber.toString().padStart(6, "0")}`;
     } while (!(await isPhoneUnique(phone)));
 
@@ -60,7 +60,7 @@ async function main() {
       hasWhatsapp: onwhatsapp === "true",
       position: faker.person.jobTitle(),
       interviewDate: faker.date.future(),
-      userId: "clmxmmc3f0000in9gsok7j1dr",
+      userId: "clmz32cpm0002injceqymgjsv",
     };
 
     pelamars.push(pelamar);
