@@ -22,6 +22,8 @@ export const pelamarRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const where = input;
       const pelamar = ctx.prisma.pelamar.findMany({
+        take: where?.take,
+        skip: where?.skip,
         where: {
           name: {
             contains: where?.name,
@@ -30,7 +32,12 @@ export const pelamarRouter = createTRPCRouter({
         },
       });
       const count = ctx.prisma.pelamar.count({
-        where,
+        where: {
+          name: {
+            contains: where?.name,
+            mode: "insensitive",
+          },
+        },
       });
 
       return ctx.prisma

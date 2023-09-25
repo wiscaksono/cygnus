@@ -14,6 +14,7 @@ import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/utils/api";
 import { convertDateToID } from "~/utils/convertDateToID";
 import { Pagination } from "~/components/Pagination";
+import { SelectPerPage } from "./components/perPage";
 import { CreatePelamar } from "./components/createPelamar";
 import { KirimUndangan } from "./components/kirimUndangan";
 import { EditPelamar } from "./components/editPelamar";
@@ -34,6 +35,7 @@ export default () => {
     isLoading,
     refetch,
   } = api.pelamar.getAll.useQuery({
+    take: parseInt(router.query.take as string, 10) || 10,
     name: router.query.name as string,
   });
 
@@ -108,35 +110,39 @@ export default () => {
           </div>
         </div>
         <div className="mt-8 flow-root">
-          <div className="relative mb-2 flex items-center">
-            <div className="absolute left-0 top-1/2 flex -translate-y-1/2 py-1.5 pl-1.5">
-              <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+          <div className="mb-4 flex items-center gap-x-4">
+            <div className="relative flex flex-1 items-center">
+              <div className="absolute left-0 top-1/2 flex -translate-y-1/2 py-1.5 pl-1.5">
+                <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                ref={inputRef}
+                type="text"
+                name="search"
+                id="search"
+                className="block w-full rounded-md border-0 py-1.5 pl-8 pr-14 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                onKeyDown={(e) => {
+                  if (!e.currentTarget.value && router.query.name) {
+                    router.push("/pelamar");
+                  }
+                  if (e.key === "Enter") {
+                    router.push({
+                      query: {
+                        name: e.currentTarget.value,
+                      },
+                    });
+                  }
+                }}
+                defaultValue={router.query.name}
+              />
+              <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
+                <kbd className="inline-flex items-center rounded border border-gray-200 px-1 font-sans text-xs text-gray-400">
+                  Ctrl + F
+                </kbd>
+              </div>
             </div>
-            <input
-              ref={inputRef}
-              type="text"
-              name="search"
-              id="search"
-              className="block w-full rounded-md border-0 py-1.5 pl-8 pr-14 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              onKeyDown={(e) => {
-                if (!e.currentTarget.value && router.query.name) {
-                  router.push("/pelamar");
-                }
-                if (e.key === "Enter") {
-                  router.push({
-                    query: {
-                      name: e.currentTarget.value,
-                    },
-                  });
-                }
-              }}
-              defaultValue={router.query.name}
-            />
-            <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
-              <kbd className="inline-flex items-center rounded border border-gray-200 px-1 font-sans text-xs text-gray-400">
-                Ctrl + F
-              </kbd>
-            </div>
+
+            <SelectPerPage />
           </div>
           <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
@@ -159,7 +165,7 @@ export default () => {
                       {[
                         "Nama Kandidat",
                         "No. Telepon",
-                        "Email",
+                        // "Email",
                         "Posisi dilamar",
                         "Tanggal Interview",
                         "Diinput",
@@ -216,9 +222,9 @@ export default () => {
                             )}
                           </p>
                         </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {person.email}
-                        </td>
+                        {/* <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500"> */}
+                        {/*   {person.email} */}
+                        {/* </td> */}
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           {person.position}
                         </td>

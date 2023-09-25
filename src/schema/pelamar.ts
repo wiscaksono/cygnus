@@ -6,6 +6,8 @@ export const filterPelamarSchema = z
     email: z.string().email().optional(),
     phone: z.string().optional(),
     position: z.string().optional(),
+    take: z.number().optional(),
+    skip: z.number().optional(),
   })
   .optional();
 

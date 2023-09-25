@@ -4,21 +4,60 @@ import { RouterInputs } from "~/utils/api";
 
 type createPelamarInput = RouterInputs["pelamar"]["create"] & {
   userId: string;
+  hasWhatsapp: boolean;
 };
 
 const prisma = new PrismaClient();
 
+async function isPhoneUnique(phone: string) {
+  const existingPelamar = await prisma.pelamar.findFirst({
+    where: { phone },
+  });
+  return !existingPelamar;
+}
+
 async function main() {
   await prisma.pelamar.deleteMany({});
 
-  const amountOfUsers = 10;
+  const amountOfUsers = 200;
   const pelamars: createPelamarInput[] = [];
 
   for (let i = 0; i < amountOfUsers; i++) {
+    let phone: string;
+    do {
+      const randomFourDigitNumber = Math.floor(Math.random() * 1000000);
+      phone = `087885${randomFourDigitNumber.toString().padStart(6, "0")}`;
+    } while (!(await isPhoneUnique(phone)));
+
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+
+    var urlencoded = new URLSearchParams();
+    urlencoded.append("token", process.env.NEXT_PUBLIC_RUANG_WHATSAPP_TOKEN!);
+    urlencoded.append("number", phone);
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: urlencoded,
+    };
+
+    const response = await fetch(
+      "https://app.ruangwa.id/api/check_number",
+      requestOptions
+    );
+
+    const res = await response.json();
+
+    const { onwhatsapp } = res;
+
+    console.log({ i, onwhatsapp, phone });
+
     const pelamar: createPelamarInput = {
       name: faker.person.fullName(),
       email: faker.internet.email(),
-      phone: faker.phone.number(),
+      phone,
+      hasWhatsapp: onwhatsapp === "true",
       position: faker.person.jobTitle(),
       interviewDate: faker.date.future(),
       userId: "clmxmmc3f0000in9gsok7j1dr",
@@ -26,13 +65,15 @@ async function main() {
 
     pelamars.push(pelamar);
   }
+
   const addUsers = async () =>
     await prisma.pelamar.createMany({
       data: pelamars,
     });
 
-  addUsers();
+  await addUsers();
 }
+
 main()
   .then(() => prisma.$disconnect())
   .catch(async (e) => {
