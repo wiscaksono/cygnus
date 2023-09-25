@@ -10,7 +10,6 @@ const config = {
   images: {
     domains: ["api.multiavatar.com", "avatars.githubusercontent.com"],
   },
-  pageExtensions: ["page.tsx", "page.ts", "page.jsx", "page.js"],
   i18n: {
     locales: ["en"],
     defaultLocale: "en",

@@ -2,7 +2,7 @@ import Head from "next/head";
 import { api } from "~/utils/api";
 import Image from "next/image";
 
-export default () => {
+export default function Teams() {
   const { data: teams, isLoading } = api.team.getAll.useQuery();
 
   if (!teams || isLoading) return <div>Loading...</div>;
@@ -34,4 +34,4 @@ export default () => {
       </ul>
     </>
   );
-};
+}

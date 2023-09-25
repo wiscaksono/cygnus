@@ -1,7 +1,8 @@
 import { useRef, useState, useEffect } from "react";
 
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import type { FilterProps } from "../..";
+
+import type { FilterProps } from "~/pages/pelamar";
 
 export const SearchBar = ({ filter, setFilter }: FilterProps) => {
   const inputRef = useRef<HTMLInputElement>(null);

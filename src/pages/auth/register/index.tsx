@@ -8,7 +8,7 @@ import { getServerAuthSession } from "~/server/auth";
 import type { IRegister } from "~/schema/auth";
 import type { GetServerSideProps } from "next";
 
-export default () => {
+export default function Register() {
   const router = useRouter();
 
   const mutation = api.auth.register.useMutation({
@@ -102,7 +102,7 @@ export default () => {
       </div>
     </>
   );
-};
+}
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getServerAuthSession(context);

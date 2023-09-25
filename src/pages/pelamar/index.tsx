@@ -7,11 +7,11 @@ import { id } from "date-fns/locale";
 import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/utils/api";
 import { convertDateToID } from "~/utils/convertDateToID";
-import { SearchBar, SelectPerPage } from "./components/filter";
-import { CreatePelamar } from "./components/createPelamar";
-import { KirimUndangan } from "./components/kirimUndangan";
-import { EditPelamar } from "./components/editPelamar";
-import { SendWhatsApp } from "./components/sendWhatsapp";
+import { SearchBar, SelectPerPage } from "~/components/pelamar/filter";
+import { CreatePelamar } from "~/components/pelamar/createPelamar";
+import { KirimUndangan } from "~/components/pelamar/kirimUndangan";
+import { EditPelamar } from "~/components/pelamar/editPelamar";
+import { SendWhatsApp } from "~/components/pelamar/sendWhatsapp";
 
 import type { Pelamar } from "@prisma/client";
 import type { GetServerSideProps } from "next";
@@ -36,7 +36,7 @@ export interface FilterProps {
   >;
 }
 
-export default () => {
+export default function Pelamar() {
   const checkbox = useRef<HTMLInputElement>(null);
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
@@ -246,7 +246,7 @@ export default () => {
       </div>
     </>
   );
-};
+}
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getServerAuthSession(context);

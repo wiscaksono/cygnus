@@ -6,7 +6,7 @@ import { getServerAuthSession } from "~/server/auth";
 
 import type { GetServerSideProps } from "next";
 
-export default () => {
+export default function Page() {
   const { data } = api.user.getSelf.useQuery();
 
   if (!data) return <p>Loading...</p>;
@@ -20,7 +20,7 @@ export default () => {
       </Head>
     </>
   );
-};
+}
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getServerAuthSession(context);

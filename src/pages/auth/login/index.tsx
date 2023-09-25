@@ -7,7 +7,7 @@ import { getServerAuthSession } from "~/server/auth";
 import type { ILogin } from "~/schema/auth";
 import type { GetServerSideProps } from "next";
 
-export default () => {
+export default function Login() {
   const { register, handleSubmit } = useForm<ILogin>({
     values: {
       email: "wwicaksono96@gmail.com",
@@ -88,7 +88,7 @@ export default () => {
       </div>
     </>
   );
-};
+}
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getServerAuthSession(context);

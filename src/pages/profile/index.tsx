@@ -7,7 +7,7 @@ import { getServerAuthSession } from "~/server/auth";
 import type { GetServerSideProps } from "next";
 import type { IUpdateSelf } from "~/schema/user";
 
-export default () => {
+export default function Profile() {
   const { data, isLoading } = api.user.getSelf.useQuery();
   const { register, handleSubmit } = useForm<IUpdateSelf>({
     values: {
@@ -121,7 +121,7 @@ export default () => {
       </form>
     </>
   );
-};
+}
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getServerAuthSession(context);

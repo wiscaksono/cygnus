@@ -2,7 +2,7 @@ import { Fragment } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { ChevronUpDownIcon } from "@heroicons/react/20/solid";
 
-import type { FilterProps } from "../..";
+import type { FilterProps } from "~/pages/pelamar";
 
 const data = [10, 20, 30, 40, 50, 100];
 
