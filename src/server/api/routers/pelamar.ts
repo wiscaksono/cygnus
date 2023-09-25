@@ -74,7 +74,9 @@ export const pelamarRouter = createTRPCRouter({
         };
       }
 
-      const { onwhatsapp } = await whatsApp.checkNumber(phone);
+      const { onwhatsapp } = (await whatsApp.checkNumber(phone)) as {
+        onwhatsapp: "true" | "false";
+      };
 
       const result = await ctx.prisma.pelamar.create({
         data: {
@@ -114,7 +116,9 @@ export const pelamarRouter = createTRPCRouter({
       let haveWhatsapp = false;
 
       if (phone) {
-        const { onwhatsapp } = await whatsApp.checkNumber(phone);
+        const { onwhatsapp } = (await whatsApp.checkNumber(phone)) as {
+          onwhatsapp: "true" | "false";
+        };
         haveWhatsapp = onwhatsapp === "true";
       }
 

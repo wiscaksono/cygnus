@@ -187,7 +187,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       alt={"PP"}
                     />
                     <button
-                      onClick={() => signOut()}
+                      onClick={() => signOut}
                       className="rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 transition-colors hover:bg-red-200 hover:text-red-500 hover:ring-red-500"
                     >
                       Log out

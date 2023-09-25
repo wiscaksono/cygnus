@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Fragment } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 

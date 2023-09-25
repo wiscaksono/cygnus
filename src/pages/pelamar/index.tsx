@@ -1,7 +1,6 @@
 import Head from "next/head";
 import { useLayoutEffect, useRef, useState, useEffect } from "react";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
-import { Pelamar } from "@prisma/client";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 
@@ -14,6 +13,7 @@ import { KirimUndangan } from "./components/kirimUndangan";
 import { EditPelamar } from "./components/editPelamar";
 import { SendWhatsApp } from "./components/sendWhatsapp";
 
+import type { Pelamar } from "@prisma/client";
 import type { GetServerSideProps } from "next";
 import type { Dispatch, SetStateAction } from "react";
 
@@ -87,7 +87,7 @@ export default () => {
   }
 
   useEffect(() => {
-    refetch();
+    void refetch();
   }, [filter]);
 
   if (isLoading || !pelamar) return <div>Loading...</div>;
@@ -110,10 +110,10 @@ export default () => {
           </div>
           <div className="mt-4 flex gap-x-4 sm:ml-16 sm:mt-0 sm:flex-none">
             <KirimUndangan
-              refetch={refetch}
+              refetch={() => void refetch()}
               selectedPelamar={selectedPelamar}
             />
-            <CreatePelamar refetch={refetch} />
+            <CreatePelamar refetch={() => void refetch()} />
           </div>
         </div>
         <div className="mt-8 flow-root">
@@ -226,8 +226,14 @@ export default () => {
                         </td>
 
                         <td className="relative space-x-2 whitespace-nowrap py-4 pl-3 pr-4 text-right sm:pr-6">
-                          <SendWhatsApp refetch={refetch} person={person} />
-                          <EditPelamar refetch={refetch} person={person} />
+                          <SendWhatsApp
+                            refetch={() => void refetch()}
+                            person={person}
+                          />
+                          <EditPelamar
+                            refetch={() => void refetch()}
+                            person={person}
+                          />
                         </td>
                       </tr>
                     ))}

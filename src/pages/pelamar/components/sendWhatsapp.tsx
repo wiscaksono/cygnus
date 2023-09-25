@@ -1,8 +1,8 @@
 import { toast } from "react-toastify";
 import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
-import { Pelamar } from "@prisma/client";
 
 import { api } from "~/utils/api";
+import type { Pelamar } from "@prisma/client";
 
 interface ISendWhatsApp {
   refetch: () => void;
@@ -19,10 +19,12 @@ export const SendWhatsApp = ({ person, refetch }: ISendWhatsApp) => {
 
   const { data } = api.user.getSelf.useQuery();
 
+  if (!data) return;
+
   const handleSend = async () => {
     await mutation.mutateAsync({
       number: person.phone,
-      message: data?.templateWhatsApp!,
+      message: data.templateWhatsApp,
     });
   };
 
@@ -32,7 +34,7 @@ export const SendWhatsApp = ({ person, refetch }: ISendWhatsApp) => {
           ? "text-gray-400"
           : "text-indigo-600 hover:text-indigo-900"
         }`}
-      onClick={handleSend}
+      onClick={() => void handleSend()}
       disabled={
         person.invitedByWhatsapp || !person.hasWhatsapp || mutation.isLoading
       }
@@ -69,18 +71,3 @@ const LoadingIcon = () => {
     </svg>
   );
 };
-
-const messageTemplate = `Halo *{{person}}*,
-
-Salam dari Royal Trust,
-Saya Pratiwi, Recruitment Specialist dari Royal Trust. Saya telah melihat lamaran sdr melalui *Email: hrd3@royalfx.co.id*  dan melamar pada posisi *{{position}}*. Kami ingin mengundang sdr/i agar turut hadir dalam seleksi wawancara yang akan diadakan pada:
-
-Hari & Tanggal : {{date}}
-Jam                   : {{interviewDate}} - Selesai
-Lokasi               : Belleza Shopping Arcade, Lt. 2 Unit 61 - 63, Jl. Arteri Permata Hijau No. 34, Kel. Grogol Utara, Kec. Kebayoran Lama, Kota Jakarta Selatan, DKI Jakarta
-
-Dengan demikian, apakah sdr/i berkenan untuk mengikuti proses rekrutmen pada posisi tersebut? Diharapkan sdr/i yang menerima pesan ini untuk mengkonfirmasi kehadiran dengan format balasan: Nama-hadir/ tidak hadir.
-
-Masukan Anda sangat berarti.
-Terima kasih
-`;

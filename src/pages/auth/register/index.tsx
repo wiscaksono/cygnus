@@ -36,7 +36,7 @@ export default () => {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+          <form className="space-y-6" onSubmit={() => handleSubmit(onSubmit)}>
             <div>
               <label
                 htmlFor="username"

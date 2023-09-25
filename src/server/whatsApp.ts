@@ -1,7 +1,20 @@
 import { env } from "~/env.mjs";
 import type { ISendMessage } from "~/schema/whatsApp";
+import type { ErrorType } from "~/types/error";
 
-class whatsApp {
+class ApiError extends Error {
+  status: number;
+  messages: string;
+
+  constructor(res: ErrorType) {
+    super(res.message);
+
+    this.messages = res.message;
+    this.status = res.status;
+  }
+}
+
+class whatsAppConstructor {
   private token;
 
   constructor() {
@@ -9,7 +22,7 @@ class whatsApp {
   }
 
   private async request(path: string, options: RequestInit) {
-    let myHeaders = new Headers();
+    const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
 
     const requestOptions: RequestInit = {
@@ -22,18 +35,15 @@ class whatsApp {
         `${env.NEXT_PUBLIC_RUANG_WHATSAPP_API_URL}${path}`,
         requestOptions
       );
-      const res = await response.json();
+      const res = (await response.json()) as object;
 
       if (!res) {
         throw new Error("Something went wrong");
       }
 
       return res;
-    } catch (error: any) {
-      return Promise.reject({
-        ...error,
-        message: error.message || "Something went wrong!",
-      });
+    } catch (error) {
+      throw new ApiError(error as ErrorType);
     }
   }
 
@@ -61,4 +71,6 @@ class whatsApp {
   }
 }
 
-export default new whatsApp();
+const whatsApp = new whatsAppConstructor();
+
+export default whatsApp;

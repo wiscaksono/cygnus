@@ -1,5 +1,6 @@
 import Head from "next/head";
 import { api } from "~/utils/api";
+import Image from "next/image";
 
 export default () => {
   const { data: teams, isLoading } = api.team.getAll.useQuery();
@@ -17,7 +18,9 @@ export default () => {
       >
         {teams.map((team) => (
           <li key={team.id}>
-            <img
+            <Image
+              width={300}
+              height={200}
               className="aspect-[3/2] w-full rounded-2xl object-cover"
               src={team.image}
               alt={team.username}

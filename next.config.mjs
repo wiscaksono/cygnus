@@ -8,7 +8,7 @@ await import("./src/env.mjs");
 const config = {
   reactStrictMode: true,
   images: {
-    domains: ["api.multiavatar.com"],
+    domains: ["api.multiavatar.com", "avatars.githubusercontent.com"],
   },
   i18n: {
     locales: ["en"],

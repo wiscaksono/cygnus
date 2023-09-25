@@ -1,9 +1,10 @@
-import { Pelamar } from "@prisma/client";
 import { toast } from "react-toastify";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 
 import { api } from "~/utils/api";
+
+import type { Pelamar } from "@prisma/client";
 
 interface IKirimUndangan {
   refetch: () => void;
@@ -20,7 +21,11 @@ export const KirimUndangan = ({ refetch, selectedPelamar }: IKirimUndangan) => {
   });
 
   const handleSend = async () => {
-    selectedPelamar.forEach(async (person) => {
+    for (const person of selectedPelamar) {
+      if (!person.phone) {
+        toast.error(`Nomor HP ${person.name} tidak ditemukan`);
+        return;
+      }
       const messageTemplate = `Halo *${person.name}*,
 
 Salam dari Royal Trust,
@@ -47,14 +52,14 @@ Terima kasih
       });
 
       toast.success(`Mengirim undangan ke ${person.name}`);
-    });
+    }
   };
 
   return (
     <button
       type="button"
       className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm transition-opacity hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-70"
-      onClick={handleSend}
+      onClick={() => void handleSend()}
       disabled={mutation.isLoading}
     >
       {mutation.isLoading ? "Mengirim..." : "Kirim Undangan"}

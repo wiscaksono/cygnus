@@ -2,13 +2,13 @@ import { Fragment, useRef } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
-import { Pelamar } from "@prisma/client";
 import { PencilIcon } from "@heroicons/react/24/outline";
 
 import { useModal } from "~/hooks";
 import { api } from "~/utils/api";
 
 import type { IDeletePelamar, IUpdatePelamar } from "~/schema/pelamar";
+import type { Pelamar } from "@prisma/client";
 
 interface IEditPelamar {
   refetch: () => void;
@@ -198,12 +198,12 @@ export const EditPelamar = ({ refetch, person }: IEditPelamar) => {
                     <button
                       type="submit"
                       className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:ml-3"
-                      onClick={handleSubmit(onSubmit)}
+                      onClick={() => void handleSubmit(onSubmit)()}
                     >
                       Ubah
                     </button>
                     <button
-                      onClick={() => onDelete(person)}
+                      onClick={() => void onDelete(person)}
                       className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-red-500 hover:text-white hover:ring-red-500 sm:ml-3 sm:mt-0 sm:w-auto"
                     >
                       Hapus
