@@ -65,38 +65,43 @@ export const pelamarRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const { name, email, phone, position, interviewDate } = input;
 
-      const phoneExists = await ctx.prisma.pelamar.findFirst({
-        where: { phone },
-      });
+      // Wrap the entire operation in a Prisma transaction
+      const result = await ctx.prisma.$transaction(async (prisma) => {
+        const phoneExists = await prisma.pelamar.findFirst({
+          where: { phone },
+        });
 
-      if (phoneExists) {
-        return {
-          status: 400,
-          message: "Nomor telepon sudah terdaftar",
+        if (phoneExists) {
+          return {
+            status: 400,
+            message: "Nomor telepon sudah terdaftar",
+          };
+        }
+
+        const { onwhatsapp } = (await whatsApp.checkNumber(phone)) as {
+          onwhatsapp: "true" | "false";
         };
-      }
 
-      const { onwhatsapp } = (await whatsApp.checkNumber(phone)) as {
-        onwhatsapp: "true" | "false";
-      };
+        const createdPelamar = await prisma.pelamar.create({
+          data: {
+            name,
+            email,
+            phone,
+            position,
+            hasWhatsapp: onwhatsapp === "true",
+            interviewDate,
+            userId: ctx.session?.user.id,
+          },
+        });
 
-      const result = await ctx.prisma.pelamar.create({
-        data: {
-          name,
-          email,
-          phone,
-          position,
-          hasWhatsapp: onwhatsapp === "true",
-          interviewDate,
-          userId: ctx.session?.user.id,
-        },
+        return {
+          status: 201,
+          message: "Berhasil menambahkan pelamar",
+          result: createdPelamar,
+        };
       });
 
-      return {
-        status: 201,
-        message: "Berhasil menambahkan pelamar",
-        result: result,
-      };
+      return result;
     }),
 
   update: protectedProcedure
