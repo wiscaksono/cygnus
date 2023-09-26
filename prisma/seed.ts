@@ -19,7 +19,7 @@ async function isPhoneUnique(phone: string) {
 async function main() {
   await prisma.pelamar.deleteMany({});
 
-  const amountOfUsers = 1000;
+  const amountOfUsers = 5;
   const pelamars: createPelamarInput[] = [];
 
   for (let i = 0; i < amountOfUsers; i++) {
