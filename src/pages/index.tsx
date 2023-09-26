@@ -1,16 +1,11 @@
 import React from "react";
 import Head from "next/head";
 
-import { api } from "~/utils/api";
 import { getServerAuthSession } from "~/server/auth";
 
 import type { GetServerSideProps } from "next";
 
 export default function Page() {
-  const { data } = api.user.getSelf.useQuery();
-
-  if (!data) return <p>Loading...</p>;
-
   return (
     <>
       <Head>

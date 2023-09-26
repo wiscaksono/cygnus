@@ -100,7 +100,7 @@ export default function Pelamar() {
                   invitedByWhatsapp: !filter.invitedByWhatsapp,
                 });
               }}
-              className={`block ${filter.invitedByWhatsapp ? "bg-indigo-600 text-white" : "text-gray-900"
+              className={`block ${filter.invitedByWhatsapp ? "bg-indigo-600 text-white" : "text-gray-800"
                 } rounded-md border-0 px-2.5 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}>
               Invited
             </button>
@@ -111,7 +111,7 @@ export default function Pelamar() {
                   hasWhatsapp: !filter.hasWhatsapp,
                 });
               }}
-              className={`block ${filter.hasWhatsapp ? "bg-indigo-600 text-white" : "text-gray-900"
+              className={`block ${filter.hasWhatsapp ? "bg-indigo-600 text-white" : "text-gray-800"
                 } rounded-md border-0 px-2.5 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}>
               Have WhatsApp
             </button>
