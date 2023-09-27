@@ -10,27 +10,25 @@ export const userRouter = createTRPCRouter({
     });
   }),
 
-  updateSelf: protectedProcedure
-    .input(updateSelf)
-    .mutation(async ({ input, ctx }) => {
-      const { email, username, password, templateWhatsApp } = input;
+  updateSelf: protectedProcedure.input(updateSelf).mutation(async ({ input, ctx }) => {
+    const { email, fullName, password, templateWhatsApp } = input;
 
-      const result = await ctx.prisma.user.update({
-        where: {
-          id: ctx.session?.user.id,
-        },
-        data: {
-          username,
-          email,
-          password,
-          templateWhatsApp,
-        },
-      });
+    const result = await ctx.prisma.user.update({
+      where: {
+        id: ctx.session?.user.id,
+      },
+      data: {
+        fullName,
+        email,
+        password,
+        templateWhatsApp,
+      },
+    });
 
-      return {
-        status: 200,
-        message: "Berhasil mengubah profile",
-        result: result,
-      };
-    }),
+    return {
+      status: 200,
+      message: "Berhasil mengubah profile",
+      result: result,
+    };
+  }),
 });

@@ -1,8 +1,6 @@
 import Head from "next/head";
 import { useLayoutEffect, useRef, useState, useEffect } from "react";
-import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
-import { format } from "date-fns";
-import { id } from "date-fns/locale";
+import { CheckCircleIcon, XMarkIcon, EnvelopeIcon } from "@heroicons/react/24/outline";
 
 import { api } from "~/utils/api";
 import { convertDateToID } from "~/utils/convertDateToID";
@@ -10,9 +8,14 @@ import { getServerAuthSession } from "~/server/auth";
 
 import { SearchBar, SelectPerPage } from "~/components/pelamar/filter";
 import { CreatePelamar } from "~/components/pelamar/createPelamar";
-import { KirimUndangan } from "~/components/pelamar/kirimUndangan";
+import { ImportFromCSV } from "~/components/pelamar/importFromCSV";
 import { EditPelamar } from "~/components/pelamar/editPelamar";
-import { SendWhatsApp } from "~/components/pelamar/sendWhatsapp";
+import { SendWhatsApp } from "~/components/pelamar/sendWhatsApp";
+import { SendWhatsAppAll } from "~/components/pelamar/sendWhatsAppAll";
+import { SendEmail } from "~/components/pelamar/sendEmail";
+import { SendEmailAll } from "~/components/pelamar/sendEmailAll";
+import { DeleteAll } from "~/components/pelamar/deleteAll";
+import { WhatsAppIcon } from "~/components/Icons";
 
 import type { Pelamar } from "@prisma/client";
 import type { GetServerSideProps } from "next";
@@ -62,7 +65,7 @@ export default function Pelamar() {
 
   function toggleAll() {
     if (!pelamar) return;
-    setSelectedPelamar(checked || indeterminate ? [] : pelamar.result.pelamar.filter((p) => !p.invitedByWhatsapp).filter((p) => p.hasWhatsapp));
+    setSelectedPelamar(checked || indeterminate ? [] : pelamar.result.pelamar);
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
   }
@@ -71,7 +74,7 @@ export default function Pelamar() {
     void refetch();
   }, [filter]);
 
-  if (isLoading || !pelamar) return <div>Loading...</div>;
+  if (isLoading) return <div>Loading...</div>;
 
   return (
     <>
@@ -85,8 +88,11 @@ export default function Pelamar() {
             <h1 className="text-base font-semibold leading-6 text-gray-900">Pelamar</h1>
             <p className="mt-2 text-sm text-gray-700">Daftar pelamar yang telah mengisi form pendaftaran.</p>
           </div>
-          <div className="mt-4 flex gap-x-4 sm:ml-16 sm:mt-0 sm:flex-none">
-            <KirimUndangan refetch={() => void refetch()} selectedPelamar={selectedPelamar} />
+          <div className="mt-4 flex gap-x-2 sm:ml-16 sm:mt-0 sm:flex-none">
+            <DeleteAll refetch={() => void refetch()} selectedPelamar={selectedPelamar} />
+            <SendEmailAll refetch={() => void refetch()} selectedPelamar={selectedPelamar} />
+            <SendWhatsAppAll refetch={() => void refetch()} selectedPelamar={selectedPelamar} />
+            <ImportFromCSV refetch={() => void refetch()} />
             <CreatePelamar refetch={() => void refetch()} />
           </div>
         </div>
@@ -101,7 +107,8 @@ export default function Pelamar() {
                 });
               }}
               className={`block ${filter.invitedByWhatsapp ? "bg-indigo-600 text-white" : "text-gray-800"
-                } rounded-md border-0 px-2.5 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}>
+                } rounded-md border-0 px-2.5 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+            >
               Invited
             </button>
             <button
@@ -112,7 +119,8 @@ export default function Pelamar() {
                 });
               }}
               className={`block ${filter.hasWhatsapp ? "bg-indigo-600 text-white" : "text-gray-800"
-                } rounded-md border-0 px-2.5 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}>
+                } rounded-md border-0 px-2.5 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
+            >
               Have WhatsApp
             </button>
             <SelectPerPage filter={filter} setFilter={setFilter} />
@@ -132,8 +140,12 @@ export default function Pelamar() {
                           onChange={toggleAll}
                         />
                       </th>
-                      {["Nama Kandidat", "No. Telepon", "Posisi dilamar", "Tanggal Interview", "Diinput", "Invited"].map((item, i) => (
-                        <th scope="col" className="whitespace-nowrap px-3 py-3.5 text-left text-sm font-semibold text-gray-900" key={i}>
+                      {["No.", "Nama Kandidat", "No. Telepon", "Email", "Posisi dilamar", "Tanggal Interview", "Invited"].map((item, i) => (
+                        <th
+                          scope="col"
+                          className={`whitespace-nowrap px-3 py-3.5 text-left text-sm font-semibold text-gray-900 ${item === "Invited" ? "text-center" : "text-left"}`}
+                          key={i}
+                        >
                           {item}
                         </th>
                       ))}
@@ -143,7 +155,7 @@ export default function Pelamar() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">
-                    {pelamar.result.pelamar.map((person, i) => (
+                    {pelamar?.result.pelamar.map((person, i) => (
                       <tr key={i}>
                         <td className="relative px-7 sm:w-12 sm:px-6">
                           {selectedPelamar.includes(person) && <div className="absolute inset-y-0 left-0 w-0.5 bg-indigo-600" />}
@@ -152,31 +164,39 @@ export default function Pelamar() {
                             className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
                             value={person.email}
                             checked={selectedPelamar.includes(person)}
-                            disabled={person.invitedByWhatsapp || !person.hasWhatsapp}
                             onChange={(e) => setSelectedPelamar(e.target.checked ? [...selectedPelamar, person] : selectedPelamar.filter((p) => p !== person))}
                           />
                         </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{i + 1}</td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.name}</td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           <p className="inline-flex items-center gap-x-2">
                             {person.phone}
-                            {!person.hasWhatsapp && <XCircleIcon className="h-5 w-5 text-red-500" />}
+                            {!person.hasWhatsapp && <XMarkIcon className="h-5 w-5 text-red-500" />}
                           </p>
                         </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.email}</td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.position}</td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {format(person.interviewDate, "hh:mm EEEE, dd MMMM yyyy", {
-                            locale: id,
-                          })}
-                        </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{convertDateToID(person.createdAt)}</td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {person.invitedByWhatsapp ? <CheckCircleIcon className="h-5 w-5 text-green-500" /> : <XCircleIcon className="h-5 w-5 text-red-500" />}
+                          <div className="flex items-center justify-center gap-x-2">
+                            <span className="flex shrink-0 items-center gap-x-1">
+                              <WhatsAppIcon size={20} /> :{" "}
+                              {person.invitedByWhatsapp ? <CheckCircleIcon className="h-5 w-5 text-green-500" /> : <XMarkIcon className="h-5 w-5 text-red-500" />}
+                            </span>
+                            <span className="flex shrink-0 items-center gap-x-1">
+                              <EnvelopeIcon className="h-6 w-6" /> :{" "}
+                              {person.invitedByEmail ? <CheckCircleIcon className="h-5 w-5 text-green-500" /> : <XMarkIcon className="h-5 w-5 text-red-500" />}
+                            </span>
+                          </div>
                         </td>
 
-                        <td className="relative space-x-2 whitespace-nowrap py-4 pl-3 pr-4 text-right sm:pr-6">
-                          <SendWhatsApp refetch={() => void refetch()} person={person} />
-                          <EditPelamar refetch={() => void refetch()} person={person} />
+                        <td className="relative py-4 pl-3 pr-4 text-right">
+                          <div className="flex items-center justify-end gap-x-2">
+                            <SendEmail refetch={() => void refetch()} person={person} />
+                            <SendWhatsApp refetch={() => void refetch()} person={person} />
+                            <EditPelamar refetch={() => void refetch()} person={person} />
+                          </div>
                         </td>
                       </tr>
                     ))}

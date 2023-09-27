@@ -34,7 +34,10 @@ export const deletePelamarSchema = z.object({
   id: z.string(),
 });
 
+export const deleteAllPelamarSchema = z.array(z.string());
+
 export type IFilterPelamar = z.infer<typeof filterPelamarSchema>;
 export type ICreatePelamar = z.infer<typeof createPelamarSchema>;
 export type IUpdatePelamar = z.infer<typeof updatePelamarSchema>;
 export type IDeletePelamar = z.infer<typeof deletePelamarSchema>;
+export type IDeleteAllPelamar = z.infer<typeof deleteAllPelamarSchema>;

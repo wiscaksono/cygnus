@@ -42,16 +42,11 @@ async function main() {
       body: urlencoded,
     };
 
-    const response = await fetch(
-      "https://app.ruangwa.id/api/check_number",
-      requestOptions
-    );
+    const response = await fetch("https://app.ruangwa.id/api/check_number", requestOptions);
 
     const res = await response.json();
 
     const { onwhatsapp } = res;
-
-    console.log({ i, onwhatsapp, phone });
 
     const pelamar: createPelamarInput = {
       name: faker.person.fullName(),

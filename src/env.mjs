@@ -15,16 +15,13 @@ export const env = createEnv({
     POSTGRES_PASSWORD: z.string(),
     POSTGRES_DATABASE: z.string(),
     NODE_ENV: z.enum(["development", "test", "production"]),
-    NEXTAUTH_SECRET:
-      process.env.NODE_ENV === "production"
-        ? z.string().min(1)
-        : z.string().min(1).optional(),
+    NEXTAUTH_SECRET: process.env.NODE_ENV === "production" ? z.string().min(1) : z.string().min(1).optional(),
     NEXTAUTH_URL: z.preprocess(
       // This makes Vercel deployments not fail if you don't set NEXTAUTH_URL
       // Since NextAuth.js automatically uses the VERCEL_URL if present.
       (str) => process.env.VERCEL_URL ?? str,
       // VERCEL_URL doesn't include `https` so it cant be validated as a URL
-      process.env.VERCEL ? z.string().min(1) : z.string().url()
+      process.env.VERCEL ? z.string().min(1) : z.string().url(),
     ),
   },
 
@@ -38,6 +35,7 @@ export const env = createEnv({
     NEXT_PUBLIC_RUANG_WHATSAPP_USERNAME: z.string(),
     NEXT_PUBLIC_RUANG_WHATSAPP_ACCESS_KEY: z.string(),
     NEXT_PUBLIC_RUANG_WHATSAPP_TOKEN: z.string(),
+    NEXT_PUBLIC_BREVO_API_KEY: z.string(),
   },
 
   /**
@@ -52,14 +50,11 @@ export const env = createEnv({
     POSTGRES_HOST: process.env.POSTGRES_HOST,
     POSTGRES_PASSWORD: process.env.POSTGRES_PASSWORD,
     POSTGRES_DATABASE: process.env.POSTGRES_DATABASE,
-    NEXT_PUBLIC_RUANG_WHATSAPP_API_URL:
-      process.env.NEXT_PUBLIC_RUANG_WHATSAPP_API_URL,
-    NEXT_PUBLIC_RUANG_WHATSAPP_USERNAME:
-      process.env.NEXT_PUBLIC_RUANG_WHATSAPP_USERNAME,
-    NEXT_PUBLIC_RUANG_WHATSAPP_ACCESS_KEY:
-      process.env.NEXT_PUBLIC_RUANG_WHATSAPP_ACCESS_KEY,
-    NEXT_PUBLIC_RUANG_WHATSAPP_TOKEN:
-      process.env.NEXT_PUBLIC_RUANG_WHATSAPP_TOKEN,
+    NEXT_PUBLIC_RUANG_WHATSAPP_API_URL: process.env.NEXT_PUBLIC_RUANG_WHATSAPP_API_URL,
+    NEXT_PUBLIC_RUANG_WHATSAPP_USERNAME: process.env.NEXT_PUBLIC_RUANG_WHATSAPP_USERNAME,
+    NEXT_PUBLIC_RUANG_WHATSAPP_ACCESS_KEY: process.env.NEXT_PUBLIC_RUANG_WHATSAPP_ACCESS_KEY,
+    NEXT_PUBLIC_RUANG_WHATSAPP_TOKEN: process.env.NEXT_PUBLIC_RUANG_WHATSAPP_TOKEN,
+    NEXT_PUBLIC_BREVO_API_KEY: process.env.NEXT_PUBLIC_BREVO_API_KEY,
     NODE_ENV: process.env.NODE_ENV,
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,

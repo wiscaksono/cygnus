@@ -1,34 +1,24 @@
 import { type GetServerSidePropsContext } from "next";
-import {
-  getServerSession,
-  type NextAuthOptions,
-  type DefaultSession,
-} from "next-auth";
+import { getServerSession, type NextAuthOptions, type DefaultSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 import { prisma } from "~/server/db";
 import { env } from "~/env.mjs";
 import { loginSchema } from "~/schema/auth";
 
-/**
- * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
- * object and keep type safety.
- *
- * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
- */
 declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      image: string;
-      username: string;
+      fullName: string;
+      phone: string;
     } & DefaultSession["user"];
   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface User {
+    fullName: string;
+    phone: string;
+  }
 }
 
 export const authOptions: NextAuthOptions = {
@@ -37,6 +27,8 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id;
         token.email = user.email;
+        token.fullName = user.fullName;
+        token.phone = user.phone;
       }
 
       return token;
@@ -44,6 +36,8 @@ export const authOptions: NextAuthOptions = {
     session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.id as string;
+        session.user.fullName = token.fullName as string;
+        session.user.phone = token.phone as string;
       }
 
       return session;
@@ -72,8 +66,7 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const isValidPassword =
-          user.password.localeCompare(cred.password) === 0;
+        const isValidPassword = user.password.localeCompare(cred.password) === 0;
 
         if (!isValidPassword) {
           return null;
@@ -82,17 +75,15 @@ export const authOptions: NextAuthOptions = {
         return {
           id: user.id,
           email: user.email,
-          username: user.username,
+          fullName: user.fullName,
           image: user.image,
+          phone: user.phone,
         };
       },
     }),
   ],
 };
 
-export const getServerAuthSession = (ctx: {
-  req: GetServerSidePropsContext["req"];
-  res: GetServerSidePropsContext["res"];
-}) => {
+export const getServerAuthSession = (ctx: { req: GetServerSidePropsContext["req"]; res: GetServerSidePropsContext["res"] }) => {
   return getServerSession(ctx.req, ctx.res, authOptions);
 };
