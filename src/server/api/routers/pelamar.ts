@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
-import * as Sib from "@getbrevo/brevo";
+const Sib = require("@getbrevo/brevo") as TBrevo;
 
 import { env } from "~/env.mjs";
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/api/trpc";
@@ -9,6 +9,8 @@ import { sendMessage } from "~/schema/whatsApp";
 import { sendEmail } from "~/schema/email";
 import whatsApp from "~/server/whatsApp";
 import { emailTemplate } from "~/components/EmailTemplate";
+
+import type { TBrevo } from "~/types/brevo";
 
 export const pelamarRouter = createTRPCRouter({
   getAll: publicProcedure.input(filterPelamarSchema).query(async ({ ctx, input }) => {
@@ -236,12 +238,12 @@ export const pelamarRouter = createTRPCRouter({
   }),
 
   sendEmail: protectedProcedure.input(sendEmail).mutation(async ({ ctx, input }) => {
-    // @ts-ignore
-    const client = Sib.ApiClient.instance;
+    const brevo = Sib;
+    const client = brevo.ApiClient.instance;
     const apiKey = client.authentications["api-key"];
     apiKey.apiKey = env.NEXT_PUBLIC_BREVO_API_KEY;
 
-    const transEmailApi = new Sib.TransactionalEmailsApi();
+    const transEmailApi = new brevo.TransactionalEmailsApi();
     const sender = {
       email: ctx.session.user.email,
       name: ctx.session.user.fullName,

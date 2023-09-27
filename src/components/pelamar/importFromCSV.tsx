@@ -6,23 +6,27 @@ import { useCSVReader, formatFileSize } from "react-papaparse";
 import { useModal } from "~/hooks";
 import { api } from "~/utils/api";
 
+import type { TCSV } from "~/types/CSV";
+
 export const ImportFromCSV = ({ refetch }: { refetch: () => void }) => {
   const cancelButtonRef = useRef(null);
   const { openModal, isOpen, closeModal } = useModal();
-  const { CSVReader } = useCSVReader();
+  const { CSVReader } = useCSVReader() as {
+    CSVReader: JSX.ElementType;
+  };
 
-  const [file, setFile] = useState<Array<string>>([]);
+  const [file, setFile] = useState<TCSV[]>([]);
 
   const mutation = api.pelamar.create.useMutation({});
 
   const handleSubmit = async () => {
     try {
       for (const data of file) {
-        const name = data[1] as string;
-        const phone = `0${data[2]?.replace(/\D/g, "")}` as string;
-        const email = data[3] as string;
-        const position = data[5] as string;
-        const interviewDate = new Date(Date.parse(data[7] as string)) as Date;
+        const name = data[1];
+        const phone = `0${data[2]?.replace(/\D/g, "")}`;
+        const email = data[3];
+        const position = data[5];
+        const interviewDate = new Date(Date.parse(data[7]));
 
         await mutation
           .mutateAsync({
@@ -82,10 +86,19 @@ export const ImportFromCSV = ({ refetch }: { refetch: () => void }) => {
                   <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                     <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                       <CSVReader
-                        onUploadAccepted={(results: any) => {
+                        onUploadAccepted={(results: { data: TCSV[] }) => {
                           setFile(results.data.slice(1));
                         }}>
-                        {({ getRootProps, acceptedFile, ProgressBar }: any) => (
+                        {/*  liblary ngentot kaga ngasih types */}
+                        {({
+                          getRootProps,
+                          acceptedFile,
+                          ProgressBar,
+                        }: {
+                          acceptedFile: { name: string; size: number };
+                          ProgressBar: JSX.ElementType;
+                          getRootProps: () => object;
+                        }) => (
                           <div {...getRootProps()} className="flex h-60 w-full items-center justify-center rounded-lg border border-dashed">
                             {acceptedFile ? (
                               <>

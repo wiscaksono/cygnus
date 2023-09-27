@@ -55,7 +55,7 @@ async function main() {
       hasWhatsapp: onwhatsapp === "true",
       position: faker.person.jobTitle(),
       interviewDate: faker.date.future(),
-      userId: "clmz32cpm0002injceqymgjsv",
+      userId: "cln22a1em0000ing0lvo50ama",
     };
 
     pelamars.push(pelamar);
