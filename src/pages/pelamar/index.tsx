@@ -30,6 +30,7 @@ export interface FilterProps {
     hasWhatsapp?: boolean;
     invitedByWhatsapp?: boolean;
     invitedByEmail?: boolean;
+    createdAt?: Date;
   };
   setFilter: Dispatch<
     SetStateAction<{
@@ -39,6 +40,7 @@ export interface FilterProps {
       hasWhatsapp?: boolean;
       invitedByWhatsapp?: boolean;
       invitedByEmail?: boolean;
+      createdAt?: Date;
     }>
   >;
 }
@@ -48,11 +50,7 @@ export default function Pelamar() {
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
   const [selectedPelamar, setSelectedPelamar] = useState<Pelamar[]>([]);
-  const [filter, setFilter] = useState<FilterProps["filter"]>({
-    name: "",
-    take: 10,
-    skip: 0,
-  });
+  const [filter, setFilter] = useState<FilterProps["filter"]>({});
 
   const { data: pelamar, isLoading, refetch } = api.pelamar.getAll.useQuery(filter);
 
@@ -102,6 +100,10 @@ export default function Pelamar() {
         <div className="mt-8 flow-root">
           <div className="mb-4 flex items-center gap-x-2">
             <SearchBar filter={filter} setFilter={setFilter} />
+            <input
+              type="date"
+              className="block rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            />
             <button
               onClick={() => {
                 setFilter({
@@ -152,7 +154,7 @@ export default function Pelamar() {
                           onChange={toggleAll}
                         />
                       </th>
-                      {["No.", "Nama Kandidat", "No. Telepon", "Email", "Posisi dilamar", "Tanggal Interview", "Invited"].map((item, i) => (
+                      {["No.", "Nama Kandidat", "No. Telepon", "Email", "Posisi dilamar", "Tanggal Interview", "Diinput", "Invited"].map((item, i) => (
                         <th
                           scope="col"
                           className={`whitespace-nowrap px-3 py-3.5 text-left text-sm font-semibold text-gray-900 ${item === "Invited" ? "text-center" : "text-left"}`}
@@ -190,6 +192,11 @@ export default function Pelamar() {
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.position}</td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           {format(person.interviewDate, "EEEE hh:mm, dd MMMM yyyy", {
+                            locale: id,
+                          })}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          {format(person.createdAt, "dd MMMM yyyy", {
                             locale: id,
                           })}
                         </td>

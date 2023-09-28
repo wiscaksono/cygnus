@@ -11,6 +11,7 @@ export const filterPelamarSchema = z
     invitedByWhatsapp: z.boolean().optional(),
     invitedByEmail: z.boolean().optional(),
     hasWhatsapp: z.boolean().optional(),
+    createdAt: z.date().optional(),
   })
   .optional();
 

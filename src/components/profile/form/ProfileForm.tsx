@@ -10,6 +10,7 @@ export const ProfileForm = () => {
       fullName: data?.fullName,
       email: data?.email,
       templateWhatsApp: data?.templateWhatsApp || "",
+      phone: data?.phone,
     },
   });
 
@@ -33,7 +34,7 @@ export const ProfileForm = () => {
           <p className="mt-1 text-sm leading-6 text-gray-600">This information will be displayed publicly so be careful what you share.</p>
 
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-            <div className="sm:col-span-3">
+            <div className="sm:col-span-2">
               <label htmlFor="full-name" className="block text-sm font-medium leading-6 text-gray-900">
                 Full Name
               </label>
@@ -48,7 +49,7 @@ export const ProfileForm = () => {
               </div>
             </div>
 
-            <div className="sm:col-span-3">
+            <div className="sm:col-span-2">
               <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
                 Email
               </label>
@@ -59,6 +60,21 @@ export const ProfileForm = () => {
                   autoComplete="email"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   {...register("email", { required: true })}
+                />
+              </div>
+            </div>
+
+            <div className="sm:col-span-2">
+              <label htmlFor="phone" className="block text-sm font-medium leading-6 text-gray-900">
+                WhatsApp
+              </label>
+              <div className="mt-2">
+                <input
+                  type="number"
+                  id="phone"
+                  autoComplete="phone"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  {...register("phone", { required: true })}
                 />
               </div>
             </div>
