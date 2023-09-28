@@ -2,6 +2,7 @@ import { Fragment, useRef } from "react";
 import { toast } from "react-toastify";
 import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import { useRouter } from "next/router";
 
 import { api } from "~/utils/api";
 import { useModal } from "~/hooks";
@@ -39,12 +40,14 @@ interface IConfirmationModal extends IDeleteAll {
 
 const ConfirmationModal = ({ isOpen, closeModal, refetch, selectedPelamar }: IConfirmationModal) => {
   const cancelButtonRef = useRef(null);
+  const router = useRouter();
 
   const mutation = api.pelamar.deleteAll.useMutation({
     onSuccess: () => {
       refetch();
       closeModal();
       toast.success("Berhasil menghapus data pelamar");
+      router.reload();
     },
   });
 

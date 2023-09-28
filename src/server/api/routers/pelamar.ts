@@ -4,7 +4,7 @@ const Sib = require("@getbrevo/brevo") as TBrevo;
 
 import { env } from "~/env.mjs";
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/api/trpc";
-import { filterPelamarSchema, createPelamarSchema, deletePelamarSchema, updatePelamarSchema, deleteAllPelamarSchema } from "~/schema/pelamar";
+import { filterPelamarSchema, createPelamarSchema, deletePelamarSchema, updatePelamarSchema, deleteAllPelamarSchema, createManyPelamarSchema } from "~/schema/pelamar";
 import { sendMessage } from "~/schema/whatsApp";
 import { sendEmail } from "~/schema/email";
 import whatsApp from "~/server/whatsApp";
@@ -22,6 +22,7 @@ export const pelamarRouter = createTRPCRouter({
         userId: ctx.session?.user.id,
         hasWhatsapp: where?.hasWhatsapp === true ? true : undefined,
         invitedByWhatsapp: where?.invitedByWhatsapp === true ? true : undefined,
+        invitedByEmail: where?.invitedByEmail === true ? true : undefined,
         name: {
           contains: where?.name,
           mode: "insensitive",
@@ -33,6 +34,7 @@ export const pelamarRouter = createTRPCRouter({
         userId: ctx.session?.user.id,
         hasWhatsapp: where?.hasWhatsapp === true ? true : undefined,
         invitedByWhatsapp: where?.invitedByWhatsapp === true ? true : undefined,
+        invitedByEmail: where?.invitedByEmail === true ? true : undefined,
         name: {
           contains: where?.name,
           mode: "insensitive",
@@ -91,6 +93,27 @@ export const pelamarRouter = createTRPCRouter({
     });
 
     return result;
+  }),
+
+  createMany: protectedProcedure.input(createManyPelamarSchema).mutation(async ({ input, ctx }) => {
+    return ctx.prisma.$transaction(async (prisma) => {
+      const pelamars = input.map((pelamar) => {
+        return {
+          ...pelamar,
+          userId: ctx.session?.user.id,
+        };
+      });
+
+      const result = await prisma.pelamar.createMany({
+        data: pelamars,
+      });
+
+      return {
+        status: 201,
+        message: "Berhasil menambahkan pelamar",
+        result: result,
+      };
+    });
   }),
 
   update: protectedProcedure.input(updatePelamarSchema).mutation(async ({ input, ctx }) => {
@@ -242,11 +265,17 @@ export const pelamarRouter = createTRPCRouter({
     const client = brevo.ApiClient.instance;
     const apiKey = client.authentications["api-key"];
     apiKey.apiKey = env.NEXT_PUBLIC_BREVO_API_KEY;
-
     const transEmailApi = new brevo.TransactionalEmailsApi();
+
+    const templateEmail = await ctx.prisma.emailTemplate.findFirst({
+      where: {
+        userId: ctx.session?.user.id,
+      },
+    });
+
     const sender = {
-      email: ctx.session.user.email,
-      name: ctx.session.user.fullName,
+      email: templateEmail?.senderEmail!,
+      name: templateEmail?.sender!,
     };
 
     const { email, namaPelamar, position, interviewDate } = input;
@@ -258,6 +287,7 @@ export const pelamarRouter = createTRPCRouter({
       .replace(/{{position}}/g, position)
       .replace(/{{namaPengirim}}/g, ctx.session?.user.fullName)
       .replace(/{{whatsApp}}/g, ctx.session?.user.phone.replace(/(\d{4})(\d{4})(\d{4})/, "$1-$2-$3"))
+      .replace(/{{jobPortal}}/g, templateEmail?.jobPortal!)
       .replace(/{{whatsAppUrl}}/g, `https://wa.me/+62${ctx.session?.user.phone.replace(/^0+/, "")}`)
       .replace(/{{interviewTime}}/g, format(interviewDate, "hh:mm", { locale: id }))
       .replace(
@@ -271,7 +301,7 @@ export const pelamarRouter = createTRPCRouter({
       transEmailApi.sendTransacEmail({
         sender,
         to: receivers,
-        subject: "Undangan Interview & Psikotest PT. Royal Trust",
+        subject: templateEmail?.subject!,
         htmlContent,
       });
     } catch (error) {

@@ -28,6 +28,7 @@ export interface FilterProps {
     skip?: number;
     hasWhatsapp?: boolean;
     invitedByWhatsapp?: boolean;
+    invitedByEmail?: boolean;
   };
   setFilter: Dispatch<
     SetStateAction<{
@@ -36,6 +37,7 @@ export interface FilterProps {
       skip?: number;
       hasWhatsapp?: boolean;
       invitedByWhatsapp?: boolean;
+      invitedByEmail?: boolean;
     }>
   >;
 }
@@ -65,7 +67,7 @@ export default function Pelamar() {
 
   function toggleAll() {
     if (!pelamar) return;
-    setSelectedPelamar(checked || indeterminate ? [] : pelamar.result.pelamar);
+    setSelectedPelamar(checked || indeterminate ? [] : pelamar.result.pelamar.filter((person) => person.hasWhatsapp));
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
   }
@@ -103,13 +105,23 @@ export default function Pelamar() {
               onClick={() => {
                 setFilter({
                   ...filter,
+                  invitedByEmail: !filter.invitedByEmail,
+                });
+              }}
+              className={`block ${filter.invitedByEmail ? "bg-indigo-600 text-white" : "text-gray-800"
+                } rounded-md border-0 px-2.5 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}>
+              Invited by Email
+            </button>
+            <button
+              onClick={() => {
+                setFilter({
+                  ...filter,
                   invitedByWhatsapp: !filter.invitedByWhatsapp,
                 });
               }}
               className={`block ${filter.invitedByWhatsapp ? "bg-indigo-600 text-white" : "text-gray-800"
-                } rounded-md border-0 px-2.5 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-            >
-              Invited
+                } rounded-md border-0 px-2.5 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}>
+              Invited by WhatsApp
             </button>
             <button
               onClick={() => {
@@ -119,8 +131,7 @@ export default function Pelamar() {
                 });
               }}
               className={`block ${filter.hasWhatsapp ? "bg-indigo-600 text-white" : "text-gray-800"
-                } rounded-md border-0 px-2.5 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-            >
+                } rounded-md border-0 px-2.5 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}>
               Have WhatsApp
             </button>
             <SelectPerPage filter={filter} setFilter={setFilter} />
@@ -144,8 +155,7 @@ export default function Pelamar() {
                         <th
                           scope="col"
                           className={`whitespace-nowrap px-3 py-3.5 text-left text-sm font-semibold text-gray-900 ${item === "Invited" ? "text-center" : "text-left"}`}
-                          key={i}
-                        >
+                          key={i}>
                           {item}
                         </th>
                       ))}

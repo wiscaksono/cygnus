@@ -36,6 +36,7 @@ export const env = createEnv({
     NEXT_PUBLIC_RUANG_WHATSAPP_ACCESS_KEY: z.string(),
     NEXT_PUBLIC_RUANG_WHATSAPP_TOKEN: z.string(),
     NEXT_PUBLIC_BREVO_API_KEY: z.string(),
+    NEXT_PUBLIC_WEBSITE_URL: z.string().url(),
   },
 
   /**
@@ -55,6 +56,7 @@ export const env = createEnv({
     NEXT_PUBLIC_RUANG_WHATSAPP_ACCESS_KEY: process.env.NEXT_PUBLIC_RUANG_WHATSAPP_ACCESS_KEY,
     NEXT_PUBLIC_RUANG_WHATSAPP_TOKEN: process.env.NEXT_PUBLIC_RUANG_WHATSAPP_TOKEN,
     NEXT_PUBLIC_BREVO_API_KEY: process.env.NEXT_PUBLIC_BREVO_API_KEY,
+    NEXT_PUBLIC_WEBSITE_URL: process.env.NEXT_PUBLIC_WEBSITE_URL,
     NODE_ENV: process.env.NODE_ENV,
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,

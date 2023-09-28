@@ -5,8 +5,10 @@ import { useCSVReader, formatFileSize } from "react-papaparse";
 
 import { useModal } from "~/hooks";
 import { api } from "~/utils/api";
+import whatsApp from "~/server/whatsApp";
 
 import type { TCSV } from "~/types/CSV";
+import type { RouterInputs } from "~/utils/api";
 
 export const ImportFromCSV = ({ refetch }: { refetch: () => void }) => {
   const cancelButtonRef = useRef(null);
@@ -17,10 +19,13 @@ export const ImportFromCSV = ({ refetch }: { refetch: () => void }) => {
 
   const [file, setFile] = useState<TCSV[]>([]);
 
-  const mutation = api.pelamar.create.useMutation({});
+  const mutation = api.pelamar.createMany.useMutation();
 
   const handleSubmit = async () => {
     try {
+      const mutationData = [] as RouterInputs["pelamar"]["createMany"];
+      const hasWhatsApp = [] as Promise<{ onwhatsapp: "true" | "false" }>[];
+
       for (const data of file) {
         const name = data[1];
         const phone = `0${data[2]?.replace(/\D/g, "")}`;
@@ -28,18 +33,25 @@ export const ImportFromCSV = ({ refetch }: { refetch: () => void }) => {
         const position = data[5];
         const interviewDate = new Date(Date.parse(data[7]));
 
-        await mutation
-          .mutateAsync({
-            name,
-            phone,
-            email,
-            position,
-            interviewDate,
-          })
-          .catch((error) => {
-            throw error;
-          });
+        const pelamar = {
+          name,
+          phone,
+          email,
+          position,
+          interviewDate,
+        };
+
+        hasWhatsApp.push(whatsApp.checkNumber(phone) as Promise<{ onwhatsapp: "true" | "false" }>);
+        mutationData.push(pelamar);
       }
+
+      await Promise.all(hasWhatsApp).then((res) => {
+        res.forEach((data, index) => {
+          mutationData[index]!.hasWhatsapp = data.onwhatsapp === "true";
+        });
+      });
+
+      await mutation.mutateAsync(mutationData);
 
       refetch();
       closeModal();
@@ -101,18 +113,16 @@ export const ImportFromCSV = ({ refetch }: { refetch: () => void }) => {
                         }) => (
                           <div {...getRootProps()} className="flex h-60 w-full items-center justify-center rounded-lg border border-dashed">
                             {acceptedFile ? (
-                              <>
-                                <div>
-                                  <div className="flex flex-col items-center justify-center">
-                                    <span>
-                                      {acceptedFile.name} ({formatFileSize(acceptedFile.size)})
-                                    </span>
-                                  </div>
-                                  <ProgressBar />
+                              <div>
+                                <div className="flex flex-col items-center justify-center">
+                                  <p className="block text-sm font-medium leading-6 text-gray-700">
+                                    {acceptedFile.name} ({formatFileSize(acceptedFile.size)})
+                                  </p>
                                 </div>
-                              </>
+                                <ProgressBar />
+                              </div>
                             ) : (
-                              "Drop CSV file here or click to upload"
+                              <p className="block text-sm font-medium leading-6 text-gray-700">Drop CSV file here or click to upload</p>
                             )}
                           </div>
                         )}
@@ -125,7 +135,7 @@ export const ImportFromCSV = ({ refetch }: { refetch: () => void }) => {
                       className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-70 sm:ml-3"
                       onClick={handleSubmit}
                       disabled={mutation.isLoading || !file.length}>
-                      Tambah
+                      {mutation.isLoading ? "Loading..." : "Submit"}
                     </button>
                     <button
                       type="button"

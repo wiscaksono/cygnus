@@ -14,16 +14,27 @@ model Example {
 }
 
 model User {
-    id               String    @id @default(cuid())
-    fullName         String    @unique
-    email            String    @unique
+    id               String          @id @default(cuid())
+    fullName         String          @unique
+    email            String          @unique
     password         String
     image            String
-    phone            String    @unique
-    createdAt        DateTime  @default(now())
-    updatedAt        DateTime  @updatedAt
-    templateWhatsApp String    @default("") @db.VarChar(10000)
+    phone            String          @unique
+    createdAt        DateTime        @default(now())
+    updatedAt        DateTime        @updatedAt
+    templateWhatsApp String          @default("") @db.VarChar(10000)
     pelamar          Pelamar[]
+    EmailTemplate    EmailTemplate[]
+}
+
+model EmailTemplate {
+    id          String  @id @default(cuid())
+    sender      String
+    senderEmail String
+    subject     String
+    jobPortal   String
+    User        User?   @relation(fields: [userId], references: [id])
+    userId      String?
 }
 
 model Pelamar {
