@@ -31,10 +31,7 @@ class whatsAppConstructor {
     };
 
     try {
-      const response = await fetch(
-        `${env.NEXT_PUBLIC_RUANG_WHATSAPP_API_URL}${path}`,
-        requestOptions
-      );
+      const response = await fetch(`${env.NEXT_PUBLIC_RUANG_WHATSAPP_API_URL}${path}`, requestOptions);
       const res = (await response.json()) as object;
 
       if (!res) {
@@ -50,7 +47,7 @@ class whatsAppConstructor {
   sendMessage(body: ISendMessage) {
     const urlEncoded = new URLSearchParams();
     urlEncoded.append("number", body.number);
-    urlEncoded.append("message", body.message);
+    urlEncoded.append("message", body.message || "");
     urlEncoded.append("token", this.token);
 
     return this.request("/send_message", {

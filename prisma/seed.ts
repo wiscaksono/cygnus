@@ -42,16 +42,11 @@ async function main() {
       body: urlencoded,
     };
 
-    const response = await fetch(
-      "https://app.ruangwa.id/api/check_number",
-      requestOptions
-    );
+    const response = await fetch("https://app.ruangwa.id/api/check_number", requestOptions);
 
     const res = await response.json();
 
     const { onwhatsapp } = res;
-
-    console.log({ i, onwhatsapp, phone });
 
     const pelamar: createPelamarInput = {
       name: faker.person.fullName(),
@@ -60,7 +55,7 @@ async function main() {
       hasWhatsapp: onwhatsapp === "true",
       position: faker.person.jobTitle(),
       interviewDate: faker.date.future(),
-      userId: "clmz32cpm0002injceqymgjsv",
+      userId: "cln22a1em0000ing0lvo50ama",
     };
 
     pelamars.push(pelamar);

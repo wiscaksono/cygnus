@@ -5,9 +5,7 @@ const path = require("path");
 const config = {
   overrides: [
     {
-      extends: [
-        "plugin:@typescript-eslint/recommended-requiring-type-checking",
-      ],
+      extends: ["plugin:@typescript-eslint/recommended-requiring-type-checking"],
       files: ["*.ts", "*.tsx"],
       parserOptions: {
         project: path.join(__dirname, "tsconfig.json"),
@@ -31,6 +29,7 @@ const config = {
     "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/no-floating-promises": "off",
+    "@typescript-eslint/no-var-requires": "off",
     "@typescript-eslint/no-misused-promises": [
       2,
       {

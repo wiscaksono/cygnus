@@ -4,38 +4,36 @@ import { TRPCError } from "@trpc/server";
 import { registerSchema } from "~/schema/auth";
 
 export const authRouter = createTRPCRouter({
-  register: publicProcedure
-    .input(registerSchema)
-    .mutation(async ({ input, ctx }) => {
-      const { username, email, password } = input;
+  register: publicProcedure.input(registerSchema).mutation(async ({ input, ctx }) => {
+    const { fullName, email, password, phone } = input;
 
-      const exists = await ctx.prisma.user.findFirst({
-        where: { email },
+    const exists = await ctx.prisma.user.findFirst({
+      where: { email },
+    });
+
+    if (exists) {
+      throw new TRPCError({
+        code: "CONFLICT",
+        message: "User already exists.",
       });
+    }
 
-      if (exists) {
-        throw new TRPCError({
-          code: "CONFLICT",
-          message: "User already exists.",
-        });
-      }
+    const image = `https://api.multiavatar.com/${fullName}.svg`;
 
-      const image = `https://api.multiavatar.com/${username}.svg`;
+    await ctx.prisma.user.create({
+      data: {
+        fullName,
+        email,
+        phone,
+        password,
+        image,
+        templateWhatsApp: "Tempalte whatsapp",
+      },
+    });
 
-      const result = await ctx.prisma.user.create({
-        data: {
-          username,
-          email,
-          password,
-          image,
-          templateWhatsApp: "Tempalte whatsapp",
-        },
-      });
-
-      return {
-        status: 201,
-        message: "Account created successfully",
-        result: result.email,
-      };
-    }),
+    return {
+      status: 201,
+      message: "Account created successfully",
+    };
+  }),
 });

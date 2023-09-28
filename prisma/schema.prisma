@@ -15,13 +15,14 @@ model Example {
 
 model User {
     id               String    @id @default(cuid())
-    username         String    @unique
+    fullName         String    @unique
     email            String    @unique
     password         String
     image            String
+    phone            String    @unique
     createdAt        DateTime  @default(now())
     updatedAt        DateTime  @updatedAt
-    templateWhatsApp String    @default("Template whatsapp") @db.VarChar(10000)
+    templateWhatsApp String    @default("") @db.VarChar(10000)
     pelamar          Pelamar[]
 }
 
@@ -33,8 +34,8 @@ model Pelamar {
     position          String
     interviewDate     DateTime
     invitedByWhatsapp Boolean  @default(false)
-    hasWhatsapp       Boolean  @default(false)
     invitedByEmail    Boolean  @default(false)
+    hasWhatsapp       Boolean  @default(false)
     createdAt         DateTime @default(now())
     User              User     @relation(fields: [userId], references: [id])
     userId            String
