@@ -195,64 +195,80 @@ export const pelamarRouter = createTRPCRouter({
   sendWhatsApp: protectedProcedure.input(sendMessage).mutation(async ({ input, ctx }) => {
     const { number } = input;
 
-    const pelamar = await ctx.prisma.pelamar.findFirst({
-      where: {
-        phone: number,
-      },
-    });
+    try {
+      await ctx.prisma.$transaction(async (prisma) => {
+        const pelamar = await prisma.pelamar.findFirst({
+          where: {
+            phone: number,
+          },
+        });
 
-    if (!pelamar) {
-      return {
-        status: 404,
-        message: "Pelamar tidak ditemukan",
-      };
-    }
+        if (!pelamar) {
+          return {
+            status: 404,
+            message: "Pelamar tidak ditemukan",
+          };
+        }
 
-    const template = await ctx.prisma.user.findFirst({
-      where: {
-        id: ctx.session?.user.id,
-      },
-    });
+        const template = await prisma.user.findFirst({
+          where: {
+            id: ctx.session?.user.id,
+          },
+        });
 
-    if (!template) {
-      return {
-        status: 404,
-        message: "Template tidak ditemukan",
-      };
-    }
+        if (!template) {
+          return {
+            status: 404,
+            message: "Template tidak ditemukan",
+          };
+        }
 
-    const templateMessage = template.templateWhatsApp
-      .replace(/{{namaPelamar}}/g, pelamar.name)
-      .replace(/{{position}}/g, pelamar.position)
-      .replace(/{{namaPengirim}}/g, ctx.session?.user.fullName)
-      .replace(/{{interviewTime}}/g, format(pelamar.interviewDate, "hh:mm", { locale: id }))
-      .replace(
-        /{{interviewDate}}/g,
-        format(pelamar.interviewDate, "EEEE, dd MMMM yyyy", {
-          locale: id,
-        }),
-      );
+        const templateMessage = template.templateWhatsApp
+          .replace(/{{namaPelamar}}/g, pelamar.name)
+          .replace(/{{position}}/g, pelamar.position)
+          .replace(/{{namaPengirim}}/g, ctx.session?.user.fullName)
+          .replace(/{{interviewTime}}/g, format(pelamar.interviewDate, "hh:mm", { locale: id }))
+          .replace(
+            /{{interviewDate}}/g,
+            format(pelamar.interviewDate, "EEEE, dd MMMM yyyy", {
+              locale: id,
+            }),
+          );
 
-    const { status } = (await whatsApp.sendMessage({
-      number,
-      message: templateMessage,
-    })) as { status: string };
+        const { status } = (await whatsApp.sendMessage({
+          number,
+          message: templateMessage,
+        })) as { status: string };
 
-    if (status !== "sent") {
+        if (status !== "sent") {
+          return {
+            status: 500,
+            message: "Gagal mengirim pesan",
+          };
+        }
+
+        await prisma.pelamar.update({
+          where: {
+            phone: number,
+          },
+          data: {
+            invitedByWhatsapp: true,
+          },
+        });
+
+        return {
+          status: 200,
+          message: "Berhasil mengirim pesan",
+        };
+      });
+    } catch (error) {
+      // Handle any errors that occur during the transaction
+      console.error("Error in Prisma transaction:", error);
       return {
         status: 500,
-        message: "Gagal mengirim pesan",
+        message: "Internal server error",
       };
     }
-
-    await ctx.prisma.pelamar.update({
-      where: {
-        phone: number,
-      },
-      data: {
-        invitedByWhatsapp: true,
-      },
-    });
 
     return {
       status: 200,
