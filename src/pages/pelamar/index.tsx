@@ -1,9 +1,10 @@
 import Head from "next/head";
 import { useLayoutEffect, useRef, useState, useEffect } from "react";
 import { CheckCircleIcon, XMarkIcon, EnvelopeIcon } from "@heroicons/react/24/outline";
+import { format } from "date-fns";
+import { id } from "date-fns/locale";
 
 import { api } from "~/utils/api";
-import { convertDateToID } from "~/utils/convertDateToID";
 import { getServerAuthSession } from "~/server/auth";
 
 import { SearchBar, SelectPerPage } from "~/components/pelamar/filter";
@@ -187,7 +188,11 @@ export default function Pelamar() {
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.email}</td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.position}</td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{convertDateToID(person.createdAt)}</td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          {format(person.interviewDate, "EEEE hh:mm, dd MMMM yyyy", {
+                            locale: id,
+                          })}
+                        </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           <div className="flex items-center justify-center gap-x-2">
                             <span className="flex shrink-0 items-center gap-x-1">

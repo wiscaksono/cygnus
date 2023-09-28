@@ -273,9 +273,16 @@ export const pelamarRouter = createTRPCRouter({
       },
     });
 
+    if (!templateEmail) {
+      return {
+        status: 404,
+        message: "Template tidak ditemukan",
+      };
+    }
+
     const sender = {
-      email: templateEmail?.senderEmail!,
-      name: templateEmail?.sender!,
+      email: templateEmail.senderEmail,
+      name: templateEmail.sender,
     };
 
     const { email, namaPelamar, position, interviewDate } = input;
@@ -287,7 +294,7 @@ export const pelamarRouter = createTRPCRouter({
       .replace(/{{position}}/g, position)
       .replace(/{{namaPengirim}}/g, ctx.session?.user.fullName)
       .replace(/{{whatsApp}}/g, ctx.session?.user.phone.replace(/(\d{4})(\d{4})(\d{4})/, "$1-$2-$3"))
-      .replace(/{{jobPortal}}/g, templateEmail?.jobPortal!)
+      .replace(/{{jobPortal}}/g, templateEmail.jobPortal)
       .replace(/{{whatsAppUrl}}/g, `https://wa.me/+62${ctx.session?.user.phone.replace(/^0+/, "")}`)
       .replace(/{{interviewTime}}/g, format(interviewDate, "hh:mm", { locale: id }))
       .replace(
@@ -301,7 +308,7 @@ export const pelamarRouter = createTRPCRouter({
       transEmailApi.sendTransacEmail({
         sender,
         to: receivers,
-        subject: templateEmail?.subject!,
+        subject: templateEmail.subject,
         htmlContent,
       });
     } catch (error) {
