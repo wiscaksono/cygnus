@@ -312,6 +312,11 @@ export const pelamarRouter = createTRPCRouter({
 
     const receivers = [{ email }];
 
+    const interviewDateUTC0 = interviewDate;
+    const interviewDateUTC7 = new Date(
+      interviewDateUTC0.getTime() + 7 * 60 * 60 * 1000, // Convert UTC+0 to UTC+7
+    );
+
     const htmlContent = emailTemplate
       .replace(/{{namaPelamar}}/g, namaPelamar)
       .replace(/{{position}}/g, position)
@@ -319,7 +324,7 @@ export const pelamarRouter = createTRPCRouter({
       .replace(/{{whatsApp}}/g, ctx.session?.user.phone.replace(/(\d{4})(\d{4})(\d{4})/, "$1-$2-$3"))
       .replace(/{{jobPortal}}/g, templateEmail.jobPortal)
       .replace(/{{whatsAppUrl}}/g, `https://wa.me/+62${ctx.session?.user.phone.replace(/^0+/, "")}`)
-      .replace(/{{interviewTime}}/g, format(interviewDate, "hh:mm", { locale: id }))
+      .replace(/{{interviewTime}}/g, interviewDateUTC7.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }))
       .replace(
         /{{interviewDate}}/g,
         format(interviewDate, "EEEE, dd MMMM yyyy", {
