@@ -25,6 +25,7 @@ export const SendEmailAll = ({ refetch, selectedPelamar }: ISendEmailAll) => {
         interviewDate: person.interviewDate,
         position: person.position,
         namaPelamar: person.name,
+        portal: person.portal,
       });
     }
     toast.success(`Mengirim undangan ke pelamar yang dipilih`);
