@@ -11,7 +11,6 @@ export const EmailForm = () => {
     values: {
       sender: data?.result?.sender || "",
       senderEmail: data?.result?.senderEmail || "",
-      jobPortal: data?.result?.jobPortal || "",
       subject: data?.result?.subject || "",
     },
   });
@@ -69,21 +68,6 @@ export const EmailForm = () => {
             </div>
 
             <div className="sm:col-span-2">
-              <label htmlFor="job-portal" className="block text-sm font-medium leading-6 text-gray-900">
-                Job Portal
-              </label>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  id="job-portal"
-                  autoComplete="job-portal"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("jobPortal", { required: true })}
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-full">
               <label htmlFor="subject" className="block text-sm font-medium leading-6 text-gray-900">
                 Subject
               </label>

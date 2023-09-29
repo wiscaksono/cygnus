@@ -133,7 +133,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 </li>
                 <li className="-mx-6 mt-auto">
                   <div className="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-50">
-                    <Image className="rounded-full bg-gray-50" width={32} height={32} src={data.user.image || ""} alt={"PP"} />
+                    <Image className="aspect-square rounded-full bg-gray-50" width={32} height={32} src={data.user.image || ""} alt={"PP"} />
                     <button
                       onClick={() => void signOut()}
                       className="rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 transition-colors hover:bg-red-200 hover:text-red-500 hover:ring-red-500">

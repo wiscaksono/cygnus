@@ -128,9 +128,8 @@ export default function Pelamar() {
                   invitedByEmail: !filter.invitedByEmail,
                 });
               }}
-              className={`block ${
-                filter.invitedByEmail ? "bg-indigo-600 text-white" : "text-gray-800"
-              } rounded-md border-0 px-2.5 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}>
+              className={`block ${filter.invitedByEmail ? "bg-indigo-600 text-white" : "text-gray-800"
+                } rounded-md border-0 px-2.5 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}>
               Invited by Email
             </button>
             <button
@@ -140,9 +139,8 @@ export default function Pelamar() {
                   invitedByWhatsapp: !filter.invitedByWhatsapp,
                 });
               }}
-              className={`block ${
-                filter.invitedByWhatsapp ? "bg-indigo-600 text-white" : "text-gray-800"
-              } rounded-md border-0 px-2.5 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}>
+              className={`block ${filter.invitedByWhatsapp ? "bg-indigo-600 text-white" : "text-gray-800"
+                } rounded-md border-0 px-2.5 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}>
               Invited by WhatsApp
             </button>
             <SelectPerPage filter={filter} setFilter={setFilter} />
@@ -162,7 +160,7 @@ export default function Pelamar() {
                           onChange={toggleAll}
                         />
                       </th>
-                      {["No.", "Nama Kandidat", "No. Telepon", "Email", "Posisi dilamar", "Tanggal Interview", "Diinput", "Invited"].map((item, i) => (
+                      {["No.", "Nama Kandidat", "No. Telepon", "Email", "Posisi dilamar", "Portal", "Tanggal Interview", "Diinput", "Invited"].map((item, i) => (
                         <th
                           scope="col"
                           className={`whitespace-nowrap px-3 py-3.5 text-left text-sm font-semibold text-gray-900 ${item === "Invited" ? "text-center" : "text-left"}`}
@@ -198,6 +196,7 @@ export default function Pelamar() {
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.email}</td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.position}</td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.portal}</td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           {format(person.interviewDate, "hh:mm, dd MMMM yyyy", {
                             locale: id,
