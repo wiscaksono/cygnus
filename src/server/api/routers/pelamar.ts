@@ -61,9 +61,17 @@ export const pelamarRouter = createTRPCRouter({
         };
       }
 
-      const { onwhatsapp } = (await whatsApp.checkNumber(phone)) as {
+      const { onwhatsapp, result } = (await whatsApp.checkNumber(phone)) as {
         onwhatsapp: "true" | "false";
+        result: "true" | "false";
       };
+
+      if (result !== "false") {
+        return {
+          status: 400,
+          message: "Whatsappnya error",
+        };
+      }
 
       const createdPelamar = await prisma.pelamar.create({
         data: {

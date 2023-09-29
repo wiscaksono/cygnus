@@ -38,7 +38,7 @@ async function createPelamars(amount: number) {
       position: faker.person.jobTitle(),
       interviewDate: faker.date.future(),
       createdAt: faker.date.past(),
-      userId: "cln4zpd6n0000inrf6655otk0",
+      userId: "cln50o7mu0000inoyuccjkl4f",
       portal: faker.internet.domainWord(),
       phone,
       hasWhatsapp: false,
@@ -50,6 +50,7 @@ async function createPelamars(amount: number) {
 
 async function main() {
   const spinnies = new Spinnies();
+  console.log("pepek");
   try {
     await prisma.pelamar.deleteMany({});
     const amountOfUsers = 2000;
