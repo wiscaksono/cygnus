@@ -2,10 +2,15 @@ import React from "react";
 import Head from "next/head";
 
 import { getServerAuthSession } from "~/server/auth";
+import { api } from "~/utils/api";
 
 import type { GetServerSideProps } from "next";
 
 export default function Page() {
+  const { data } = api.chart.pelelamar.useQuery();
+
+  console.log(data);
+
   return (
     <>
       <Head>
