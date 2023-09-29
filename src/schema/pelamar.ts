@@ -17,11 +17,12 @@ export const filterPelamarSchema = z
 
 export const createPelamarSchema = z.object({
   name: z.string(),
-  email: z.string().email(),
+  email: z.string(),
   phone: z.string(),
   position: z.string(),
   interviewDate: z.date(),
   hasWhatsapp: z.boolean().optional(),
+  portal: z.string(),
 });
 
 export const createManyPelamarSchema = z.array(createPelamarSchema);

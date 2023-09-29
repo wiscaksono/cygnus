@@ -6,6 +6,7 @@ type createPelamarInput = RouterInputs["pelamar"]["create"] & {
   userId: string;
   hasWhatsapp: boolean;
   createdAt: Date;
+  portal: string;
 };
 
 const prisma = new PrismaClient();
@@ -57,7 +58,8 @@ async function main() {
       position: faker.person.jobTitle(),
       interviewDate: faker.date.future(),
       createdAt: faker.date.past(),
-      userId: "cln4g5yrh0000in7m4osmoddr",
+      userId: "cln4uuoqs0000inwzmg77uuaz",
+      portal: faker.internet.domainWord(),
     };
 
     pelamars.push(pelamar);

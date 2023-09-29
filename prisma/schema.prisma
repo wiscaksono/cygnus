@@ -44,6 +44,7 @@ model Pelamar {
     phone             String   @unique
     position          String
     interviewDate     DateTime
+    portal            String
     invitedByWhatsapp Boolean  @default(false)
     invitedByEmail    Boolean  @default(false)
     hasWhatsapp       Boolean  @default(false)
