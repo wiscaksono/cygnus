@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { faker } from "@faker-js/faker/locale/id_ID";
 import { RouterInputs } from "~/utils/api";
+import Spinnies from "spinnies";
 
 type CreatePelamarInput = RouterInputs["pelamar"]["create"] & {
   userId: string;
@@ -48,6 +49,7 @@ async function createPelamars(amount: number) {
 }
 
 async function main() {
+  const spinnies = new Spinnies();
   try {
     await prisma.pelamar.deleteMany({});
     const amountOfUsers = 2000;
@@ -55,10 +57,13 @@ async function main() {
     const MAX_POOL = 100;
     const workers = [] as (() => Promise<void>)[];
 
+    spinnies.add("main", { text: "Processing..." });
+
     for (let i = 0; i < amountOfUsers; i += MAX_POOL) {
       const chunk = pelamars.slice(i, i + MAX_POOL);
       workers.push(async () => {
         const users = [];
+
         for (const item of chunk) {
           var myHeaders = new Headers();
           myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
@@ -73,6 +78,7 @@ async function main() {
             body: urlencoded,
           };
 
+          spinnies.add(`worker-${i}`, { text: `Worker ${i} - Processing...` });
           const response = await fetch("https://app.ruangwa.id/api/check_number", requestOptions);
           const res = await response.json();
           const { onwhatsapp } = res;
@@ -87,13 +93,18 @@ async function main() {
         await prisma.pelamar.createMany({
           data: users,
         });
+
+        // Remove the worker spinner when done
+        spinnies.succeed(`worker-${i}`, { text: `Worker ${i} - Done` });
       });
     }
 
     await Promise.all(workers.map((worker) => worker()));
+    spinnies.succeed("main", { text: "Done" });
     await prisma.$disconnect();
   } catch (e) {
     console.error(e);
+    spinnies.fail("main", { text: "Error" });
     await prisma.$disconnect();
     process.exit(1);
   }
