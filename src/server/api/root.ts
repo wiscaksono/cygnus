@@ -5,6 +5,7 @@ import { pelamarRouter } from "./routers/pelamar";
 import { teamRouter } from "./routers/team";
 import { userRouter } from "./routers/user";
 import { emailTemplateRouter } from "./routers/emailTemplate";
+import { chartRouter } from "./routers/chart";
 
 export const appRouter = createTRPCRouter({
   example: exampleRouter,
@@ -13,6 +14,7 @@ export const appRouter = createTRPCRouter({
   team: teamRouter,
   user: userRouter,
   emailTemplate: emailTemplateRouter,
+  chart: chartRouter,
 });
 
 export type AppRouter = typeof appRouter;

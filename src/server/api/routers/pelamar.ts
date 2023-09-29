@@ -15,11 +15,11 @@ import type { TBrevo } from "~/types/brevo";
 export const pelamarRouter = createTRPCRouter({
   getAll: publicProcedure.input(filterPelamarSchema).query(async ({ ctx, input }) => {
     const where = input;
+
     const pelamar = ctx.prisma.pelamar.findMany({
       take: where?.take,
       skip: where?.skip,
       where: {
-        createdAt: where?.createdAt || undefined,
         userId: ctx.session?.user.id,
         hasWhatsapp: where?.hasWhatsapp === true ? true : undefined,
         invitedByWhatsapp: where?.invitedByWhatsapp === true ? true : undefined,
@@ -32,7 +32,6 @@ export const pelamarRouter = createTRPCRouter({
     });
     const count = ctx.prisma.pelamar.count({
       where: {
-        createdAt: where?.createdAt || undefined,
         userId: ctx.session?.user.id,
         hasWhatsapp: where?.hasWhatsapp === true ? true : undefined,
         invitedByWhatsapp: where?.invitedByWhatsapp === true ? true : undefined,

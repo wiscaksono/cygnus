@@ -18,19 +18,15 @@ export const emailTemplateRouter = createTRPCRouter({
   }),
 
   update: protectedProcedure.input(updateEmailTemplateSchema).mutation(async ({ input, ctx }) => {
-    const result = await ctx.prisma.$transaction(async (prisma) => {
-      const emailTemplate = await prisma.emailTemplate.findFirst({
-        where: {
-          userId: ctx.session?.user.id,
-        },
-      });
-
-      await prisma.emailTemplate.update({
-        where: {
-          id: emailTemplate?.id,
-        },
-        data: input,
-      });
+    const result = await ctx.prisma.emailTemplate.upsert({
+      where: {
+        userId: ctx.session?.user.id,
+      },
+      create: {
+        ...input,
+        userId: ctx.session?.user.id,
+      },
+      update: input,
     });
 
     return {

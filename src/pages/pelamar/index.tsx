@@ -50,7 +50,9 @@ export default function Pelamar() {
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
   const [selectedPelamar, setSelectedPelamar] = useState<Pelamar[]>([]);
-  const [filter, setFilter] = useState<FilterProps["filter"]>({});
+  const [filter, setFilter] = useState<FilterProps["filter"]>({
+    take: 10,
+  });
 
   const { data: pelamar, isLoading, refetch } = api.pelamar.getAll.useQuery(filter);
 
@@ -103,6 +105,13 @@ export default function Pelamar() {
             <input
               type="date"
               className="block rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              value={filter.createdAt?.toISOString().slice(0, 10)}
+              onChange={(e) => {
+                setFilter({
+                  ...filter,
+                  createdAt: new Date(e.target.value ? `${e.target.value}T00:00:00.000Z` : new Date().toISOString().slice(0, 10)),
+                });
+              }}
             />
             <button
               onClick={() => {
@@ -125,17 +134,6 @@ export default function Pelamar() {
               className={`block ${filter.invitedByWhatsapp ? "bg-indigo-600 text-white" : "text-gray-800"
                 } rounded-md border-0 px-2.5 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}>
               Invited by WhatsApp
-            </button>
-            <button
-              onClick={() => {
-                setFilter({
-                  ...filter,
-                  hasWhatsapp: !filter.hasWhatsapp,
-                });
-              }}
-              className={`block ${filter.hasWhatsapp ? "bg-indigo-600 text-white" : "text-gray-800"
-                } rounded-md border-0 px-2.5 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}>
-              Have WhatsApp
             </button>
             <SelectPerPage filter={filter} setFilter={setFilter} />
           </div>
@@ -191,7 +189,7 @@ export default function Pelamar() {
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.email}</td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.position}</td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {format(person.interviewDate, "EEEE hh:mm, dd MMMM yyyy", {
+                          {format(person.interviewDate, "hh:mm, dd MMMM yyyy", {
                             locale: id,
                           })}
                         </td>

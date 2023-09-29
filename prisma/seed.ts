@@ -20,7 +20,7 @@ async function isPhoneUnique(phone: string) {
 async function main() {
   await prisma.pelamar.deleteMany({});
 
-  const amountOfUsers = 5;
+  const amountOfUsers = 200;
   const pelamars: createPelamarInput[] = [];
 
   for (let i = 0; i < amountOfUsers; i++) {
@@ -57,10 +57,11 @@ async function main() {
       position: faker.person.jobTitle(),
       interviewDate: faker.date.future(),
       createdAt: faker.date.past(),
-      userId: "cln28uxlu0000intrwdxzmpa4",
+      userId: "cln4g5yrh0000in7m4osmoddr",
     };
 
     pelamars.push(pelamar);
+    console.log(`Pelamar ${i + 1} berhasil dibuat`);
   }
 
   const addUsers = async () =>

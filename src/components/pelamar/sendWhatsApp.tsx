@@ -17,14 +17,9 @@ export const SendWhatsApp = ({ person, refetch }: ISendWhatsApp) => {
     },
   });
 
-  const { data } = api.user.getSelf.useQuery();
-
-  if (!data) return;
-
   const handleSend = async () => {
     await mutation.mutateAsync({
       number: person.phone,
-      message: data.templateWhatsApp,
     });
   };
 
