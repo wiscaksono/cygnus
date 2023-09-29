@@ -3,6 +3,12 @@ import { useLayoutEffect, useRef, useState, useEffect } from "react";
 import { CheckCircleIcon, XMarkIcon, EnvelopeIcon } from "@heroicons/react/24/outline";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 import { api } from "~/utils/api";
 import { getServerAuthSession } from "~/server/auth";
@@ -52,6 +58,7 @@ export default function Pelamar() {
   const [selectedPelamar, setSelectedPelamar] = useState<Pelamar[]>([]);
   const [filter, setFilter] = useState<FilterProps["filter"]>({
     take: 10,
+    createdAt: dayjs().tz("Asia/Jakarta").toDate(),
   });
 
   const { data: pelamar, isLoading, refetch } = api.pelamar.getAll.useQuery(filter);
@@ -105,12 +112,13 @@ export default function Pelamar() {
             <input
               type="date"
               className="block rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              value={filter.createdAt?.toISOString().slice(0, 10)}
+              value={filter.createdAt ? dayjs(filter.createdAt).tz("Asia/Jakarta").format("YYYY-MM-DD") : ""}
               onChange={(e) => {
                 setFilter({
                   ...filter,
-                  createdAt: new Date(e.target.value ? `${e.target.value}T00:00:00.000Z` : new Date().toISOString().slice(0, 10)),
+                  createdAt: e.target.value ? dayjs(e.target.value).tz("Asia/Jakarta").toDate() : undefined,
                 });
+                console.log(e.target.value);
               }}
             />
             <button
@@ -120,8 +128,9 @@ export default function Pelamar() {
                   invitedByEmail: !filter.invitedByEmail,
                 });
               }}
-              className={`block ${filter.invitedByEmail ? "bg-indigo-600 text-white" : "text-gray-800"
-                } rounded-md border-0 px-2.5 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}>
+              className={`block ${
+                filter.invitedByEmail ? "bg-indigo-600 text-white" : "text-gray-800"
+              } rounded-md border-0 px-2.5 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}>
               Invited by Email
             </button>
             <button
@@ -131,8 +140,9 @@ export default function Pelamar() {
                   invitedByWhatsapp: !filter.invitedByWhatsapp,
                 });
               }}
-              className={`block ${filter.invitedByWhatsapp ? "bg-indigo-600 text-white" : "text-gray-800"
-                } rounded-md border-0 px-2.5 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}>
+              className={`block ${
+                filter.invitedByWhatsapp ? "bg-indigo-600 text-white" : "text-gray-800"
+              } rounded-md border-0 px-2.5 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}>
               Invited by WhatsApp
             </button>
             <SelectPerPage filter={filter} setFilter={setFilter} />

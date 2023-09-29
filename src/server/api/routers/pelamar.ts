@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 const Sib = require("@getbrevo/brevo") as TBrevo;
+import dayjs from "dayjs";
 
 import { env } from "~/env.mjs";
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/api/trpc";
@@ -16,22 +17,14 @@ export const pelamarRouter = createTRPCRouter({
   getAll: publicProcedure.input(filterPelamarSchema).query(async ({ ctx, input }) => {
     const where = input;
 
-    const pelamar = ctx.prisma.pelamar.findMany({
-      take: where?.take,
-      skip: where?.skip,
+    const pelamar = await ctx.prisma.pelamar.findMany({
+      // take: where?.take,
+      // skip: where?.skip,
       where: {
-        userId: ctx.session?.user.id,
-        hasWhatsapp: where?.hasWhatsapp === true ? true : undefined,
-        invitedByWhatsapp: where?.invitedByWhatsapp === true ? true : undefined,
-        invitedByEmail: where?.invitedByEmail === true ? true : undefined,
-        name: {
-          contains: where?.name,
-          mode: "insensitive",
+        createdAt: {
+          gte: where?.createdAt && dayjs(where?.createdAt).isValid() ? dayjs(where?.createdAt).startOf("day").toDate() : undefined,
+          lte: where?.createdAt && dayjs(where?.createdAt).isValid() ? dayjs(where?.createdAt).endOf("day").toDate() : undefined,
         },
-      },
-    });
-    const count = ctx.prisma.pelamar.count({
-      where: {
         userId: ctx.session?.user.id,
         hasWhatsapp: where?.hasWhatsapp === true ? true : undefined,
         invitedByWhatsapp: where?.invitedByWhatsapp === true ? true : undefined,
@@ -43,20 +36,18 @@ export const pelamarRouter = createTRPCRouter({
       },
     });
 
-    return ctx.prisma.$transaction([pelamar, count]).then(([pelamar, count]) => {
-      return {
-        status: 200,
-        message: "Berhasil mendapatkan data pelamar",
-        result: {
-          pelamar,
-          count,
-        },
-      };
-    });
+    return {
+      status: 200,
+      message: "Berhasil mendapatkan semua pelamar",
+      result: {
+        pelamar,
+        count: pelamar.length,
+      },
+    };
   }),
 
   create: protectedProcedure.input(createPelamarSchema).mutation(async ({ input, ctx }) => {
-    const { name, email, phone, position, interviewDate } = input;
+    const { name, email, phone, position, interviewDate, portal } = input;
 
     const result = await ctx.prisma.$transaction(async (prisma) => {
       const phoneExists = await prisma.pelamar.findFirst({
@@ -76,6 +67,7 @@ export const pelamarRouter = createTRPCRouter({
 
       const createdPelamar = await prisma.pelamar.create({
         data: {
+          portal,
           name,
           email,
           phone,
@@ -307,7 +299,7 @@ export const pelamarRouter = createTRPCRouter({
       name: templateEmail.sender,
     };
 
-    const { email, namaPelamar, position, interviewDate } = input;
+    const { email, namaPelamar, position, interviewDate, portal } = input;
 
     const receivers = [{ email }];
 
@@ -321,7 +313,7 @@ export const pelamarRouter = createTRPCRouter({
       .replace(/{{position}}/g, position)
       .replace(/{{namaPengirim}}/g, ctx.session?.user.fullName)
       .replace(/{{whatsApp}}/g, ctx.session?.user.phone.replace(/(\d{4})(\d{4})(\d{4})/, "$1-$2-$3"))
-      .replace(/{{jobPortal}}/g, templateEmail.jobPortal)
+      .replace(/{{portal}}/g, portal)
       .replace(/{{whatsAppUrl}}/g, `https://wa.me/+62${ctx.session?.user.phone.replace(/^0+/, "")}`)
       .replace(/{{interviewTime}}/g, interviewDateUTC7.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }))
       .replace(

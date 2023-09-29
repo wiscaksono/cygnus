@@ -38,10 +38,12 @@ export const chartRouter = createTRPCRouter({
     const monthOrder = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
     // Create the output in the desired format and sort by month
-    const monthly = monthOrder.map((month) => ({
-      month,
-      total: countsByMonth[month] || 0, // Default to 0 if no data for the month
-    }));
+    const monthly = monthOrder
+      .map((month) => ({
+        month,
+        total: countsByMonth[month] || 0, // Default to 0 if no data for the month
+      }))
+      .filter((item) => item.total > 0);
 
     const daily = Object.keys(countsByDay).map((dayKey) => ({
       day: dayKey,

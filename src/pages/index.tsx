@@ -1,6 +1,6 @@
 import React from "react";
 import Head from "next/head";
-import { XAxis, YAxis, Legend, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from "recharts";
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from "recharts";
 
 import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/utils/api";
@@ -9,8 +9,6 @@ import type { GetServerSideProps } from "next";
 
 export default function Page() {
   const { data } = api.chart.pelamar.useQuery();
-
-  console.log(data);
 
   return (
     <>

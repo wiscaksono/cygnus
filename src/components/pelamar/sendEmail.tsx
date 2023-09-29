@@ -25,6 +25,7 @@ export const SendEmail = ({ person, refetch }: ISendWhatsApp) => {
         position: person.position,
         namaPelamar: person.name,
         interviewDate: person.interviewDate,
+        portal: person.portal,
       });
     } catch (error) {
       console.log(error);
@@ -35,8 +36,7 @@ export const SendEmail = ({ person, refetch }: ISendWhatsApp) => {
     <button
       className={`inline ${person.invitedByEmail ? "text-gray-400" : "text-indigo-600 hover:text-indigo-900"}`}
       onClick={() => void handleSend()}
-      disabled={person.invitedByEmail || mutation.isLoading}
-    >
+      disabled={person.invitedByEmail || mutation.isLoading}>
       {mutation.isLoading ? <LoadingIcon /> : <EnvelopeIcon className="h-6 w-6" />}
     </button>
   );

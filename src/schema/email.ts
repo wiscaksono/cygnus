@@ -6,6 +6,7 @@ export const sendEmail = z.object({
   position: z.string(),
   interviewDate: z.date(),
   message: z.string().optional(),
+  portal: z.string(),
 });
 
 export type ISendEmail = z.infer<typeof sendEmail>;

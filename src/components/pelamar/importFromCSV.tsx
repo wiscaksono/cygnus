@@ -6,7 +6,7 @@ import { useModal } from "~/hooks";
 import { api } from "~/utils/api";
 import whatsApp from "~/server/whatsApp";
 
-import { RouterInputs } from "~/utils/api";
+import type { RouterInputs } from "~/utils/api";
 
 export const ImportFromCSV = ({ refetch }: { refetch: () => void }) => {
   const cancelButtonRef = useRef(null);
