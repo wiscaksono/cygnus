@@ -28,13 +28,13 @@ model User {
 }
 
 model EmailTemplate {
-    id          String  @id @default(cuid())
+    id          String @id @default(cuid())
     sender      String
     senderEmail String
     subject     String
     jobPortal   String
-    User        User?   @relation(fields: [userId], references: [id])
-    userId      String?
+    User        User   @relation(fields: [userId], references: [id])
+    userId      String @unique
 }
 
 model Pelamar {
