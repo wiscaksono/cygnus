@@ -225,11 +225,16 @@ export const pelamarRouter = createTRPCRouter({
           };
         }
 
+        const interviewDateUTC0 = pelamar.interviewDate;
+        const interviewDateUTC7 = new Date(
+          interviewDateUTC0.getTime() + 7 * 60 * 60 * 1000, // Convert UTC+0 to UTC+7
+        );
+
         const templateMessage = template.templateWhatsApp
           .replace(/{{namaPelamar}}/g, pelamar.name)
           .replace(/{{position}}/g, pelamar.position)
           .replace(/{{namaPengirim}}/g, ctx.session?.user.fullName)
-          .replace(/{{interviewTime}}/g, pelamar.interviewDate.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }))
+          .replace(/{{interviewTime}}/g, interviewDateUTC7.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }))
           .replace(
             /{{interviewDate}}/g,
             format(pelamar.interviewDate, "EEEE, dd MMMM yyyy", {
