@@ -229,7 +229,7 @@ export const pelamarRouter = createTRPCRouter({
           .replace(/{{namaPelamar}}/g, pelamar.name)
           .replace(/{{position}}/g, pelamar.position)
           .replace(/{{namaPengirim}}/g, ctx.session?.user.fullName)
-          .replace(/{{interviewTime}}/g, format(pelamar.interviewDate, "hh:mm", { locale: id }))
+          .replace(/{{interviewTime}}/g, pelamar.interviewDate.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }))
           .replace(
             /{{interviewDate}}/g,
             format(pelamar.interviewDate, "EEEE, dd MMMM yyyy", {
