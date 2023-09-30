@@ -36,7 +36,7 @@ async function createPelamars(amount: number) {
     const phone = await generateUniquePhone();
     const pelamar: CreatePelamarInput = {
       name: faker.person.fullName(),
-      email: faker.internet.email(),
+      email: faker.internet.email().toLowerCase(),
       position: faker.person.jobTitle(),
       interviewDate: faker.date.future(),
       createdAt: faker.date.past(),
@@ -54,7 +54,7 @@ async function createPelamars(amount: number) {
   const spinnies = new Spinnies();
   try {
     await prisma.pelamar.deleteMany({});
-    const amountOfUsers = 2000;
+    const amountOfUsers = 10000;
     const pelamars = await createPelamars(amountOfUsers);
     const MAX_POOL = 100;
     const workers = [] as (() => Promise<void>)[];
