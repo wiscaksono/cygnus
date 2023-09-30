@@ -1,7 +1,8 @@
 import { toast } from "react-toastify";
 import { EnvelopeIcon } from "@heroicons/react/24/outline";
-import { LoadingIcon } from "../Icons";
+import validator from "validator";
 
+import { LoadingIcon } from "../Icons";
 import { api } from "~/utils/api";
 import type { Pelamar } from "@prisma/client";
 
@@ -34,9 +35,10 @@ export const SendEmail = ({ person, refetch }: ISendWhatsApp) => {
 
   return (
     <button
-      className={`inline ${person.invitedByEmail ? "text-gray-400" : "text-indigo-600 hover:text-indigo-900"}`}
+      className={`inline ${person.invitedByEmail || mutation.isLoading || !validator.isEmail(person.email) ? "text-gray-400" : "text-indigo-600 hover:text-indigo-900"}`}
       onClick={() => void handleSend()}
-      disabled={person.invitedByEmail || mutation.isLoading}>
+      disabled={person.invitedByEmail || mutation.isLoading || !validator.isEmail(person.email)}
+    >
       {mutation.isLoading ? <LoadingIcon /> : <EnvelopeIcon className="h-6 w-6" />}
     </button>
   );

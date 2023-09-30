@@ -17,9 +17,9 @@ export const pelamarRouter = createTRPCRouter({
   getAll: publicProcedure.input(filterPelamarSchema).query(async ({ ctx, input }) => {
     const where = input;
 
-    const pelamar = await ctx.prisma.pelamar.findMany({
-      // take: where?.take,
-      // skip: where?.skip,
+    const pelamar = ctx.prisma.pelamar.findMany({
+      take: typeof where?.take === "number" ? where?.take : undefined,
+      skip: where?.skip,
       where: {
         createdAt: {
           gte: where?.createdAt && dayjs(where?.createdAt).isValid() ? dayjs(where?.createdAt).startOf("day").toDate() : undefined,
@@ -36,14 +36,33 @@ export const pelamarRouter = createTRPCRouter({
       },
     });
 
-    return {
-      status: 200,
-      message: "Berhasil mendapatkan semua pelamar",
-      result: {
-        pelamar,
-        count: pelamar.length,
+    const count = ctx.prisma.pelamar.count({
+      where: {
+        createdAt: {
+          gte: where?.createdAt && dayjs(where?.createdAt).isValid() ? dayjs(where?.createdAt).startOf("day").toDate() : undefined,
+          lte: where?.createdAt && dayjs(where?.createdAt).isValid() ? dayjs(where?.createdAt).endOf("day").toDate() : undefined,
+        },
+        userId: ctx.session?.user.id,
+        hasWhatsapp: where?.hasWhatsapp === true ? true : undefined,
+        invitedByWhatsapp: where?.invitedByWhatsapp === true ? true : undefined,
+        invitedByEmail: where?.invitedByEmail === true ? true : undefined,
+        name: {
+          contains: where?.name,
+          mode: "insensitive",
+        },
       },
-    };
+    });
+
+    return ctx.prisma.$transaction([pelamar, count]).then(([pelamar, count]) => {
+      return {
+        status: 200,
+        message: "Berhasil mendapatkan data pelamar",
+        result: {
+          pelamar,
+          count,
+        },
+      };
+    });
   }),
 
   create: protectedProcedure.input(createPelamarSchema).mutation(async ({ input, ctx }) => {

@@ -13,7 +13,7 @@ dayjs.extend(timezone);
 import { api } from "~/utils/api";
 import { getServerAuthSession } from "~/server/auth";
 
-import { SearchBar, SelectPerPage } from "~/components/pelamar/filter";
+import { SearchBar, SelectPerPage, DateFilter } from "~/components/pelamar/filter";
 import { CreatePelamar } from "~/components/pelamar/createPelamar";
 import { ImportFromCSV } from "~/components/pelamar/importFromCSV";
 import { EditPelamar } from "~/components/pelamar/editPelamar";
@@ -22,6 +22,7 @@ import { SendWhatsAppAll } from "~/components/pelamar/sendWhatsAppAll";
 import { SendEmail } from "~/components/pelamar/sendEmail";
 import { SendEmailAll } from "~/components/pelamar/sendEmailAll";
 import { DeleteAll } from "~/components/pelamar/deleteAll";
+
 import { WhatsAppIcon } from "~/components/Icons";
 import { Loader } from "~/components/Loader";
 
@@ -96,7 +97,7 @@ export default function Pelamar() {
       <div className="px-4 sm:px-0">
         <div className="sm:flex sm:items-center">
           <div className="sm:flex-auto">
-            <h1 className="text-base font-semibold leading-6 text-gray-900">Pelamar</h1>
+            <h1 className="text-base font-semibold leading-6 text-gray-900">Pelamar ({pelamar?.result.count} results)</h1>
             <p className="mt-2 text-sm text-gray-700">Daftar pelamar yang telah mengisi form pendaftaran.</p>
           </div>
           <div className="mt-4 flex gap-x-2 sm:ml-16 sm:mt-0 sm:flex-none">
@@ -110,18 +111,6 @@ export default function Pelamar() {
         <div className="mt-8 flow-root">
           <div className="mb-4 flex items-center gap-x-2">
             <SearchBar filter={filter} setFilter={setFilter} />
-            <input
-              type="date"
-              className="block rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              value={filter.createdAt ? dayjs(filter.createdAt).tz("Asia/Jakarta").format("YYYY-MM-DD") : ""}
-              onChange={(e) => {
-                setFilter({
-                  ...filter,
-                  createdAt: e.target.value ? dayjs(e.target.value).tz("Asia/Jakarta").toDate() : undefined,
-                });
-                console.log(e.target.value);
-              }}
-            />
             <button
               onClick={() => {
                 setFilter({
@@ -148,6 +137,8 @@ export default function Pelamar() {
             >
               Invited by WhatsApp
             </button>
+
+            <DateFilter filter={filter} setFilter={setFilter} />
             <SelectPerPage filter={filter} setFilter={setFilter} />
           </div>
           <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -245,6 +236,12 @@ export default function Pelamar() {
     </>
   );
 }
+
+export const config = {
+  api: {
+    responseLimit: false,
+  },
+};
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getServerAuthSession(context);
