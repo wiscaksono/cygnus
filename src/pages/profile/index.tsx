@@ -10,9 +10,7 @@ export default function Profile() {
   return (
     <>
       <Head>
-        <title>Profile</title>
-        <meta name="description" content="Cygnus" />
-        <link rel="icon" href="/favicon.ico" />
+        <title>Cygnus - Profile</title>
       </Head>
 
       <ProfileForm />

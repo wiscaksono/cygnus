@@ -91,7 +91,7 @@ export default function Pelamar() {
   return (
     <>
       <Head>
-        <title>Pelamar</title>
+        <title>Cygnus - Pelamar</title>
       </Head>
 
       <div className="px-4 sm:px-0">

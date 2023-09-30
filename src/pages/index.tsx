@@ -18,8 +18,6 @@ export default function Page() {
     <>
       <Head>
         <title>Cygnus - Dashboard</title>
-        <meta name="description" content="Cygnus" />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <section className="grid h-[calc(100vh-80px)] grid-cols-6 grid-rows-2 gap-5">
