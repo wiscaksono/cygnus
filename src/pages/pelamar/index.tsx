@@ -77,7 +77,7 @@ export default function Pelamar() {
 
   function toggleAll() {
     if (!pelamar) return;
-    setSelectedPelamar(checked || indeterminate ? [] : pelamar.result.pelamar.filter((person) => person.hasWhatsapp));
+    setSelectedPelamar(checked || indeterminate ? [] : pelamar.result.pelamar);
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
   }

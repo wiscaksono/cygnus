@@ -30,6 +30,7 @@ model User {
 
 model EmailTemplate {
     id          String @id @default(cuid())
+    brevoApiKey String
     sender      String
     senderEmail String
     subject     String

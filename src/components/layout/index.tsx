@@ -37,7 +37,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               enterTo="opacity-100"
               leave="transition-opacity ease-linear duration-300"
               leaveFrom="opacity-100"
-              leaveTo="opacity-0">
+              leaveTo="opacity-0"
+            >
               <div className="fixed inset-0 bg-gray-900/80" />
             </Transition.Child>
 
@@ -49,7 +50,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 enterTo="translate-x-0"
                 leave="transition ease-in-out duration-300 transform"
                 leaveFrom="translate-x-0"
-                leaveTo="-translate-x-full">
+                leaveTo="-translate-x-full"
+              >
                 <Dialog.Panel className="relative mr-16 flex w-full max-w-xs flex-1">
                   <Transition.Child
                     as={Fragment}
@@ -58,7 +60,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     enterTo="opacity-100"
                     leave="ease-in-out duration-300"
                     leaveFrom="opacity-100"
-                    leaveTo="opacity-0">
+                    leaveTo="opacity-0"
+                  >
                     <div className="absolute left-full top-0 flex w-16 justify-center pt-5">
                       <button type="button" className="-m-2.5 p-2.5" onClick={() => setSidebarOpen(false)}>
                         <span className="sr-only">Close sidebar</span>
@@ -82,7 +85,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                   className={classNames(
                                     pathname === item.href ? "bg-gray-50 text-indigo-600" : "text-gray-700 hover:bg-gray-50 hover:text-indigo-600",
                                     "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6",
-                                  )}>
+                                  )}
+                                >
                                   <item.icon
                                     className={classNames(pathname === item.href ? "text-indigo-600" : "text-gray-400 group-hover:text-indigo-600", "h-6 w-6 shrink-0")}
                                     aria-hidden="true"
@@ -120,7 +124,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                           className={classNames(
                             pathname === item.href ? "bg-gray-50 text-indigo-600" : "text-gray-700 hover:bg-gray-50 hover:text-indigo-600",
                             "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6",
-                          )}>
+                          )}
+                        >
                           <item.icon
                             className={classNames(pathname === item.href ? "text-indigo-600" : "text-gray-400 group-hover:text-indigo-600", "h-6 w-6 shrink-0")}
                             aria-hidden="true"
@@ -136,7 +141,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     <Image className="aspect-square rounded-full bg-gray-50" width={32} height={32} src={data.user.image || ""} alt={"PP"} />
                     <button
                       onClick={() => void signOut()}
-                      className="rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 transition-colors hover:bg-red-200 hover:text-red-500 hover:ring-red-500">
+                      className="rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 transition-colors hover:bg-red-200 hover:text-red-500 hover:ring-red-500"
+                    >
                       Log out
                     </button>
                   </div>
@@ -154,7 +160,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <div className="flex-1 text-sm font-semibold leading-6 text-gray-900">Dashboard</div>
           <a href="#">
             <span className="sr-only">Your profile</span>
-            <Image className="rounded-full bg-gray-50" width={32} height={32} src={data.user.image || ""} alt={"PP"} />
+            <Image className="aspect-square rounded-full bg-gray-50" width={32} height={32} src={data.user.image || ""} alt={"PP"} />
           </a>
         </div>
 

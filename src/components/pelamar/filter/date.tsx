@@ -10,7 +10,7 @@ import type { FilterProps } from "~/pages/pelamar";
 
 export const DateFilter = ({ filter, setFilter }: FilterProps) => {
   return (
-    <div className="flex items-center rounded-lg border border-gray-300 shadow-sm">
+    <div className="flex w-full items-center justify-between rounded-lg border border-gray-300 shadow-sm md:w-auto md:justify-center">
       <button
         className="border-r px-1.5 py-[7px] text-gray-400 ring-0 hover:text-gray-900 focus:outline-none focus:ring-0"
         onClick={() => {

@@ -36,7 +36,8 @@ export const SendEmailAll = ({ refetch, selectedPelamar }: ISendEmailAll) => {
       type="button"
       className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm transition-opacity hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-70"
       onClick={() => void handleSend()}
-      disabled={mutation.isLoading || selectedPelamar.some((item) => item.invitedByEmail === true)}>
+      disabled={mutation.isLoading || selectedPelamar.some((item) => item.invitedByEmail === true)}
+    >
       {mutation.isLoading ? "Mengirim..." : "Kirim Email"}
     </button>
   );

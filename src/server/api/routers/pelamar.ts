@@ -302,12 +302,6 @@ export const pelamarRouter = createTRPCRouter({
   }),
 
   sendEmail: protectedProcedure.input(sendEmail).mutation(async ({ ctx, input }) => {
-    const brevo = Sib;
-    const client = brevo.ApiClient.instance;
-    const apiKey = client.authentications["api-key"];
-    apiKey.apiKey = env.NEXT_PUBLIC_BREVO_API_KEY;
-    const transEmailApi = new brevo.TransactionalEmailsApi();
-
     const templateEmail = await ctx.prisma.emailTemplate.findFirst({
       where: {
         userId: ctx.session?.user.id,
@@ -320,6 +314,12 @@ export const pelamarRouter = createTRPCRouter({
         message: "Template tidak ditemukan",
       };
     }
+
+    const brevo = Sib;
+    const client = brevo.ApiClient.instance;
+    const apiKey = client.authentications["api-key"];
+    apiKey.apiKey = templateEmail.brevoApiKey;
+    const transEmailApi = new brevo.TransactionalEmailsApi();
 
     const sender = {
       email: templateEmail.senderEmail,

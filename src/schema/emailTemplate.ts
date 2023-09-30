@@ -4,6 +4,7 @@ export const updateEmailTemplateSchema = z.object({
   sender: z.string(),
   senderEmail: z.string().email(),
   subject: z.string(),
+  brevoApiKey: z.string(),
 });
 
 export type IUpdateEmailTemplate = z.infer<typeof updateEmailTemplateSchema>;
