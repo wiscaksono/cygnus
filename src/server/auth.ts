@@ -44,6 +44,11 @@ export const authOptions: NextAuthOptions = {
     },
   },
   secret: env.NEXTAUTH_SECRET,
+  pages: {
+    signIn: "/auth/login",
+    signOut: "/auth/login",
+    error: "/auth/login",
+  },
   providers: [
     CredentialsProvider({
       name: "credentials",

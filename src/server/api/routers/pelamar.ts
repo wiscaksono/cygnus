@@ -3,7 +3,6 @@ import { id } from "date-fns/locale";
 const Sib = require("@getbrevo/brevo") as TBrevo;
 import dayjs from "dayjs";
 
-import { env } from "~/env.mjs";
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/api/trpc";
 import { filterPelamarSchema, createPelamarSchema, deletePelamarSchema, updatePelamarSchema, deleteAllPelamarSchema, createManyPelamarSchema } from "~/schema/pelamar";
 import { sendMessage } from "~/schema/whatsApp";

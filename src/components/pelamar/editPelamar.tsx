@@ -56,20 +56,12 @@ export const EditPelamar = ({ refetch, person }: IEditPelamar) => {
 
   return (
     <>
-      <button
-        onClick={openModal}
-        className="inline text-indigo-600 hover:text-indigo-900"
-      >
+      <button onClick={openModal} className="inline text-indigo-600 hover:text-indigo-900">
         <PencilIcon className="h-6 w-6" />
       </button>
 
       <Transition.Root show={isOpen} as={Fragment}>
-        <Dialog
-          as="div"
-          className="relative z-[60]"
-          initialFocus={cancelButtonRef}
-          onClose={closeModal}
-        >
+        <Dialog as="div" className="relative z-[60]" initialFocus={cancelButtonRef} onClose={closeModal}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -96,18 +88,12 @@ export const EditPelamar = ({ refetch, person }: IEditPelamar) => {
                 <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-xl">
                   <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                     <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                      <Dialog.Title
-                        as="h3"
-                        className="text-base font-semibold leading-6 text-gray-900"
-                      >
+                      <Dialog.Title as="h3" className="text-base font-semibold leading-6 text-gray-900">
                         Ubah Pelamar
                       </Dialog.Title>
                       <form className="mt-2 grid grid-cols-2 gap-5">
                         <div className="col-span-2">
-                          <label
-                            htmlFor="name"
-                            className="block text-sm font-medium leading-6 text-gray-900"
-                          >
+                          <label htmlFor="name" className="block text-sm font-medium leading-6 text-gray-900">
                             Nama
                           </label>
                           <div className="mt-2">
@@ -121,10 +107,7 @@ export const EditPelamar = ({ refetch, person }: IEditPelamar) => {
                           </div>
                         </div>
                         <div>
-                          <label
-                            htmlFor="email"
-                            className="block text-sm font-medium leading-6 text-gray-900"
-                          >
+                          <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
                             Email
                           </label>
                           <div className="mt-2">
@@ -138,10 +121,7 @@ export const EditPelamar = ({ refetch, person }: IEditPelamar) => {
                           </div>
                         </div>
                         <div>
-                          <label
-                            htmlFor="phone"
-                            className="block text-sm font-medium leading-6 text-gray-900"
-                          >
+                          <label htmlFor="phone" className="block text-sm font-medium leading-6 text-gray-900">
                             No. Telepon
                           </label>
                           <div className="mt-2">
@@ -155,10 +135,7 @@ export const EditPelamar = ({ refetch, person }: IEditPelamar) => {
                           </div>
                         </div>
                         <div>
-                          <label
-                            htmlFor="position"
-                            className="block text-sm font-medium leading-6 text-gray-900"
-                          >
+                          <label htmlFor="position" className="block text-sm font-medium leading-6 text-gray-900">
                             Posisi Dilamar
                           </label>
                           <div className="mt-2">
@@ -172,10 +149,7 @@ export const EditPelamar = ({ refetch, person }: IEditPelamar) => {
                           </div>
                         </div>
                         <div>
-                          <label
-                            htmlFor="interview-date"
-                            className="block text-sm font-medium leading-6 text-gray-900"
-                          >
+                          <label htmlFor="interview-date" className="block text-sm font-medium leading-6 text-gray-900">
                             Tanggal Interview
                           </label>
                           <div className="mt-2">

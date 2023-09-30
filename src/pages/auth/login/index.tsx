@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { signIn } from "next-auth/react";
 
@@ -10,34 +10,34 @@ import type { GetServerSideProps } from "next";
 export default function Login() {
   const { register, handleSubmit } = useForm<ILogin>({});
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const onSubmit: SubmitHandler<ILogin> = async (data) => {
-    await signIn("credentials", {
-      ...data,
-      callbackUrl: "/",
-    });
+    try {
+      setIsLoading(true);
+      await signIn("credentials", {
+        ...data,
+        callbackUrl: "/",
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <>
       <div className="flex min-h-screen flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <img
-            className="mx-auto h-10 w-auto"
-            src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-            alt="Your Company"
-          />
-          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-            Login to your account
-          </h2>
+          <img className="mx-auto h-10 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="Your Company" />
+          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Login to your account</h2>
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
+              <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
                 Email address
               </label>
               <div className="mt-2">
@@ -54,10 +54,7 @@ export default function Login() {
             </div>
 
             <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
+              <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
                 Password
               </label>
               <div className="mt-2">
@@ -74,9 +71,10 @@ export default function Login() {
 
             <button
               type="submit"
-              className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50"
+              disabled={isLoading}
             >
-              Sign in
+              {isLoading ? "Loading..." : "Login"}
             </button>
           </form>
         </div>
