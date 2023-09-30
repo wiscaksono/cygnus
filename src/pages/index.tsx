@@ -3,12 +3,15 @@ import Head from "next/head";
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from "recharts";
 
 import { getServerAuthSession } from "~/server/auth";
+import { Loader } from "~/components/Loader";
 import { api } from "~/utils/api";
 
 import type { GetServerSideProps } from "next";
 
 export default function Page() {
-  const { data } = api.chart.pelamar.useQuery();
+  const { data, isLoading } = api.chart.pelamar.useQuery();
+
+  if (isLoading) return <Loader />;
 
   return (
     <>
@@ -27,7 +30,8 @@ export default function Page() {
               right: 30,
               top: 30,
               bottom: 5,
-            }}>
+            }}
+          >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis
               dataKey="month"
@@ -57,7 +61,8 @@ export default function Page() {
               right: 30,
               top: 30,
               bottom: 5,
-            }}>
+            }}
+          >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis
               dataKey="day"

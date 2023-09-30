@@ -1,8 +1,11 @@
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
+
 import { api } from "~/utils/api";
+import { Loader } from "~/components/Loader";
 
 import type { IUpdateSelf } from "~/schema/user";
+
 export const ProfileForm = () => {
   const { data, isLoading } = api.user.getSelf.useQuery();
   const { register, handleSubmit } = useForm<IUpdateSelf>({
@@ -24,7 +27,7 @@ export const ProfileForm = () => {
     await mutation.mutateAsync(data);
   };
 
-  if (isLoading || !data) return <p>Loading...</p>;
+  if (isLoading) return <Loader />;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="mb-5">
@@ -107,7 +110,8 @@ export const ProfileForm = () => {
         <button
           type="submit"
           className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          disabled={mutation.isLoading}>
+          disabled={mutation.isLoading}
+        >
           {mutation.isLoading ? "Saving..." : "Simpan Profile"}
         </button>
       </div>
