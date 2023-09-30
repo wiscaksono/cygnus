@@ -4,32 +4,34 @@ import { RouterInputs } from "~/utils/api";
 import Spinnies from "spinnies";
 
 type CreatePelamarInput = RouterInputs["pelamar"]["create"] & {
-  userId: string;
-  hasWhatsapp: boolean;
   createdAt: Date;
-  portal: string;
+  userId: string;
 };
 
 const prisma = new PrismaClient();
 
+const pelamars: CreatePelamarInput[] = [];
+
 async function isPhoneUnique(phone: string) {
-  const existingPelamar = await prisma.pelamar.findFirst({
-    where: { phone },
-  });
+  const existingPelamar = pelamars.find((pelamar) => pelamar.phone === phone);
   return !existingPelamar;
 }
 
 async function generateUniquePhone() {
   let phone: string;
+  const temp = "087xxxxxxxxx";
+
   do {
-    const randomFourDigitNumber = Math.floor(Math.random() * 10000000);
-    phone = `087885${randomFourDigitNumber.toString().padStart(6, "0")}`;
-  } while (!(await isPhoneUnique(phone)));
+    phone = temp
+      .split("")
+      .map((char) => (char === "x" ? Math.floor(Math.random() * 10).toString() : char))
+      .join("");
+  } while (!isPhoneUnique(phone));
+
   return phone;
 }
 
 async function createPelamars(amount: number) {
-  const pelamars: CreatePelamarInput[] = [];
   for (let i = 0; i < amount; i++) {
     const phone = await generateUniquePhone();
     const pelamar: CreatePelamarInput = {
@@ -48,9 +50,8 @@ async function createPelamars(amount: number) {
   return pelamars;
 }
 
-async function main() {
+(async () => {
   const spinnies = new Spinnies();
-  console.log("pepek");
   try {
     await prisma.pelamar.deleteMany({});
     const amountOfUsers = 2000;
@@ -109,6 +110,4 @@ async function main() {
     await prisma.$disconnect();
     process.exit(1);
   }
-}
-
-main();
+})();
