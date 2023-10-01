@@ -1,4 +1,5 @@
 import { env } from "~/env.mjs";
+
 import type { ISendMessage } from "~/schema/whatsApp";
 import type { ErrorType } from "~/types/error";
 
@@ -15,23 +16,13 @@ class ApiError extends Error {
 }
 
 class whatsAppConstructor {
-  private token;
-
-  constructor() {
-    this.token = env.NEXT_PUBLIC_RUANG_WHATSAPP_TOKEN;
-  }
-
   private async request(path: string, options: RequestInit) {
-    const myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
-
     const requestOptions: RequestInit = {
-      headers: myHeaders,
       ...options,
     };
 
     try {
-      const response = await fetch(`${env.NEXT_PUBLIC_RUANG_WHATSAPP_API_URL}${path}`, requestOptions);
+      const response = await fetch(`${env.NEXT_PUBLIC_FONNTE_BASE_URL}${path}`, requestOptions);
       const res = (await response.json()) as object;
 
       if (!res) {
@@ -44,26 +35,38 @@ class whatsAppConstructor {
     }
   }
 
-  sendMessage(body: ISendMessage) {
-    const urlEncoded = new URLSearchParams();
-    urlEncoded.append("number", body.number);
-    urlEncoded.append("message", body.message || "");
-    urlEncoded.append("token", this.token);
+  sendMessage(req: ISendMessage) {
+    const body = new FormData();
+    body.append("target", req.number);
+    body.append("message", req.message || "");
 
-    return this.request("/send_message", {
+    const headers = new Headers();
+    if (!req.token) {
+      throw new Error("Token is required");
+    }
+    headers.append("Authorization", req.token);
+
+    return this.request("/send", {
       method: "POST",
-      body: urlEncoded,
+      body,
+      headers,
     });
   }
 
-  checkNumber(number: string) {
-    const urlEncoded = new URLSearchParams();
-    urlEncoded.append("number", number);
-    urlEncoded.append("token", this.token);
+  validate(req: { target: string; token: string }) {
+    const body = new FormData();
+    body.append("target", req.target);
 
-    return this.request("/check_number", {
+    const headers = new Headers();
+    if (!req.token) {
+      throw new Error("Token is required");
+    }
+    headers.append("Authorization", req.token);
+
+    return this.request("/validate", {
       method: "POST",
-      body: urlEncoded,
+      body,
+      headers,
     });
   }
 }

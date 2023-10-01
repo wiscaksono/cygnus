@@ -19,11 +19,16 @@ export const SendWhatsAppAll = ({ refetch, selectedPelamar }: ISendWhatsAppAll) 
   });
 
   const handleSend = async () => {
+    const promises = [];
+
     for (const person of selectedPelamar) {
-      await mutation.mutateAsync({
-        number: person.phone,
-      });
+      promises.push(
+        mutation.mutateAsync({
+          number: person.phone,
+        }),
+      );
     }
+    await Promise.all(promises);
     toast.success(`Mengirim undangan ke pelamar yang dipilih`);
   };
 
@@ -32,8 +37,7 @@ export const SendWhatsAppAll = ({ refetch, selectedPelamar }: ISendWhatsAppAll) 
       type="button"
       className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm transition-opacity hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-70"
       onClick={() => void handleSend()}
-      disabled={mutation.isLoading || selectedPelamar.some((item) => item.hasWhatsapp === false) || selectedPelamar.some((item) => item.invitedByWhatsapp === true)}
-    >
+      disabled={mutation.isLoading || selectedPelamar.some((item) => item.hasWhatsapp === false) || selectedPelamar.some((item) => item.invitedByWhatsapp === true)}>
       {mutation.isLoading ? "Mengirim..." : "Kirim WhatsApp"}
     </button>
   );

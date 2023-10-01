@@ -24,8 +24,6 @@
     "@trpc/next": "^10.26.0",
     "@trpc/react-query": "^10.26.0",
     "@trpc/server": "^10.26.0",
-    "bcrypt": "^5.1.1",
-    "date-fns": "^2.30.0",
     "dayjs": "^1.11.10",
     "next": "^13.4.2",
     "next-auth": "^4.22.1",
@@ -42,7 +40,6 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
-    "@types/bcrypt": "^5.0.0",
     "@types/eslint": "^8.37.0",
     "@types/node": "^20.6.5",
     "@types/prettier": "^2.7.2",

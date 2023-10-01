@@ -11,7 +11,7 @@ export const userRouter = createTRPCRouter({
   }),
 
   updateSelf: protectedProcedure.input(updateSelf).mutation(async ({ input, ctx }) => {
-    const { email, fullName, password, templateWhatsApp, phone } = input;
+    const { email, fullName, password, templateWhatsApp, phone, whatsAppToken } = input;
 
     const result = await ctx.prisma.user.update({
       where: {
@@ -23,6 +23,7 @@ export const userRouter = createTRPCRouter({
         password,
         phone,
         templateWhatsApp,
+        whatsAppToken,
       },
     });
 

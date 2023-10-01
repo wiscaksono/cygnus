@@ -14,6 +14,7 @@ export const ProfileForm = () => {
       email: data?.email,
       templateWhatsApp: data?.templateWhatsApp || "",
       phone: data?.phone,
+      whatsAppToken: data?.whatsAppToken || undefined,
     },
   });
 
@@ -37,7 +38,7 @@ export const ProfileForm = () => {
           <p className="mt-1 text-sm leading-6 text-gray-600">This information will be displayed publicly so be careful what you share.</p>
 
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-            <div className="sm:col-span-2">
+            <div className="sm:col-span-3">
               <label htmlFor="full-name" className="block text-sm font-medium leading-6 text-gray-900">
                 Full Name
               </label>
@@ -52,7 +53,7 @@ export const ProfileForm = () => {
               </div>
             </div>
 
-            <div className="sm:col-span-2">
+            <div className="sm:col-span-3">
               <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
                 Email
               </label>
@@ -67,7 +68,7 @@ export const ProfileForm = () => {
               </div>
             </div>
 
-            <div className="sm:col-span-2">
+            <div className="sm:col-span-3">
               <label htmlFor="phone" className="block text-sm font-medium leading-6 text-gray-900">
                 WhatsApp
               </label>
@@ -78,6 +79,21 @@ export const ProfileForm = () => {
                   autoComplete="phone"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   {...register("phone", { required: true })}
+                />
+              </div>
+            </div>
+
+            <div className="sm:col-span-3">
+              <label htmlFor="whatsapp-token" className="block text-sm font-medium leading-6 text-gray-900">
+                WhatsApp Token
+              </label>
+              <div className="mt-2">
+                <input
+                  type="password"
+                  id="whatsapp-token"
+                  autoComplete="whatsapp-token"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  {...register("whatsAppToken", { required: true })}
                 />
               </div>
             </div>
@@ -110,8 +126,7 @@ export const ProfileForm = () => {
         <button
           type="submit"
           className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          disabled={mutation.isLoading}
-        >
+          disabled={mutation.isLoading}>
           {mutation.isLoading ? "Saving..." : "Simpan Profile"}
         </button>
       </div>

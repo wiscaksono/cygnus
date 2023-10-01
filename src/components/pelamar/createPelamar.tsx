@@ -23,7 +23,6 @@ export const CreatePelamar = ({ refetch }: { refetch: () => void }) => {
       toast.success(message);
     },
     onError: (error) => {
-      console.log(error.message);
       toast.error(error.message);
     },
   });

@@ -23,6 +23,7 @@ model User {
     phone            String         @unique
     createdAt        DateTime       @default(now())
     updatedAt        DateTime       @updatedAt
+    whatsAppToken    String?
     templateWhatsApp String         @default("") @db.VarChar(10000)
     pelamar          Pelamar[]
     EmailTemplate    EmailTemplate?

@@ -6,6 +6,7 @@ export const updateSelf = z.object({
   password: z.string().min(4).optional(),
   templateWhatsApp: z.string().optional(),
   phone: z.string().optional(),
+  whatsAppToken: z.string().optional(),
 });
 
 export type IUpdateSelf = z.infer<typeof updateSelf>;

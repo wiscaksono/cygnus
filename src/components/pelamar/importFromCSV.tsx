@@ -1,6 +1,14 @@
 import { Fragment, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { toast } from "react-toastify";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+import "dayjs/locale/id";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.locale("id-ID");
 
 import { useModal } from "~/hooks";
 import { api } from "~/utils/api";
@@ -17,55 +25,59 @@ export const ImportFromCSV = ({ refetch }: { refetch: () => void }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const mutation = api.pelamar.createMany.useMutation();
+  const { data: user } = api.user.getSelf.useQuery();
 
   const handleSubmit = () => {
-    const reader = new FileReader();
-
     try {
       setIsLoading(true);
+      const reader = new FileReader();
+
       reader.onload = async (e) => {
         const text = e.target?.result as string;
 
         if (text) {
           const candidates = parseData(text);
 
-          const hasWhatsApp = [] as Promise<{ onwhatsapp: "true" | "false" }>[];
+          if (!user?.whatsAppToken) {
+            toast.error("Token WhatsApp belum diatur");
+            return;
+          }
+
+          const isValid = (await whatsApp.validate({
+            target: candidates.map((candidate) => candidate.phone).join(","),
+            token: user.whatsAppToken,
+          })) as {
+            registered: string[];
+          };
+
           const mutationData = [] as RouterInputs["pelamar"]["createMany"];
 
           for (const candidate of candidates) {
-            hasWhatsApp.push(whatsApp.checkNumber(candidate.phone) as Promise<{ onwhatsapp: "true" | "false" }>);
             mutationData.push({
               name: candidate.name,
-              phone: candidate.phone,
+              phone: candidate.phone || "-",
               email: candidate.email,
               portal: candidate.portal,
               position: candidate.position,
               interviewDate: candidate.interviewDate,
+              hasWhatsapp: isValid.registered.includes(`62${candidate.phone.replace(/^0+/, "")}`),
+              createdAt: dayjs("09-26-2023").tz("Asia/Jakarta").toDate(),
             });
           }
 
-          await Promise.all(hasWhatsApp).then((res) => {
-            res.forEach((data, index) => {
-              mutationData[index]!.hasWhatsapp = data.onwhatsapp === "true";
-            });
-          });
-
-          await mutation.mutateAsync(mutationData).then(() => {
-            toast.success("Pelamar berhasil ditambahkan");
-            closeModal();
-            refetch();
-          });
+          await mutation.mutateAsync(mutationData);
+          toast.success("Pelamar berhasil ditambahkan");
+          refetch();
+          closeModal();
+          setIsLoading(false);
+          setFile(undefined);
         }
       };
 
       reader.readAsText(file!);
     } catch (error) {
-      console.log(error);
-    } finally {
-      toast.success("Pelamar berhasil ditambahkan");
-      refetch();
-      closeModal();
       setIsLoading(false);
+      toast.error("Terjadi kesalahan saat menambahkan pelamar");
     }
   };
 

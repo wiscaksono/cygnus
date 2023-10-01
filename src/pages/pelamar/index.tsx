@@ -1,14 +1,14 @@
 import Head from "next/head";
 import { useLayoutEffect, useRef, useState, useEffect } from "react";
 import { CheckCircleIcon, XMarkIcon, EnvelopeIcon } from "@heroicons/react/24/outline";
-import { format } from "date-fns";
-import { id } from "date-fns/locale";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+import "dayjs/locale/id";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
+dayjs.locale("id-ID");
 
 import { api } from "~/utils/api";
 import { getServerAuthSession } from "~/server/auth";
@@ -118,10 +118,8 @@ export default function Pelamar() {
                   invitedByEmail: !filter.invitedByEmail,
                 });
               }}
-              className={`block ${
-                filter.invitedByEmail ? "bg-indigo-600 text-white" : "text-gray-800"
-              } rounded-md border-0 px-2.5 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-            >
+              className={`block ${filter.invitedByEmail ? "bg-indigo-600 text-white" : "text-gray-800"
+                } rounded-md border-0 px-2.5 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}>
               Invited by Email
             </button>
             <button
@@ -131,10 +129,8 @@ export default function Pelamar() {
                   invitedByWhatsapp: !filter.invitedByWhatsapp,
                 });
               }}
-              className={`block ${
-                filter.invitedByWhatsapp ? "bg-indigo-600 text-white" : "text-gray-800"
-              } rounded-md border-0 px-2.5 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}
-            >
+              className={`block ${filter.invitedByWhatsapp ? "bg-indigo-600 text-white" : "text-gray-800"
+                } rounded-md border-0 px-2.5 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}>
               Invited by WhatsApp
             </button>
 
@@ -160,8 +156,7 @@ export default function Pelamar() {
                         <th
                           scope="col"
                           className={`whitespace-nowrap px-3 py-3.5 text-left text-sm font-semibold text-gray-900 ${item === "Invited" ? "text-center" : "text-left"}`}
-                          key={i}
-                        >
+                          key={i}>
                           {item}
                         </th>
                       ))}
@@ -194,16 +189,8 @@ export default function Pelamar() {
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.email}</td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.position}</td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.portal}</td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {format(person.interviewDate, "hh:mm, dd MMMM yyyy", {
-                            locale: id,
-                          })}
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {format(person.createdAt, "dd MMMM yyyy", {
-                            locale: id,
-                          })}
-                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{dayjs(person.interviewDate).tz("Asia/Jakarta").format("h:mm, DD MMMM YYYY")}</td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{dayjs(person.createdAt).tz("Asia/Jakarta").format("DD MMMM YYYY")}</td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           <div className="flex items-center justify-center gap-x-2">
                             <span className="flex shrink-0 items-center gap-x-1">

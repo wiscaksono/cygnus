@@ -1,7 +1,12 @@
-import { format } from "date-fns";
-import { id } from "date-fns/locale";
 const Sib = require("@getbrevo/brevo") as TBrevo;
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+import "dayjs/locale/id";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.locale("id-ID");
 
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/api/trpc";
 import { filterPelamarSchema, createPelamarSchema, deletePelamarSchema, updatePelamarSchema, deleteAllPelamarSchema, createManyPelamarSchema } from "~/schema/pelamar";
@@ -79,17 +84,27 @@ export const pelamarRouter = createTRPCRouter({
         };
       }
 
-      const { onwhatsapp, result } = (await whatsApp.checkNumber(phone)) as {
-        onwhatsapp: "true" | "false";
-        result: "true" | "false";
-      };
+      const user = await prisma.user.findFirst({
+        where: {
+          id: ctx.session?.user.id,
+        },
+      });
 
-      if (result !== "false") {
+      if (!user?.whatsAppToken) {
         return {
           status: 400,
-          message: "Whatsappnya error",
+          message: "Token WhatsApp tidak ditemukan",
         };
       }
+
+      const isValid = (await whatsApp.validate({
+        token: user?.whatsAppToken,
+        target: phone,
+      })) as {
+        registered: string[];
+      };
+
+      const hasWhatsapp = isValid.registered.includes(`62${phone.replace(/^0+/, "")}`);
 
       const createdPelamar = await prisma.pelamar.create({
         data: {
@@ -98,7 +113,7 @@ export const pelamarRouter = createTRPCRouter({
           email,
           phone,
           position,
-          hasWhatsapp: onwhatsapp === "true",
+          hasWhatsapp,
           interviewDate,
           userId: ctx.session?.user.id,
         },
@@ -149,15 +164,6 @@ export const pelamarRouter = createTRPCRouter({
       };
     }
 
-    let haveWhatsapp = false;
-
-    if (phone) {
-      const { onwhatsapp } = (await whatsApp.checkNumber(phone)) as {
-        onwhatsapp: "true" | "false";
-      };
-      haveWhatsapp = onwhatsapp === "true";
-    }
-
     const result = await ctx.prisma.pelamar.update({
       where: {
         id,
@@ -166,7 +172,7 @@ export const pelamarRouter = createTRPCRouter({
         name,
         email,
         phone,
-        hasWhatsapp: haveWhatsapp,
+        hasWhatsapp: true,
         position,
         interviewDate,
       },
@@ -229,47 +235,38 @@ export const pelamarRouter = createTRPCRouter({
           };
         }
 
-        const template = await prisma.user.findFirst({
+        const user = await prisma.user.findFirst({
           where: {
             id: ctx.session?.user.id,
           },
         });
 
-        if (!template) {
+        if (!user) {
           return {
             status: 404,
             message: "Template tidak ditemukan",
           };
         }
 
-        const interviewDateUTC0 = pelamar.interviewDate;
-        const interviewDateUTC7 = new Date(
-          interviewDateUTC0.getTime() + 7 * 60 * 60 * 1000, // Convert UTC+0 to UTC+7
-        );
-
-        const templateMessage = template.templateWhatsApp
+        const templateMessage = user.templateWhatsApp
           .replace(/{{namaPelamar}}/g, pelamar.name)
           .replace(/{{position}}/g, pelamar.position)
           .replace(/{{namaPengirim}}/g, ctx.session?.user.fullName)
-          .replace(/{{interviewTime}}/g, interviewDateUTC7.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }))
-          .replace(
-            /{{interviewDate}}/g,
-            format(pelamar.interviewDate, "EEEE, dd MMMM yyyy", {
-              locale: id,
-            }),
-          );
+          .replace(/{{interviewTime}}/g, dayjs(pelamar.interviewDate).tz("Asia/Jakarta").format("h:mm"))
+          .replace(/{{interviewDate}}/g, dayjs(pelamar.interviewDate).tz("Asia/Jakarta").format("dddd, DD MMMM YYYY"));
 
-        const { status } = (await whatsApp.sendMessage({
-          number,
-          message: templateMessage,
-        })) as { status: string };
-
-        if (status !== "sent") {
+        if (!user.whatsAppToken) {
           return {
-            status: 500,
-            message: "Gagal mengirim pesan",
+            status: 400,
+            message: "Token WhatsApp tidak ditemukan",
           };
         }
+
+        await whatsApp.sendMessage({
+          number,
+          token: user.whatsAppToken,
+          message: templateMessage,
+        });
 
         await prisma.pelamar.update({
           where: {
@@ -329,11 +326,6 @@ export const pelamarRouter = createTRPCRouter({
 
     const receivers = [{ email }];
 
-    const interviewDateUTC0 = interviewDate;
-    const interviewDateUTC7 = new Date(
-      interviewDateUTC0.getTime() + 7 * 60 * 60 * 1000, // Convert UTC+0 to UTC+7
-    );
-
     const htmlContent = emailTemplate
       .replace(/{{namaPelamar}}/g, namaPelamar)
       .replace(/{{position}}/g, position)
@@ -341,13 +333,8 @@ export const pelamarRouter = createTRPCRouter({
       .replace(/{{whatsApp}}/g, ctx.session?.user.phone.replace(/(\d{4})(\d{4})(\d{4})/, "$1-$2-$3"))
       .replace(/{{portal}}/g, portal)
       .replace(/{{whatsAppUrl}}/g, `https://wa.me/+62${ctx.session?.user.phone.replace(/^0+/, "")}`)
-      .replace(/{{interviewTime}}/g, interviewDateUTC7.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }))
-      .replace(
-        /{{interviewDate}}/g,
-        format(interviewDate, "EEEE, dd MMMM yyyy", {
-          locale: id,
-        }),
-      );
+      .replace(/{{interviewTime}}/g, dayjs(interviewDate).tz("Asia/Jakarta").format("h:mm"))
+      .replace(/{{interviewDate}}/g, dayjs(interviewDate).tz("Asia/Jakarta").format("dddd, DD MMMM YYYY"));
 
     try {
       transEmailApi.sendTransacEmail({

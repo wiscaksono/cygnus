@@ -23,6 +23,7 @@ export const createPelamarSchema = z.object({
   interviewDate: z.date(),
   hasWhatsapp: z.boolean().optional(),
   portal: z.string(),
+  createdAt: z.string().or(z.date()).optional(),
 });
 
 export const createManyPelamarSchema = z.array(createPelamarSchema);
