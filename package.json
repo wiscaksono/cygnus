@@ -8,6 +8,7 @@
     "postinstall": "prisma generate",
     "lint": "next lint",
     "start": "next start",
+    "studio": "prisma studio",
     "db-seed": "NODE_ENV=development prisma db seed"
   },
   "dependencies": {

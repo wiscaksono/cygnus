@@ -35,6 +35,8 @@ export const updatePelamarSchema = z.object({
   phone: z.string().optional(),
   position: z.string().optional(),
   interviewDate: z.string().or(z.date()).optional(),
+  invitedByWhatsapp: z.boolean().optional(),
+  invitedByEmail: z.boolean().optional(),
 });
 
 export const deletePelamarSchema = z.object({

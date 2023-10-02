@@ -74,7 +74,7 @@ export const pelamarRouter = createTRPCRouter({
 
     const result = await ctx.prisma.$transaction(async (prisma) => {
       const phoneExists = await prisma.pelamar.findFirst({
-        where: { phone },
+        where: { phone, userId: ctx.session?.user.id },
       });
 
       if (phoneExists) {
@@ -141,6 +141,7 @@ export const pelamarRouter = createTRPCRouter({
           phone: {
             in: pelamars.map((pelamar) => pelamar.phone),
           },
+          userId: ctx.session?.user.id,
         },
       });
 
@@ -164,10 +165,21 @@ export const pelamarRouter = createTRPCRouter({
   }),
 
   update: protectedProcedure.input(updatePelamarSchema).mutation(async ({ input, ctx }) => {
-    const { id, name, email, phone, position, interviewDate } = input;
+    const { id, name, email, phone, position, interviewDate, invitedByWhatsapp, invitedByEmail } = input;
+
+    const existingPelamar = await ctx.prisma.pelamar.findUnique({
+      where: { id },
+    });
+
+    if (!existingPelamar) {
+      return {
+        status: 404,
+        message: "Pelamar not found",
+      };
+    }
 
     const phoneExists = await ctx.prisma.pelamar.findFirst({
-      where: { phone },
+      where: { phone, NOT: { id } },
     });
 
     if (phoneExists) {
@@ -177,25 +189,55 @@ export const pelamarRouter = createTRPCRouter({
       };
     }
 
-    const result = await ctx.prisma.pelamar.update({
+    const user = await ctx.prisma.user.findFirst({
       where: {
-        id,
-      },
-      data: {
-        name,
-        email,
-        phone,
-        hasWhatsapp: true,
-        position,
-        interviewDate,
+        id: ctx.session?.user.id,
       },
     });
 
-    return {
-      status: 201,
-      message: "Berhasil mengubah pelamar",
-      result: result,
-    };
+    if (!user?.whatsAppToken) {
+      return {
+        status: 400,
+        message: "Token WhatsApp tidak ditemukan",
+      };
+    }
+
+    let hasWhatsapp = false;
+
+    if (phone) {
+      const isValid = await whatsApp.validate({
+        token: user?.whatsAppToken,
+        target: phone,
+      });
+      hasWhatsapp = isValid.registered.includes(`62${phone.replace(/^0+/, "")}`);
+    }
+
+    try {
+      const updatedPelamar = await ctx.prisma.pelamar.update({
+        where: { id },
+        data: {
+          name,
+          email,
+          phone,
+          hasWhatsapp,
+          position,
+          interviewDate,
+          invitedByEmail,
+          invitedByWhatsapp,
+        },
+      });
+
+      return {
+        status: 200,
+        message: "Pelamar berhasil diperbarui",
+        result: updatedPelamar,
+      };
+    } catch (error) {
+      return {
+        status: 500,
+        message: "Gagal memperbarui pelamar",
+      };
+    }
   }),
 
   delete: protectedProcedure.input(deletePelamarSchema).mutation(async ({ input, ctx }) => {

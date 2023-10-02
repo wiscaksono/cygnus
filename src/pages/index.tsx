@@ -31,8 +31,7 @@ export default function Page() {
                 right: 30,
                 top: 30,
                 bottom: 5,
-              }}
-            >
+              }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
                 dataKey="month"
@@ -66,8 +65,7 @@ export default function Page() {
                 right: 30,
                 top: 30,
                 bottom: 5,
-              }}
-            >
+              }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
                 dataKey="day"
