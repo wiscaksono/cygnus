@@ -20,7 +20,7 @@ export default function Page() {
         <title>Cygnus - Dashboard</title>
       </Head>
 
-      <section className="grid h-[calc(100vh-80px)] grid-cols-6 grid-rows-2 gap-5">
+      <section className="grid h-[calc(100vh-80px-64px)] grid-cols-6 grid-rows-2 gap-5 lg:h-[calc(100vh-80px)]">
         <div className="relative col-span-6 overflow-hidden rounded-lg border">
           <h3 className="absolute right-0 top-0 z-10 rounded-bl-lg border-b border-l bg-white px-4 py-2 text-sm font-medium">Pelamar tahun ini</h3>
           <ResponsiveContainer>

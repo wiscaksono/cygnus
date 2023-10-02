@@ -95,6 +95,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                             ))}
                           </ul>
                         </li>
+
+                        <li className="mt-auto">
+                          <div className="flex items-center gap-x-4 py-3 text-sm font-semibold leading-6 text-gray-900">
+                            <Image className="aspect-square rounded-full bg-gray-50" width={40} height={40} src={data.user.image || ""} alt={"PP"} />
+                            <button
+                              onClick={() => void signOut()}
+                              className="w-full rounded bg-white px-2 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 transition-colors hover:bg-red-200 hover:text-red-500 hover:ring-red-500">
+                              Log out
+                            </button>
+                          </div>
+                        </li>
                       </ul>
                     </nav>
                   </div>
@@ -154,10 +165,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <Bars3Icon className="h-6 w-6" aria-hidden="true" />
           </button>
           <div className="flex-1 text-sm font-semibold leading-6 text-gray-900">Dashboard</div>
-          <a href="#">
+          <div>
             <span className="sr-only">Your profile</span>
             <Image className="aspect-square rounded-full bg-gray-50" width={32} height={32} src={data.user.image || ""} alt={"PP"} />
-          </a>
+          </div>
         </div>
 
         <main className="py-10 lg:pl-72">
