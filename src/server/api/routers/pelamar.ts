@@ -97,12 +97,10 @@ export const pelamarRouter = createTRPCRouter({
         };
       }
 
-      const isValid = (await whatsApp.validate({
+      const isValid = await whatsApp.validate({
         token: user?.whatsAppToken,
         target: phone,
-      })) as {
-        registered: string[];
-      };
+      });
 
       const hasWhatsapp = isValid.registered.includes(`62${phone.replace(/^0+/, "")}`);
 

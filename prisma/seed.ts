@@ -40,7 +40,7 @@ async function createPelamars(amount: number) {
       position: faker.person.jobTitle(),
       interviewDate: faker.date.future(),
       createdAt: faker.date.past(),
-      userId: "cln6w7sme0000inh9iuztvc5d",
+      userId: "cln6ls2c00000sbkc5evjv39h",
       portal: faker.internet.domainWord(),
       phone,
       hasWhatsapp: true,

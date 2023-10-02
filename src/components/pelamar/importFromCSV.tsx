@@ -43,16 +43,17 @@ export const ImportFromCSV = ({ refetch }: { refetch: () => void }) => {
             return;
           }
 
-          const isValid = (await whatsApp.validate({
-            target: candidates.map((candidate) => candidate.phone).join(","),
-            token: user.whatsAppToken,
-          })) as {
-            registered: string[];
-          };
-
           const mutationData = [] as RouterInputs["pelamar"]["createMany"];
+          const whatsAppData = [] as Promise<{ status: boolean; registered: string[] }>[];
 
           for (const candidate of candidates) {
+            whatsAppData.push(
+              whatsApp.validate({
+                token: user.whatsAppToken,
+                target: candidate.phone,
+              }),
+            );
+
             mutationData.push({
               name: candidate.name,
               phone: candidate.phone || "-",
@@ -60,11 +61,18 @@ export const ImportFromCSV = ({ refetch }: { refetch: () => void }) => {
               portal: candidate.portal,
               position: candidate.position,
               interviewDate: candidate.interviewDate,
-              hasWhatsapp: isValid.registered.includes(`62${candidate.phone.replace(/^0+/, "")}`),
             });
           }
 
+          await Promise.all(whatsAppData).then((results) => {
+            results.forEach((data, index) => {
+              const hasWhatsApp = data.status ? data.registered.includes(`62${mutationData[index]!.phone.replace(/^0+/, "")}`) : false;
+              mutationData[index]!.hasWhatsapp = hasWhatsApp;
+            });
+          });
+
           await mutation.mutateAsync(mutationData);
+
           toast.success("Pelamar berhasil ditambahkan");
           refetch();
           closeModal();
@@ -75,6 +83,7 @@ export const ImportFromCSV = ({ refetch }: { refetch: () => void }) => {
 
       reader.readAsText(file!);
     } catch (error) {
+      console.log(error);
       setIsLoading(false);
       toast.error("Terjadi kesalahan saat menambahkan pelamar");
     }
@@ -85,12 +94,11 @@ export const ImportFromCSV = ({ refetch }: { refetch: () => void }) => {
       <button
         type="button"
         className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-        onClick={openModal}
-      >
+        onClick={openModal}>
         Import from CSV
       </button>
 
-      <Transition.Root show={isOpen} as={Fragment}>
+      <Transition.Root show={isOpen || isLoading} as={Fragment}>
         <Dialog as="div" className="relative z-[60]" initialFocus={cancelButtonRef} onClose={closeModal}>
           <Transition.Child
             as={Fragment}
@@ -99,8 +107,7 @@ export const ImportFromCSV = ({ refetch }: { refetch: () => void }) => {
             enterTo="opacity-100"
             leave="ease-in duration-200"
             leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
+            leaveTo="opacity-0">
             <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
           </Transition.Child>
 
@@ -113,8 +120,7 @@ export const ImportFromCSV = ({ refetch }: { refetch: () => void }) => {
                 enterTo="opacity-100 translate-y-0 sm:scale-100"
                 leave="ease-in duration-200"
                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              >
+                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
                 <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-xl">
                   <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                     <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
@@ -123,7 +129,7 @@ export const ImportFromCSV = ({ refetch }: { refetch: () => void }) => {
                           <div className="flex flex-col items-center justify-center">
                             <h1 className="text-xl font-semibold">File selected</h1>
                             <p className="text-sm text-gray-500">{file.name}</p>
-                            <button className="mt-1 rounded-lg border bg-gray-100 px-3 py-2 text-sm" onClick={() => setFile(undefined)}>
+                            <button className="mt-1 rounded-lg border bg-gray-100 px-3 py-2 text-sm" onClick={() => setFile(undefined)} disabled={isLoading}>
                               Remove
                             </button>
                           </div>
@@ -151,16 +157,14 @@ export const ImportFromCSV = ({ refetch }: { refetch: () => void }) => {
                       type="submit"
                       className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-70 sm:ml-3"
                       onClick={handleSubmit}
-                      disabled={isLoading || !file}
-                    >
+                      disabled={isLoading || !file}>
                       {isLoading ? "Loading..." : "Submit"}
                     </button>
                     <button
                       type="button"
                       className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
                       onClick={closeModal}
-                      ref={cancelButtonRef}
-                    >
+                      ref={cancelButtonRef}>
                       Cancel
                     </button>
                   </div>
