@@ -58,7 +58,7 @@ async function createPelamars(amount: number) {
   const spinnies = new Spinnies();
   try {
     await prisma.pelamar.deleteMany({});
-    const amountOfUsers = 300;
+    const amountOfUsers = 1000;
     const pelamars = await createPelamars(amountOfUsers);
     const MAX_POOL = 10;
     const workers = [] as (() => Promise<void>)[];
@@ -72,7 +72,7 @@ async function createPelamars(amount: number) {
 
         for (const item of chunk) {
           const headers = new Headers();
-          headers.append("Authorization", "Caukbif_tkoWs5p61DZm");
+          headers.append("Authorization", "");
 
           const body = new FormData();
           body.append("target", item.phone);
