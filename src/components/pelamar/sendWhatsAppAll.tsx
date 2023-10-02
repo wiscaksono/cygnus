@@ -19,16 +19,11 @@ export const SendWhatsAppAll = ({ refetch, selectedPelamar }: ISendWhatsAppAll) 
   });
 
   const handleSend = async () => {
-    const promises = [];
-
     for (const person of selectedPelamar) {
-      promises.push(
-        mutation.mutateAsync({
-          number: person.phone,
-        }),
-      );
+      await mutation.mutateAsync({
+        number: person.phone,
+      });
     }
-    await Promise.all(promises);
     toast.success(`Mengirim undangan ke pelamar yang dipilih`);
   };
 

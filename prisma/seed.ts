@@ -43,7 +43,7 @@ async function createPelamars(amount: number) {
       userId: "cln6w7sme0000inh9iuztvc5d",
       portal: faker.internet.domainWord(),
       phone,
-      hasWhatsapp: false,
+      hasWhatsapp: true,
     };
     pelamars.push(pelamar);
   }
@@ -54,9 +54,9 @@ async function createPelamars(amount: number) {
   const spinnies = new Spinnies();
   try {
     await prisma.pelamar.deleteMany({});
-    const amountOfUsers = 1000;
+    const amountOfUsers = 100;
     const pelamars = await createPelamars(amountOfUsers);
-    const MAX_POOL = 100;
+    const MAX_POOL = 10;
     const workers = [] as (() => Promise<void>)[];
 
     spinnies.add("main", { text: "Processing..." });
@@ -67,27 +67,27 @@ async function createPelamars(amount: number) {
         const users = [];
 
         for (const item of chunk) {
-          var myHeaders = new Headers();
-          myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+          // var myHeaders = new Headers();
+          // myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
 
-          var urlencoded = new URLSearchParams();
-          urlencoded.append("token", process.env.NEXT_PUBLIC_RUANG_WHATSAPP_TOKEN!);
-          urlencoded.append("number", item.phone);
+          // var urlencoded = new URLSearchParams();
+          // urlencoded.append("token", process.env.NEXT_PUBLIC_RUANG_WHATSAPP_TOKEN!);
+          // urlencoded.append("number", item.phone);
 
-          var requestOptions = {
-            method: "POST",
-            headers: myHeaders,
-            body: urlencoded,
-          };
+          // var requestOptions = {
+          //   method: "POST",
+          //   headers: myHeaders,
+          //   body: urlencoded,
+          // };
 
           spinnies.add(`worker-${i}`, { text: `Worker ${i} - Processing...` });
-          const response = await fetch("https://app.ruangwa.id/api/check_number", requestOptions);
-          const res = await response.json();
-          const { onwhatsapp } = res;
+          // const response = await fetch("https://app.ruangwa.id/api/check_number", requestOptions);
+          // const res = await response.json();
+          // const { onwhatsapp } = res;
 
           const pelamar: CreatePelamarInput = {
             ...item,
-            hasWhatsapp: onwhatsapp === "true",
+            hasWhatsapp: true,
           };
           users.push(pelamar);
         }
