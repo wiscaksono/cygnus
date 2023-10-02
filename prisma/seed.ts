@@ -1,7 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import { faker } from "@faker-js/faker/locale/id_ID";
-import { RouterInputs } from "~/utils/api";
 import Spinnies from "spinnies";
+
+import { RouterInputs } from "~/utils/api";
 
 type CreatePelamarInput = RouterInputs["pelamar"]["create"] & {
   createdAt: Date;
@@ -39,7 +40,10 @@ async function createPelamars(amount: number) {
       email: faker.internet.email().toLowerCase(),
       position: faker.person.jobTitle(),
       interviewDate: faker.date.future(),
-      createdAt: faker.date.past(),
+      createdAt: faker.date.between({
+        from: new Date("2023-01-01"),
+        to: new Date("2023-10-01"),
+      }),
       userId: "cln6ls2c00000sbkc5evjv39h",
       portal: faker.internet.domainWord(),
       phone,
@@ -54,7 +58,7 @@ async function createPelamars(amount: number) {
   const spinnies = new Spinnies();
   try {
     await prisma.pelamar.deleteMany({});
-    const amountOfUsers = 100;
+    const amountOfUsers = 300;
     const pelamars = await createPelamars(amountOfUsers);
     const MAX_POOL = 10;
     const workers = [] as (() => Promise<void>)[];
@@ -67,27 +71,34 @@ async function createPelamars(amount: number) {
         const users = [];
 
         for (const item of chunk) {
-          // var myHeaders = new Headers();
-          // myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+          const headers = new Headers();
+          headers.append("Authorization", "Caukbif_tkoWs5p61DZm");
 
-          // var urlencoded = new URLSearchParams();
-          // urlencoded.append("token", process.env.NEXT_PUBLIC_RUANG_WHATSAPP_TOKEN!);
-          // urlencoded.append("number", item.phone);
+          const body = new FormData();
+          body.append("target", item.phone);
 
-          // var requestOptions = {
-          //   method: "POST",
-          //   headers: myHeaders,
-          //   body: urlencoded,
-          // };
+          var requestOptions = {
+            method: "POST",
+            headers,
+            body,
+          };
+
+          const response = await fetch(`${process.env.NEXT_PUBLIC_FONNTE_BASE_URL}/validate`, requestOptions);
+          const res = (await response.json()) as { status: boolean; registered: string[]; not_registered: string[] };
+          console.log(res);
 
           spinnies.add(`worker-${i}`, { text: `Worker ${i} - Processing...` });
-          // const response = await fetch("https://app.ruangwa.id/api/check_number", requestOptions);
-          // const res = await response.json();
-          // const { onwhatsapp } = res;
+
+          let hasWhatsapp;
+          if (res.status && res.registered !== undefined) {
+            hasWhatsapp = res?.registered?.includes(`62${item.phone.replace(/^0+/, "")}`);
+          } else {
+            hasWhatsapp = false;
+          }
 
           const pelamar: CreatePelamarInput = {
             ...item,
-            hasWhatsapp: true,
+            hasWhatsapp,
           };
           users.push(pelamar);
         }

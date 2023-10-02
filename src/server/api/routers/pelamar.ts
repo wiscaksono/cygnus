@@ -136,6 +136,21 @@ export const pelamarRouter = createTRPCRouter({
         };
       });
 
+      const isExists = await prisma.pelamar.findMany({
+        where: {
+          phone: {
+            in: pelamars.map((pelamar) => pelamar.phone),
+          },
+        },
+      });
+
+      if (isExists.length > 0) {
+        return {
+          status: 400,
+          message: `Nomor telepon ${isExists.map((pelamar) => pelamar.phone).join(", ")} sudah terdaftar`,
+        };
+      }
+
       const result = await prisma.pelamar.createMany({
         data: pelamars,
       });

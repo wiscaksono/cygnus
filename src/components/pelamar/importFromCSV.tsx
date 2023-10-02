@@ -66,14 +66,28 @@ export const ImportFromCSV = ({ refetch }: { refetch: () => void }) => {
 
           await Promise.all(whatsAppData).then((results) => {
             results.forEach((data, index) => {
-              const hasWhatsApp = data.status ? data.registered.includes(`62${mutationData[index]!.phone.replace(/^0+/, "")}`) : false;
+              let hasWhatsApp;
+
+              if (data.status && data.registered !== undefined) {
+                hasWhatsApp = data?.registered?.includes(`62${mutationData[index]!.phone.replace(/^0+/, "")}`);
+              } else {
+                hasWhatsApp = false;
+              }
+
               mutationData[index]!.hasWhatsapp = hasWhatsApp;
             });
           });
 
-          await mutation.mutateAsync(mutationData);
+          const res = await mutation.mutateAsync(mutationData);
 
-          toast.success("Pelamar berhasil ditambahkan");
+          if (res && res.status !== 201) {
+            toast.error(res.message);
+          }
+
+          if (res && res.status === 201) {
+            toast.success(res.message);
+          }
+
           refetch();
           closeModal();
           setIsLoading(false);
