@@ -102,6 +102,8 @@ export const pelamarRouter = createTRPCRouter({
         target: phone,
       });
 
+      console.log(isValid);
+
       const hasWhatsapp = isValid.registered.includes(`62${phone.replace(/^0+/, "")}`);
 
       const createdPelamar = await prisma.pelamar.create({
@@ -306,6 +308,7 @@ export const pelamarRouter = createTRPCRouter({
         const templateMessage = user.templateWhatsApp
           .replace(/{{namaPelamar}}/g, pelamar.name)
           .replace(/{{position}}/g, pelamar.position)
+          .replace(/{{portal}}/g, pelamar.portal)
           .replace(/{{namaPengirim}}/g, ctx.session?.user.fullName)
           .replace(/{{interviewTime}}/g, dayjs(pelamar.interviewDate).tz("Asia/Jakarta").format("h:mm"))
           .replace(/{{interviewDate}}/g, dayjs(pelamar.interviewDate).tz("Asia/Jakarta").format("dddd, DD MMMM YYYY"));

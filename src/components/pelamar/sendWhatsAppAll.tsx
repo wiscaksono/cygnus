@@ -23,6 +23,7 @@ export const SendWhatsAppAll = ({ refetch, selectedPelamar }: ISendWhatsAppAll) 
       await mutation.mutateAsync({
         number: person.phone,
       });
+      await new Promise((resolve) => setTimeout(resolve, 1000));
     }
     toast.success(`Mengirim undangan ke pelamar yang dipilih`);
   };

@@ -112,7 +112,7 @@ export const ProfileForm = () => {
                 <span className="text-gray-500">Available variables: </span>
                 <span className="text-gray-400">&#123;&#123;namaPelamar&#125;&#125;</span> <span className="text-gray-400">&#123;&#123;namaPengirim&#125;&#125;</span>{" "}
                 <span className="text-gray-400">&#123;&#123;position&#125;&#125;</span> <span className="text-gray-400">&#123;&#123;interviewDate&#125;&#125;</span>{" "}
-                <span className="text-gray-400">&#123;&#123;interviewTime&#125;&#125;</span>{" "}
+                <span className="text-gray-400">&#123;&#123;portal&#125;&#125;</span> <span className="text-gray-400">&#123;&#123;interviewTime&#125;&#125;</span>
               </p>
             </div>
           </div>
