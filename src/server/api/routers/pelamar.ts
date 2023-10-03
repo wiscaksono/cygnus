@@ -102,8 +102,6 @@ export const pelamarRouter = createTRPCRouter({
         target: phone,
       });
 
-      console.log(isValid);
-
       const hasWhatsapp = isValid.registered.includes(`62${phone.replace(/^0+/, "")}`);
 
       const createdPelamar = await prisma.pelamar.create({
@@ -320,13 +318,22 @@ export const pelamarRouter = createTRPCRouter({
           };
         }
 
-        await whatsApp.sendMessage({
+        const { status: sendWhatsappStatus } = (await whatsApp.sendMessage({
           number,
           token: user.whatsAppToken,
           message: templateMessage,
-        });
+        })) as {
+          status: string;
+        };
 
-        await prisma.pelamar.update({
+        if (!sendWhatsappStatus) {
+          return {
+            status: 500,
+            message: "Gagal mengirim WhatsApp",
+          };
+        }
+
+        const updateUser = await prisma.pelamar.update({
           where: {
             phone: number,
           },
@@ -334,6 +341,13 @@ export const pelamarRouter = createTRPCRouter({
             invitedByWhatsapp: true,
           },
         });
+
+        if (!updateUser) {
+          return {
+            status: 500,
+            message: "Gagal mengupdate pelamar",
+          };
+        }
 
         return {
           status: 200,
@@ -345,7 +359,7 @@ export const pelamarRouter = createTRPCRouter({
       console.error("Error in Prisma transaction:", error);
       return {
         status: 500,
-        message: "Internal server error",
+        message: "Gagal mengirim pesan",
       };
     }
 

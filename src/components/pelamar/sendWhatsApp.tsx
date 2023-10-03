@@ -11,7 +11,8 @@ interface ISendWhatsApp {
 
 export const SendWhatsApp = ({ person, refetch }: ISendWhatsApp) => {
   const mutation = api.pelamar.sendWhatsApp.useMutation({
-    onSuccess: ({ message }) => {
+    onSuccess: ({ message, status }) => {
+      if (status !== 200) return toast.error(message);
       toast.success(message);
       refetch();
     },
