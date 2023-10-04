@@ -23,6 +23,7 @@ import { SendWhatsAppAll } from "~/components/pelamar/sendWhatsAppAll";
 import { SendEmail } from "~/components/pelamar/sendEmail";
 import { SendEmailAll } from "~/components/pelamar/sendEmailAll";
 import { DeleteAll } from "~/components/pelamar/deleteAll";
+import { AddToTracking } from "~/components/pelamar/addToTracking";
 
 import { WhatsAppIcon } from "~/components/Icons";
 import { Loader } from "~/components/Loader";
@@ -214,6 +215,7 @@ export default function Pelamar() {
 
                         <td className="relative py-4 pl-3 pr-4 text-right">
                           <div className="flex items-center justify-end gap-x-2">
+                            <AddToTracking refetch={() => void refetch()} person={person} />
                             <SendEmail refetch={() => void refetch()} person={person} />
                             <SendWhatsApp refetch={() => void refetch()} person={person} />
                             <EditPelamar refetch={() => void refetch()} person={person} />
