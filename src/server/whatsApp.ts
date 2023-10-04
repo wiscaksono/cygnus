@@ -2,6 +2,7 @@ import { env } from "~/env.mjs";
 
 import type { ISendMessage } from "~/schema/whatsApp";
 import type { ErrorType } from "~/types/error";
+import type { IGetDevice, IGetQR, IDisconnectDevice } from "~/types/whatsApp";
 
 class ApiError extends Error {
   status: number;
@@ -68,6 +69,45 @@ class whatsAppConstructor {
       body,
       headers,
     }) as Promise<{ status: boolean; registered: string[]; not_registered: string[] }>;
+  }
+
+  device(req: { token: string }) {
+    const headers = new Headers();
+    if (!req.token) {
+      throw new Error("Token is required");
+    }
+    headers.append("Authorization", req.token);
+
+    return this.request("/device", {
+      method: "POST",
+      headers,
+    }) as Promise<IGetDevice>;
+  }
+
+  getQR(req: { token: string }) {
+    const headers = new Headers();
+    if (!req.token) {
+      throw new Error("Token is required");
+    }
+    headers.append("Authorization", req.token);
+
+    return this.request("/qr", {
+      method: "POST",
+      headers,
+    }) as Promise<IGetQR>;
+  }
+
+  disconnect(req: { token: string }) {
+    const headers = new Headers();
+    if (!req.token) {
+      throw new Error("Token is required");
+    }
+    headers.append("Authorization", req.token);
+
+    return this.request("/disconnect", {
+      method: "POST",
+      headers,
+    }) as Promise<IDisconnectDevice>;
   }
 }
 
