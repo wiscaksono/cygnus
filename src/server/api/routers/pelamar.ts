@@ -38,6 +38,14 @@ export const pelamarRouter = createTRPCRouter({
           mode: "insensitive",
         },
       },
+      orderBy: [
+        {
+          interviewDate: "asc",
+        },
+        {
+          name: "asc",
+        },
+      ],
     });
 
     const count = ctx.prisma.pelamar.count({
