@@ -97,6 +97,17 @@ export const pelamarRouter = createTRPCRouter({
         };
       }
 
+      const isWhatsAppConnected = await whatsApp.device({
+        token: user?.whatsAppToken,
+      });
+
+      if (isWhatsAppConnected.device_status === "disconnect") {
+        return {
+          status: 400,
+          message: "WhatsApp tidak terhubung",
+        };
+      }
+
       const isValid = await whatsApp.validate({
         token: user?.whatsAppToken,
         target: phone,
@@ -275,98 +286,95 @@ export const pelamarRouter = createTRPCRouter({
   sendWhatsApp: protectedProcedure.input(sendMessage).mutation(async ({ input, ctx }) => {
     const { number } = input;
 
-    try {
-      await ctx.prisma.$transaction(async (prisma) => {
-        const pelamar = await prisma.pelamar.findFirst({
-          where: {
-            phone: number,
-          },
-        });
-
-        if (!pelamar) {
-          return {
-            status: 404,
-            message: "Pelamar tidak ditemukan",
-          };
-        }
-
-        const user = await prisma.user.findFirst({
-          where: {
-            id: ctx.session?.user.id,
-          },
-        });
-
-        if (!user) {
-          return {
-            status: 404,
-            message: "Template tidak ditemukan",
-          };
-        }
-
-        const templateMessage = user.templateWhatsApp
-          .replace(/{{namaPelamar}}/g, pelamar.name)
-          .replace(/{{position}}/g, pelamar.position)
-          .replace(/{{portal}}/g, pelamar.portal)
-          .replace(/{{namaPengirim}}/g, ctx.session?.user.fullName)
-          .replace(/{{interviewTime}}/g, dayjs(pelamar.interviewDate).tz("Asia/Jakarta").format("h:mm"))
-          .replace(/{{interviewDate}}/g, dayjs(pelamar.interviewDate).tz("Asia/Jakarta").format("dddd, DD MMMM YYYY"));
-
-        if (!user.whatsAppToken) {
-          return {
-            status: 400,
-            message: "Token WhatsApp tidak ditemukan",
-          };
-        }
-
-        const { status: sendWhatsappStatus } = (await whatsApp.sendMessage({
-          number,
-          token: user.whatsAppToken,
-          message: templateMessage,
-        })) as {
-          status: string;
-        };
-
-        if (!sendWhatsappStatus) {
-          return {
-            status: 500,
-            message: "Gagal mengirim WhatsApp",
-          };
-        }
-
-        const updateUser = await prisma.pelamar.update({
-          where: {
-            phone: number,
-          },
-          data: {
-            invitedByWhatsapp: true,
-          },
-        });
-
-        if (!updateUser) {
-          return {
-            status: 500,
-            message: "Gagal mengupdate pelamar",
-          };
-        }
-
-        return {
-          status: 200,
-          message: "Berhasil mengirim pesan",
-        };
+    return await ctx.prisma.$transaction(async (prisma) => {
+      const pelamar = await prisma.pelamar.findFirst({
+        where: {
+          phone: number,
+        },
       });
-    } catch (error) {
-      // Handle any errors that occur during the transaction
-      console.error("Error in Prisma transaction:", error);
-      return {
-        status: 500,
-        message: "Gagal mengirim pesan",
-      };
-    }
 
-    return {
-      status: 200,
-      message: "Berhasil mengirim pesan",
-    };
+      if (!pelamar) {
+        return {
+          status: 404,
+          message: "Pelamar tidak ditemukan",
+        };
+      }
+
+      const user = await prisma.user.findFirst({
+        where: {
+          id: ctx.session?.user.id,
+        },
+      });
+
+      if (!user?.templateWhatsApp) {
+        return {
+          status: 400,
+          message: "Template WhatsApp belum diatur",
+        };
+      }
+
+      if (!user.whatsAppToken) {
+        return {
+          status: 400,
+          message: "Token WhatsApp tidak ditemukan",
+        };
+      }
+
+      const isWhatsAppConnected = await whatsApp.device({
+        token: user?.whatsAppToken,
+      });
+
+      if (isWhatsAppConnected.device_status === "disconnect") {
+        return {
+          status: 400,
+          message: "WhatsApp tidak terhubung",
+        };
+      }
+
+      const templateMessage = user.templateWhatsApp
+        .replace(/{{namaPelamar}}/g, pelamar.name)
+        .replace(/{{position}}/g, pelamar.position)
+        .replace(/{{portal}}/g, pelamar.portal)
+        .replace(/{{namaPengirim}}/g, ctx.session?.user.fullName)
+        .replace(/{{interviewTime}}/g, dayjs(pelamar.interviewDate).tz("Asia/Jakarta").format("h:mm"))
+        .replace(/{{interviewDate}}/g, dayjs(pelamar.interviewDate).tz("Asia/Jakarta").format("dddd, DD MMMM YYYY"));
+
+      const { status: sendWhatsappStatus } = (await whatsApp.sendMessage({
+        number,
+        token: user.whatsAppToken,
+        message: templateMessage,
+      })) as {
+        status: string;
+      };
+
+      if (!sendWhatsappStatus) {
+        return {
+          status: 500,
+          message: "Gagal mengirim WhatsApp",
+        };
+      }
+
+      const updateUser = await prisma.pelamar.update({
+        where: {
+          phone: number,
+        },
+        data: {
+          invitedByWhatsapp: true,
+        },
+      });
+
+      if (!updateUser) {
+        return {
+          status: 500,
+          message: "Gagal mengupdate pelamar",
+        };
+      }
+
+      return {
+        status: 200,
+        message: "Berhasil mengirim pesan",
+      };
+    });
   }),
 
   sendEmail: protectedProcedure.input(sendEmail).mutation(async ({ ctx, input }) => {

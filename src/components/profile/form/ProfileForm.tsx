@@ -146,20 +146,20 @@ const WhatsAppStatus = ({ whatsAppDevice, refetch }: { whatsAppDevice: IGetDevic
   return (
     <div className="sm:col-span-full">
       <p className="block text-sm font-medium leading-6 text-gray-900">WhatsApp Status</p>
-      <div className="mt-2 flex items-center justify-between rounded-md p-2 shadow-sm ring-1 ring-inset ring-gray-300">
-        <div className="flex items-center gap-x-2 divide-x">
+      <div className="mt-2 flex flex-col items-center justify-between gap-2 rounded-md p-2 shadow-sm ring-1 ring-inset ring-gray-300 sm:flex-row">
+        <div className="flex w-full flex-col items-center gap-x-2 gap-y-1 divide-y sm:flex-row sm:divide-x sm:divide-y-0">
           <p
-            className={`rounded-md px-2 py-0.5 text-sm font-medium capitalize ${whatsAppDevice?.device_status === "connect" ? "bg-green-100 text-green-500" : "bg-red-100 text-red-500"
+            className={`w-full rounded-md px-2 py-0.5 text-center text-sm font-medium capitalize sm:w-auto sm:text-left ${whatsAppDevice?.device_status === "connect" ? "bg-green-100 text-green-500" : "bg-red-100 text-red-500"
               }`}>
             {whatsAppDevice?.device_status}
           </p>
-          <p className="pl-2 text-sm leading-6 text-gray-600">
+          <p className="w-full text-center text-sm leading-6 text-gray-600 sm:w-auto sm:pl-2 sm:text-left">
             Message sent: <b>{whatsAppDevice?.messages}</b>
           </p>
-          <p className="pl-2 text-sm leading-6 text-gray-600">
+          <p className="w-full text-center text-sm leading-6 text-gray-600 sm:w-auto sm:pl-2 sm:text-left">
             Quota : <b>{whatsAppDevice?.quota}</b> <span className="text-gray-400">/ 9999</span>
           </p>
-          <p className="pl-2 text-sm leading-6 text-gray-600">
+          <p className="w-full text-center text-sm leading-6 text-gray-600 sm:w-auto sm:pl-2 sm:text-left">
             Expired : <b>{whatsAppDevice?.expired}</b>
           </p>
         </div>

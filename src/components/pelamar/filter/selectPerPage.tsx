@@ -15,10 +15,9 @@ export const SelectPerPage = ({ filter, setFilter }: FilterProps) => {
           ...filter,
           take: val,
         });
-      }}
-    >
+      }}>
       <div className="relative w-full md:w-auto">
-        <Listbox.Button className="relative block w-full rounded-md border-0 py-1.5 pl-4 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 md:w-28">
+        <Listbox.Button className="relative block w-full rounded-md border-0 py-2 pl-4 pr-10 text-left text-xs text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:py-1.5 sm:text-sm sm:leading-6 md:w-28">
           <span className="block truncate">{filter.take}</span>
           <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
             <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
@@ -29,9 +28,10 @@ export const SelectPerPage = ({ filter, setFilter }: FilterProps) => {
             {data.map((item) => (
               <Listbox.Option
                 key={item}
-                className={({ active }) => `relative block cursor-default select-none px-4 py-2 ${active ? "bg-indigo-100 text-indigo-900" : "text-gray-900"}`}
-                value={item}
-              >
+                className={({ active }) =>
+                  `relative block cursor-default select-none px-4 py-1 text-xs sm:py-2 sm:text-sm ${active ? "bg-indigo-100 text-indigo-900" : "text-gray-900"}`
+                }
+                value={item}>
                 {({ selected }) => (
                   <>
                     <span className={`block truncate ${selected ? "font-medium" : "font-normal"}`}>{item}</span>

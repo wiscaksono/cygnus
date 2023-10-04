@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import "dayjs/locale/id";
+import Link from "next/link";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -108,34 +109,37 @@ export default function Pelamar() {
             <CreatePelamar refetch={() => void refetch()} />
           </div>
         </div>
-        <div className="mt-8 flow-root">
-          <div className="mb-4 flex items-center gap-x-2">
+        <div className="mt-1 flow-root sm:mt-8">
+          <div className="mb-4 flex flex-col items-center gap-x-2 gap-y-1 sm:flex-row">
             <SearchBar filter={filter} setFilter={setFilter} />
-            <button
-              onClick={() => {
-                setFilter({
-                  ...filter,
-                  invitedByEmail: !filter.invitedByEmail,
-                });
-              }}
-              className={`block ${filter.invitedByEmail ? "bg-indigo-600 text-white" : "text-gray-800"
-                } rounded-md border-0 px-2.5 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}>
-              Invited by Email
-            </button>
-            <button
-              onClick={() => {
-                setFilter({
-                  ...filter,
-                  invitedByWhatsapp: !filter.invitedByWhatsapp,
-                });
-              }}
-              className={`block ${filter.invitedByWhatsapp ? "bg-indigo-600 text-white" : "text-gray-800"
-                } rounded-md border-0 px-2.5 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6`}>
-              Invited by WhatsApp
-            </button>
-
-            <DateFilter filter={filter} setFilter={setFilter} />
-            <SelectPerPage filter={filter} setFilter={setFilter} />
+            <div className="flex w-full items-center gap-x-2 sm:w-auto">
+              <button
+                onClick={() => {
+                  setFilter({
+                    ...filter,
+                    invitedByEmail: !filter.invitedByEmail,
+                  });
+                }}
+                className={`block ${filter.invitedByEmail ? "bg-indigo-600 text-white" : "text-gray-800"
+                  } w-full rounded-md border-0 px-2.5 py-1.5 text-xs shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:w-auto sm:text-sm sm:leading-6`}>
+                Invited by Email
+              </button>
+              <button
+                onClick={() => {
+                  setFilter({
+                    ...filter,
+                    invitedByWhatsapp: !filter.invitedByWhatsapp,
+                  });
+                }}
+                className={`block ${filter.invitedByWhatsapp ? "bg-indigo-600 text-white" : "text-gray-800"
+                  } w-full rounded-md border-0 px-2.5 py-1.5 text-xs shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:w-auto sm:text-sm sm:leading-6`}>
+                Invited by WhatsApp
+              </button>
+            </div>
+            <div className="flex w-full items-center gap-x-2 sm:w-auto">
+              <DateFilter filter={filter} setFilter={setFilter} />
+              <SelectPerPage filter={filter} setFilter={setFilter} />
+            </div>
           </div>
           <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
@@ -181,12 +185,16 @@ export default function Pelamar() {
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{i + 1}</td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.name}</td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          <p className="inline-flex items-center gap-x-2">
+                          <Link href={`https://wa.me/+62${person.phone}`} target="_blank" className="inline-flex items-center gap-x-2 underline">
                             {person.phone}
                             {!person.hasWhatsapp && <XMarkIcon className="h-5 w-5 text-red-500" />}
-                          </p>
+                          </Link>
                         </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.email}</td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          <Link href={`mailto:${person.email}`} target="_blank" className="underline">
+                            {person.email}
+                          </Link>
+                        </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.position}</td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.portal}</td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{dayjs(person.interviewDate).tz("Asia/Jakarta").format("h:mm, DD MMMM YYYY")}</td>
