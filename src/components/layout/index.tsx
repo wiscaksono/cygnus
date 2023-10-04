@@ -4,11 +4,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useSession, signOut } from "next-auth/react";
-import { Bars3Icon, HomeIcon, UserGroupIcon, XMarkIcon, UserCircleIcon } from "@heroicons/react/24/outline";
+import { Bars3Icon, HomeIcon, UserGroupIcon, XMarkIcon, UserCircleIcon, ClipboardDocumentCheckIcon } from "@heroicons/react/24/outline";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: HomeIcon },
   { name: "Pelamar", href: "/pelamar", icon: UserGroupIcon },
+  { name: "Tracking Pelamar", href: "/tracking-pelamar", icon: ClipboardDocumentCheckIcon },
   { name: "Profile", href: "/profile", icon: UserCircleIcon },
 ];
 

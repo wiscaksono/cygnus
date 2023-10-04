@@ -29,7 +29,7 @@ export const createPelamarSchema = z.object({
 export const createManyPelamarSchema = z.array(createPelamarSchema);
 
 export const updatePelamarSchema = z.object({
-  id: z.string().optional(),
+  id: z.string(),
   name: z.string().optional(),
   email: z.string().email().optional(),
   phone: z.string().optional(),
