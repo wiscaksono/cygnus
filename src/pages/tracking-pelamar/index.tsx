@@ -6,6 +6,7 @@ import { getServerAuthSession } from "~/server/auth";
 import { Loader } from "~/components/Loader";
 import { Delete } from "~/components/tracking-pelamar/delete";
 import { deepEqual } from "~/utils/deepEqual";
+import { ConvertToCSV } from "~/components/tracking-pelamar/convertToCSV";
 
 import type { GetServerSideProps } from "next";
 import type { HadirType, TrackingPelamar } from "@prisma/client";
@@ -13,9 +14,7 @@ import type { HadirType, TrackingPelamar } from "@prisma/client";
 export default function TrackingPelamar() {
   const { data, isLoading, refetch } = api.trackingPelamar.getAll.useQuery();
 
-  if (isLoading) {
-    return <Loader />;
-  }
+  if (isLoading) return <Loader />;
 
   return (
     <>
@@ -27,12 +26,11 @@ export default function TrackingPelamar() {
         <div className="sm:flex sm:items-center">
           <div className="sm:flex-auto">
             <h1 className="text-base font-semibold leading-6 text-gray-900">Tracking Pelamar ({0} results)</h1>
-            <p className="mt-2 text-sm text-gray-700">
-              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Modi, nobis neque itaque officiis vel omnis molestiae obcaecati ea, reiciendis quae, vero libero quaerat?
-              Voluptatem totam error dignissimos deserunt at animi!
-            </p>
+            <p className="mt-2 text-sm text-gray-700">Tracking pelamar yang sudah diundang interview, psikotest, compro, interview 2, dan OJT.</p>
           </div>
-          <div className="mt-4 flex gap-x-2 sm:ml-16 sm:mt-0 sm:flex-none"></div>
+          <div className="mt-4 flex gap-x-2 sm:ml-16 sm:mt-0 sm:flex-none">
+            <ConvertToCSV pelamar={data?.result.trackingPelamar || []} />
+          </div>
         </div>
         <div className="mt-1 flow-root sm:mt-8">
           <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -41,7 +39,7 @@ export default function TrackingPelamar() {
                 <table className="min-w-full divide-y divide-gray-300">
                   <thead className="bg-gray-50">
                     <tr>
-                      {["No.", "Name", "Interview 1", "Tgl Interview 1", "Psikotest", "Compro", "Interview 2", "OJT", "Tgl OJT", "Note"].map((item, i) => (
+                      {["No.", "Name", "Tgl Interview 1", "Interview 1", "Psikotest", "Compro", "Interview 2", "Tgl OJT", "Hadir OJT", "Note"].map((item, i) => (
                         <th
                           scope="col"
                           className={`whitespace-nowrap px-3 py-3.5 text-left text-sm font-semibold text-gray-900 ${item === "Invited" ? "text-center" : "text-left"}`}
@@ -122,16 +120,6 @@ const Row = ({ pelamar, index, refetch }: { pelamar: TrackingPelamar; index: num
     <tr>
       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{index + 1}</td>
       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{pelamar.name}</td>
-      <td className="w-px whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-        <input
-          type="text"
-          placeholder="-"
-          className="w-max border-0 p-0 text-sm focus:ring-0"
-          value={debouncedInput1 || ""}
-          onChange={(e) => setDebouncedInput1(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && setValues({ ...values, interview1: e.currentTarget.value })}
-        />
-      </td>
       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
         <input
           type="date"
@@ -142,6 +130,16 @@ const Row = ({ pelamar, index, refetch }: { pelamar: TrackingPelamar; index: num
             console.log(e.target.valueAsDate);
             setValues((prevValues) => ({ ...prevValues, interview1Date: e.target.valueAsDate }));
           }}
+        />
+      </td>
+      <td className="w-px whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+        <input
+          type="text"
+          placeholder="-"
+          className="w-max border-0 p-0 text-sm focus:ring-0"
+          value={debouncedInput1 || ""}
+          onChange={(e) => setDebouncedInput1(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && setValues({ ...values, interview1: e.currentTarget.value })}
         />
       </td>
       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
@@ -171,14 +169,6 @@ const Row = ({ pelamar, index, refetch }: { pelamar: TrackingPelamar; index: num
         />
       </td>
       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-        <Select
-          value={values.OJT}
-          onChange={(value) => {
-            setValues({ ...values, OJT: value });
-          }}
-        />
-      </td>
-      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
         <input
           type="date"
           className="ring-red w-28 border-0 p-0 text-sm focus:ring-0"
@@ -187,6 +177,14 @@ const Row = ({ pelamar, index, refetch }: { pelamar: TrackingPelamar; index: num
             if (e.target.valueAsDate === null) return;
             console.log(e.target.valueAsDate);
             setValues((prevValues) => ({ ...prevValues, OJTDate: e.target.valueAsDate }));
+          }}
+        />
+      </td>
+      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+        <Select
+          value={values.OJT}
+          onChange={(value) => {
+            setValues({ ...values, OJT: value });
           }}
         />
       </td>

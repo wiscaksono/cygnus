@@ -59,7 +59,7 @@ export const trackingPelamarRouter = createTRPCRouter({
   }),
 
   update: protectedProcedure.input(updateTrackingPelamar).mutation(async ({ ctx, input }) => {
-    const { id, interview1, interview1Date, psikotest, compro, interview2, OJT, hadirOJT, note } = input;
+    const { id, interview1, interview1Date, psikotest, compro, interview2, OJT, OJTDate, hadirOJT, note } = input;
 
     let updateData = {
       interview1,
@@ -68,6 +68,7 @@ export const trackingPelamarRouter = createTRPCRouter({
       compro,
       interview2,
       OJT,
+      OJTDate,
       hadirOJT,
       note,
     };
