@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { api } from "~/utils/api";
 import { getServerAuthSession } from "~/server/auth";
 import { Loader } from "~/components/Loader";
+import { Delete } from "~/components/tracking-pelamar/delete";
 import { deepEqual } from "~/utils/deepEqual";
 
 import type { GetServerSideProps } from "next";
@@ -40,7 +41,7 @@ export default function TrackingPelamar() {
                 <table className="min-w-full divide-y divide-gray-300">
                   <thead className="bg-gray-50">
                     <tr>
-                      {["No.", "Name", "Interview 1", "Psikotest", "Compro", "Interview 2", "OJT", "Hadir OJT", "Note"].map((item, i) => (
+                      {["No.", "Name", "Interview 1", "Tgl Interview 1", "Psikotest", "Compro", "Interview 2", "OJT", "Tgl OJT", "Note"].map((item, i) => (
                         <th
                           scope="col"
                           className={`whitespace-nowrap px-3 py-3.5 text-left text-sm font-semibold text-gray-900 ${item === "Invited" ? "text-center" : "text-left"}`}
@@ -48,6 +49,10 @@ export default function TrackingPelamar() {
                           {item}
                         </th>
                       ))}
+
+                      <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                        <span className="sr-only">Edit</span>
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">
@@ -105,7 +110,7 @@ const Row = ({ pelamar, index, refetch }: { pelamar: TrackingPelamar; index: num
   });
 
   useEffect(() => {
-    if (!deepEqual(values, pelamar)) {
+    if (!deepEqual(values, pelamar) || values.interview1Date !== pelamar.interview1Date) {
       void (async () => {
         await update.mutateAsync(values);
         refetch();
@@ -125,6 +130,18 @@ const Row = ({ pelamar, index, refetch }: { pelamar: TrackingPelamar; index: num
           value={debouncedInput1 || ""}
           onChange={(e) => setDebouncedInput1(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && setValues({ ...values, interview1: e.currentTarget.value })}
+        />
+      </td>
+      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+        <input
+          type="date"
+          className="ring-red w-28 border-0 p-0 text-sm focus:ring-0"
+          value={values.interview1Date?.toISOString().split("T")[0] || ""}
+          onChange={(e) => {
+            if (e.target.valueAsDate === null) return;
+            console.log(e.target.valueAsDate);
+            setValues((prevValues) => ({ ...prevValues, interview1Date: e.target.valueAsDate }));
+          }}
         />
       </td>
       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
@@ -162,10 +179,14 @@ const Row = ({ pelamar, index, refetch }: { pelamar: TrackingPelamar; index: num
         />
       </td>
       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-        <Select
-          value={values.hadirOJT}
-          onChange={(value) => {
-            setValues({ ...values, hadirOJT: value });
+        <input
+          type="date"
+          className="ring-red w-28 border-0 p-0 text-sm focus:ring-0"
+          value={values.OJTDate?.toISOString().split("T")[0] || ""}
+          onChange={(e) => {
+            if (e.target.valueAsDate === null) return;
+            console.log(e.target.valueAsDate);
+            setValues((prevValues) => ({ ...prevValues, OJTDate: e.target.valueAsDate }));
           }}
         />
       </td>
@@ -179,6 +200,11 @@ const Row = ({ pelamar, index, refetch }: { pelamar: TrackingPelamar; index: num
           onKeyDown={(e) => e.key === "Enter" && setValues({ ...values, note: e.currentTarget.value })}
         />
       </td>
+      <td className="w-px whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+        <div className="flex items-center justify-end gap-x-2">
+          <Delete pelamar={values} refetch={() => void refetch()} />
+        </div>
+      </td>
     </tr>
   );
 };
@@ -186,7 +212,7 @@ const Row = ({ pelamar, index, refetch }: { pelamar: TrackingPelamar; index: num
 const Select = ({ value, onChange }: { value: HadirType; onChange: (value: HadirType) => void }) => {
   return (
     <select
-      className="w-full border-0 p-0 text-sm focus:ring-0"
+      className="w-24 border-0 p-0 text-sm focus:ring-0"
       value={value}
       onChange={(e) => {
         onChange(e.target.value as HadirType);

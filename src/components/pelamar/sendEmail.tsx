@@ -13,7 +13,8 @@ interface ISendWhatsApp {
 
 export const SendEmail = ({ person, refetch }: ISendWhatsApp) => {
   const mutation = api.pelamar.sendEmail.useMutation({
-    onSuccess: ({ message }) => {
+    onSuccess: ({ message, status }) => {
+      if (status !== 200) return toast.error(message);
       toast.success(message);
       refetch();
     },
@@ -37,8 +38,7 @@ export const SendEmail = ({ person, refetch }: ISendWhatsApp) => {
     <button
       className={`inline ${person.invitedByEmail || mutation.isLoading || !validator.isEmail(person.email) ? "text-gray-400" : "text-indigo-600 hover:text-indigo-900"}`}
       onClick={() => void handleSend()}
-      disabled={person.invitedByEmail || mutation.isLoading || !validator.isEmail(person.email)}
-    >
+      disabled={person.invitedByEmail || mutation.isLoading || !validator.isEmail(person.email)}>
       {mutation.isLoading ? <LoadingIcon /> : <EnvelopeIcon className="h-6 w-6" />}
     </button>
   );

@@ -58,20 +58,21 @@ model Pelamar {
 }
 
 model TrackingPelamar {
-    id         String    @id @default(cuid())
-    name       String
-    phone      String    @unique
-    User       User      @relation(fields: [userId], references: [id])
-    userId     String
-    interview1 String?
-    psikotest  HadirType @default(PENDING)
-    compro     HadirType @default(PENDING)
-    interview2 String?
-    OJT        HadirType @default(PENDING)
-    OJTDate    DateTime?
-    hadirOJT   HadirType @default(PENDING)
-    note       String?
-    createdAt  DateTime  @default(now())
+    id             String    @id @default(cuid())
+    name           String
+    phone          String    @unique
+    User           User      @relation(fields: [userId], references: [id])
+    userId         String
+    interview1     String?
+    interview1Date DateTime?
+    psikotest      HadirType @default(PENDING)
+    compro         HadirType @default(PENDING)
+    interview2     String?
+    OJT            HadirType @default(PENDING)
+    OJTDate        DateTime?
+    hadirOJT       HadirType @default(PENDING)
+    note           String?
+    createdAt      DateTime  @default(now())
 }
 
 enum HadirType {

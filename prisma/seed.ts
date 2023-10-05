@@ -44,7 +44,7 @@ async function createPelamars(amount: number) {
         from: new Date("2023-01-01"),
         to: new Date("2023-10-01"),
       }),
-      userId: "cln6ls2c00000sbkc5evjv39h",
+      userId: "clnce8o7r0000ineeug934jrq",
       portal: faker.internet.domainWord(),
       phone,
       hasWhatsapp: true,
@@ -58,7 +58,7 @@ async function createPelamars(amount: number) {
   const spinnies = new Spinnies();
   try {
     await prisma.pelamar.deleteMany({});
-    const amountOfUsers = 1000;
+    const amountOfUsers = 100;
     const pelamars = await createPelamars(amountOfUsers);
     const MAX_POOL = 10;
     const workers = [] as (() => Promise<void>)[];
@@ -72,7 +72,7 @@ async function createPelamars(amount: number) {
 
         for (const item of chunk) {
           const headers = new Headers();
-          headers.append("Authorization", "");
+          headers.append("Authorization", "Caukbif_tkoWs5p61DZm");
 
           const body = new FormData();
           body.append("target", item.phone);

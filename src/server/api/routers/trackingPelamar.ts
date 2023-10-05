@@ -1,11 +1,39 @@
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+import "dayjs/locale/id";
 
-import { createTrackingPelamar, updateTrackingPelamar } from "~/schema/trackingPelamar";
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.locale("id-ID");
+
+import { createTrackingPelamar, updateTrackingPelamar, deleteTrackingPelamar } from "~/schema/trackingPelamar";
 
 export const trackingPelamarRouter = createTRPCRouter({
+  getAll: protectedProcedure.query(async ({ ctx }) => {
+    const trackingPelamar = await ctx.prisma.trackingPelamar.findMany({
+      where: {
+        userId: ctx.session.user.id,
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
+
+    return {
+      status: 200,
+      message: "Success",
+      result: {
+        trackingPelamar,
+      },
+    };
+  }),
+
   create: protectedProcedure.input(createTrackingPelamar).mutation(async ({ ctx, input }) => {
     const trackingPelamar = await ctx.prisma.trackingPelamar.create({
       data: {
+        id: input.id,
         name: input.name,
         phone: input.phone,
         userId: ctx.session.user.id,
@@ -30,30 +58,12 @@ export const trackingPelamarRouter = createTRPCRouter({
     };
   }),
 
-  getAll: protectedProcedure.query(async ({ ctx }) => {
-    const trackingPelamar = await ctx.prisma.trackingPelamar.findMany({
-      where: {
-        userId: ctx.session.user.id,
-      },
-      orderBy: {
-        createdAt: "asc",
-      },
-    });
-
-    return {
-      status: 200,
-      message: "Success",
-      result: {
-        trackingPelamar,
-      },
-    };
-  }),
-
   update: protectedProcedure.input(updateTrackingPelamar).mutation(async ({ ctx, input }) => {
-    const { id, interview1, psikotest, compro, interview2, OJT, hadirOJT, note } = input;
+    const { id, interview1, interview1Date, psikotest, compro, interview2, OJT, hadirOJT, note } = input;
 
     let updateData = {
       interview1,
+      interview1Date,
       psikotest,
       compro,
       interview2,
@@ -102,6 +112,32 @@ export const trackingPelamarRouter = createTRPCRouter({
       result: {
         pelamar,
       },
+    };
+  }),
+
+  delete: protectedProcedure.input(deleteTrackingPelamar).mutation(async ({ ctx, input }) => {
+    const { id } = input;
+
+    await ctx.prisma.$transaction(async (prisma) => {
+      await prisma.pelamar.update({
+        where: {
+          id,
+        },
+        data: {
+          onTracking: false,
+        },
+      });
+
+      await prisma.trackingPelamar.delete({
+        where: {
+          id,
+        },
+      });
+    });
+
+    return {
+      status: 200,
+      message: "Berhasil menghapus data pelamar",
     };
   }),
 });

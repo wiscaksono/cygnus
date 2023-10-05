@@ -11,6 +11,7 @@ export const createTrackingPelamar = z.object({
 export const updateTrackingPelamar = z.object({
   id: z.string(),
   interview1: z.string().or(z.null()),
+  interview1Date: z.date().or(z.null()),
   psikotest: HadirEnum,
   compro: HadirEnum,
   interview2: z.string().or(z.null()),
@@ -20,5 +21,10 @@ export const updateTrackingPelamar = z.object({
   note: z.string().or(z.null()),
 });
 
+export const deleteTrackingPelamar = z.object({
+  id: z.string(),
+});
+
 export type IcreateTrackingPelamar = z.infer<typeof updateTrackingPelamar>;
 export type IUpdateTrackingPelamar = z.infer<typeof updateTrackingPelamar>;
+export type IDeleteTrackingPelamar = z.infer<typeof deleteTrackingPelamar>;
