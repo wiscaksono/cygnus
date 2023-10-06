@@ -44,7 +44,7 @@ model Pelamar {
     id                String   @id @default(cuid())
     name              String
     email             String
-    phone             String   @unique
+    phone             String
     position          String
     interviewDate     DateTime
     portal            String
@@ -60,7 +60,7 @@ model Pelamar {
 model TrackingPelamar {
     id             String    @id @default(cuid())
     name           String
-    phone          String    @unique
+    phone          String
     User           User      @relation(fields: [userId], references: [id])
     userId         String
     interview1     String?

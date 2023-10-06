@@ -81,17 +81,6 @@ export const pelamarRouter = createTRPCRouter({
     const { name, email, phone, position, interviewDate, portal } = input;
 
     const result = await ctx.prisma.$transaction(async (prisma) => {
-      const phoneExists = await prisma.pelamar.findFirst({
-        where: { phone, userId: ctx.session?.user.id },
-      });
-
-      if (phoneExists) {
-        return {
-          status: 400,
-          message: "Nomor telepon sudah terdaftar",
-        };
-      }
-
       const user = await prisma.user.findFirst({
         where: {
           id: ctx.session?.user.id,
@@ -155,22 +144,6 @@ export const pelamarRouter = createTRPCRouter({
         };
       });
 
-      const isExists = await prisma.pelamar.findMany({
-        where: {
-          phone: {
-            in: pelamars.map((pelamar) => pelamar.phone),
-          },
-          userId: ctx.session?.user.id,
-        },
-      });
-
-      if (isExists.length > 0) {
-        return {
-          status: 400,
-          message: `Nomor telepon ${isExists.map((pelamar) => pelamar.phone).join(", ")} sudah terdaftar`,
-        };
-      }
-
       const result = await prisma.pelamar.createMany({
         data: pelamars,
       });
@@ -194,17 +167,6 @@ export const pelamarRouter = createTRPCRouter({
       return {
         status: 404,
         message: "Pelamar not found",
-      };
-    }
-
-    const phoneExists = await ctx.prisma.pelamar.findFirst({
-      where: { phone, NOT: { id } },
-    });
-
-    if (phoneExists) {
-      return {
-        status: 400,
-        message: "Nomor telepon sudah terdaftar",
       };
     }
 
