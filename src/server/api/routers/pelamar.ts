@@ -326,7 +326,7 @@ export const pelamarRouter = createTRPCRouter({
 
       const updateUser = await prisma.pelamar.update({
         where: {
-          phone: number,
+          id: pelamar.id,
         },
         data: {
           invitedByWhatsapp: true,
