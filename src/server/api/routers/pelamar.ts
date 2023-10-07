@@ -198,6 +198,14 @@ export const pelamarRouter = createTRPCRouter({
         token: user?.whatsAppToken,
         target: phone,
       });
+
+      if (isValid.reason === "device disconnected") {
+        return {
+          status: 400,
+          message: "WhatsApp tidak terhubung",
+        };
+      }
+
       hasWhatsapp = isValid.registered.includes(`62${phone.replace(/^0+/, "")}`);
     }
 

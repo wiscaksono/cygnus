@@ -1,4 +1,4 @@
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { WhatsAppIcon, LoadingIcon } from "../Icons";
 
 import { api } from "~/utils/api";
@@ -29,7 +29,8 @@ export const SendWhatsApp = ({ person, refetch }: ISendWhatsApp) => {
     <button
       className={`inline ${person.invitedByWhatsapp || !person.hasWhatsapp ? "text-gray-400" : "text-indigo-600 hover:text-indigo-900"}`}
       onClick={() => void handleSend()}
-      disabled={person.invitedByWhatsapp || !person.hasWhatsapp || mutation.isLoading}>
+      disabled={person.invitedByWhatsapp || !person.hasWhatsapp || mutation.isLoading}
+    >
       {mutation.isLoading ? <LoadingIcon /> : <WhatsAppIcon />}
     </button>
   );

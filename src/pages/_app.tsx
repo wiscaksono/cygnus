@@ -1,14 +1,13 @@
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
-import { ToastContainer } from "react-toastify";
+import { Toaster } from "sonner";
 import Head from "next/head";
 
 import { api } from "~/utils/api";
 import Layout from "~/components/layout";
 
 import "~/styles/globals.css";
-import "react-toastify/dist/ReactToastify.css";
 
 const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { session, ...pageProps } }) => {
   return (
@@ -20,7 +19,7 @@ const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { s
       <SessionProvider session={session}>
         <Layout>
           <Component {...pageProps} />
-          <ToastContainer position="bottom-right" />
+          <Toaster position="bottom-right" richColors />
         </Layout>
       </SessionProvider>
     </>

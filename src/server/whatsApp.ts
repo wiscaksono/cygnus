@@ -68,7 +68,7 @@ class whatsAppConstructor {
       method: "POST",
       body,
       headers,
-    }) as Promise<{ status: boolean; registered: string[]; not_registered: string[] }>;
+    }) as Promise<{ status: boolean; registered: string[]; not_registered: string[]; reason: "device disconnected" }>;
   }
 
   device(req: { token: string }) {

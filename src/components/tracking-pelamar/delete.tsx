@@ -1,5 +1,5 @@
 import { TrashIcon } from "@heroicons/react/24/outline";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 import { api } from "~/utils/api";
 import { LoadingIcon } from "../Icons";

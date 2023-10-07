@@ -1,4 +1,4 @@
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { EnvelopeIcon } from "@heroicons/react/24/outline";
 import validator from "validator";
 
@@ -39,7 +39,8 @@ export const SendEmail = ({ person, refetch }: ISendWhatsApp) => {
     <button
       className={`inline ${person.invitedByEmail || mutation.isLoading || !validator.isEmail(person.email) ? "text-gray-400" : "text-indigo-600 hover:text-indigo-900"}`}
       onClick={() => void handleSend()}
-      disabled={person.invitedByEmail || mutation.isLoading || !validator.isEmail(person.email)}>
+      disabled={person.invitedByEmail || mutation.isLoading || !validator.isEmail(person.email)}
+    >
       {mutation.isLoading ? <LoadingIcon /> : <EnvelopeIcon className="h-6 w-6" />}
     </button>
   );

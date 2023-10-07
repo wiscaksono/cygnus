@@ -1,6 +1,6 @@
 import { Fragment, useEffect } from "react";
 import Image from "next/image";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { Dialog, Transition } from "@headlessui/react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { QrCodeIcon, ArrowLeftOnRectangleIcon } from "@heroicons/react/20/solid";
@@ -134,7 +134,8 @@ export const ProfileForm = () => {
         <button
           type="submit"
           className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          disabled={mutation.isLoading}>
+          disabled={mutation.isLoading}
+        >
           {mutation.isLoading ? "Saving..." : "Simpan Profile"}
         </button>
       </div>
@@ -149,8 +150,10 @@ const WhatsAppStatus = ({ whatsAppDevice, refetch }: { whatsAppDevice: IGetDevic
       <div className="mt-2 flex flex-col items-center justify-between gap-2 rounded-md p-2 shadow-sm ring-1 ring-inset ring-gray-300 sm:flex-row">
         <div className="flex w-full flex-col items-center gap-x-2 gap-y-1 divide-y sm:flex-row sm:divide-x sm:divide-y-0">
           <p
-            className={`w-full rounded-md px-2 py-0.5 text-center text-sm font-medium capitalize sm:w-auto sm:text-left ${whatsAppDevice?.device_status === "connect" ? "bg-green-100 text-green-500" : "bg-red-100 text-red-500"
-              }`}>
+            className={`w-full rounded-md px-2 py-0.5 text-center text-sm font-medium capitalize sm:w-auto sm:text-left ${
+              whatsAppDevice?.device_status === "connect" ? "bg-green-100 text-green-500" : "bg-red-100 text-red-500"
+            }`}
+          >
             {whatsAppDevice?.device_status}
           </p>
           <p className="w-full text-center text-sm leading-6 text-gray-600 sm:w-auto sm:pl-2 sm:text-left">
@@ -185,7 +188,8 @@ const DisconnectWhatsApp = ({ refetch }: { refetch: () => void }) => {
     <button
       onClick={onClick}
       type="button"
-      className="flex items-center gap-x-1 rounded-md bg-red-600 px-3 py-1 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
+      className="flex items-center gap-x-1 rounded-md bg-red-600 px-3 py-1 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+    >
       <ArrowLeftOnRectangleIcon className="h-4 w-4" />
       {mutation.isLoading ? "Disconnecting..." : "Disconnect"}
     </button>
@@ -221,7 +225,8 @@ const ConnectWhatsApp = () => {
       <button
         onClick={openModal}
         type="button"
-        className="flex items-center gap-x-1 rounded-md bg-green-600 px-3 py-1 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">
+        className="flex items-center gap-x-1 rounded-md bg-green-600 px-3 py-1 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+      >
         <QrCodeIcon className="h-4 w-4" />
         Connect
       </button>
@@ -234,7 +239,8 @@ const ConnectWhatsApp = () => {
             enterTo="opacity-100"
             leave="ease-in duration-200"
             leaveFrom="opacity-100"
-            leaveTo="opacity-0">
+            leaveTo="opacity-0"
+          >
             <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
           </Transition.Child>
 
@@ -247,7 +253,8 @@ const ConnectWhatsApp = () => {
                 enterTo="opacity-100 translate-y-0 sm:scale-100"
                 leave="ease-in duration-200"
                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              >
                 <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-xl">
                   <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                     <div className="mt-3 text-center sm:mt-0 sm:text-left">
@@ -260,7 +267,8 @@ const ConnectWhatsApp = () => {
                     <button
                       type="button"
                       className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-                      onClick={closeModal}>
+                      onClick={closeModal}
+                    >
                       Cancel
                     </button>
                   </div>

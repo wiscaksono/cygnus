@@ -85,4 +85,14 @@ export const chartRouter = createTRPCRouter({
       result,
     };
   }),
+
+  trackingPelamarMonthly: protectedProcedure.query(async ({ ctx }) => {
+    const trackingPelamar = await ctx.prisma.trackingPelamar.findMany();
+
+    return {
+      status: 200,
+      message: "Berhasil mendapatkan data tracking pelamar",
+      result: { trackingPelamarMonthly: trackingPelamar },
+    };
+  }),
 });

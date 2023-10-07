@@ -1,4 +1,4 @@
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { LoadingIcon } from "../Icons";
 import { DocumentArrowUpIcon } from "@heroicons/react/24/outline";
 
@@ -31,7 +31,8 @@ export const AddToTracking = ({ person, refetch }: ISendWhatsApp) => {
     <button
       className={`inline ${(!person.invitedByWhatsapp && !person.invitedByEmail) || person.onTracking ? "text-gray-400" : "text-indigo-600 hover:text-indigo-900"}`}
       onClick={() => void handleSend()}
-      disabled={(!person.invitedByWhatsapp && !person.invitedByEmail) || person.onTracking}>
+      disabled={(!person.invitedByWhatsapp && !person.invitedByEmail) || person.onTracking}
+    >
       {mutation.isLoading ? <LoadingIcon /> : <DocumentArrowUpIcon className="h-6 w-6" />}
     </button>
   );

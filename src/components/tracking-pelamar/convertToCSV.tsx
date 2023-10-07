@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
@@ -56,7 +56,7 @@ export const ConvertToCSV = ({ pelamar }: { pelamar: TrackingPelamar[] }) => {
       a.download = "data.csv";
       a.click();
       window.URL.revokeObjectURL(url);
-      toast.success("CSV file downloaded.");
+      toast.success("CSV berhasil didownload");
       setCsvData("");
     }
   };
@@ -74,7 +74,8 @@ export const ConvertToCSV = ({ pelamar }: { pelamar: TrackingPelamar[] }) => {
       disabled={isConverting}
       onClick={() => {
         convertToCsv();
-      }}>
+      }}
+    >
       {isConverting ? "Converting..." : "Convert to CSV"}
     </button>
   );

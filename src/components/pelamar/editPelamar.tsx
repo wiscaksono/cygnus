@@ -1,7 +1,7 @@
 import { Fragment, useRef } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { useForm, type SubmitHandler } from "react-hook-form";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { PencilIcon } from "@heroicons/react/24/outline";
 
 import { useModal } from "~/hooks";
@@ -81,7 +81,8 @@ export const EditPelamar = ({ refetch, person }: IEditPelamar) => {
             enterTo="opacity-100"
             leave="ease-in duration-200"
             leaveFrom="opacity-100"
-            leaveTo="opacity-0">
+            leaveTo="opacity-0"
+          >
             <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
           </Transition.Child>
 
@@ -94,7 +95,8 @@ export const EditPelamar = ({ refetch, person }: IEditPelamar) => {
                 enterTo="opacity-100 translate-y-0 sm:scale-100"
                 leave="ease-in duration-200"
                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              >
                 <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-xl">
                   <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                     <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
@@ -197,7 +199,8 @@ export const EditPelamar = ({ refetch, person }: IEditPelamar) => {
                             <select
                               {...register("invitedByWhatsapp")}
                               defaultValue={person.invitedByEmail.toString()}
-                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            >
                               <option value="true">Sudah</option>
                               <option value="false">Belum</option>
                             </select>
@@ -211,7 +214,8 @@ export const EditPelamar = ({ refetch, person }: IEditPelamar) => {
                             <select
                               {...register("invitedByEmail")}
                               defaultValue={person.invitedByEmail.toString()}
-                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            >
                               <option value="true">Sudah</option>
                               <option value="false">Belum</option>
                             </select>
@@ -224,19 +228,22 @@ export const EditPelamar = ({ refetch, person }: IEditPelamar) => {
                     <button
                       type="submit"
                       className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:ml-3"
-                      onClick={() => void handleSubmit(onSubmit)()}>
+                      onClick={() => void handleSubmit(onSubmit)()}
+                    >
                       {mutation.isLoading ? "Loading..." : "Simpan"}
                     </button>
                     <button
                       onClick={() => void onDelete(person)}
-                      className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-red-500 hover:text-white hover:ring-red-500 sm:ml-3 sm:mt-0 sm:w-auto">
+                      className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-red-500 hover:text-white hover:ring-red-500 sm:ml-3 sm:mt-0 sm:w-auto"
+                    >
                       Hapus
                     </button>
                     <button
                       type="button"
                       className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
                       onClick={closeModal}
-                      ref={cancelButtonRef}>
+                      ref={cancelButtonRef}
+                    >
                       Cancel
                     </button>
                   </div>
