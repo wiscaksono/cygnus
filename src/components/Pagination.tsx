@@ -1,103 +1,93 @@
-import { Fragment } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 
-interface IPagination {
-  totalCount: number;
-  itemsPerPage?: number;
-  currentPage?: number;
-  onPageChange?: (page: number) => void;
-}
+type PaginationProps = {
+  currentPage: number;
+  totalPages: number;
+  itemsPerPage: number;
+  totalItems: number;
+  onPageChange: (page: number) => void;
+};
 
-export const Pagination = ({ totalCount, itemsPerPage = 10, currentPage = 1, onPageChange = () => {} }: IPagination) => {
-  const totalPages = Math.ceil(totalCount / itemsPerPage);
+type PageNumbers = number | "...";
 
-  const pageNumbers = [];
-  const maxPageButtons = 5;
-  let startIndex = 0;
+export const Pagination = ({ currentPage, totalPages, onPageChange, itemsPerPage, totalItems }: PaginationProps) => {
+  const pageNumbers: PageNumbers[] = [];
+  const maxVisiblePages = 3;
 
-  for (let i = 1; i <= totalPages; i++) {
-    pageNumbers.push(i);
-  }
-
-  let endIndex = pageNumbers.length;
-
-  if (totalPages > maxPageButtons) {
-    const halfButtons = Math.floor(maxPageButtons / 2);
-
-    if (currentPage <= halfButtons) {
-      endIndex = maxPageButtons;
-    } else if (currentPage >= totalPages - halfButtons) {
-      startIndex = totalPages - maxPageButtons;
+  const generatePageNumbers = () => {
+    if (totalPages <= maxVisiblePages) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
     } else {
-      startIndex = currentPage - halfButtons - 1;
-      endIndex = currentPage + halfButtons;
-    }
-  }
+      let start = Math.max(currentPage - Math.floor(maxVisiblePages / 2), 1);
+      const end = Math.min(start + maxVisiblePages - 1, totalPages);
 
-  const displayedPageNumbers = pageNumbers.slice(startIndex, endIndex);
+      if (end === totalPages) {
+        start = Math.max(end - maxVisiblePages + 1, 1);
+      }
+
+      for (let i = start; i <= end; i++) {
+        pageNumbers.push(i);
+      }
+      if (start > 1) {
+        pageNumbers.unshift("...");
+      }
+      if (end < totalPages) {
+        pageNumbers.push("...");
+      }
+    }
+
+    return pageNumbers;
+  };
 
   return (
-    <div className="flex items-center justify-between px-4 py-3 sm:px-6">
-      <div className="flex flex-1 justify-between sm:hidden">
-        <button
-          onClick={() => onPageChange(currentPage - 1)}
-          className={`relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 ${
-            currentPage === 1 ? "cursor-not-allowed opacity-50" : "hover:bg-gray-50"
-          }`}
-        >
-          Previous
-        </button>
-        <button
-          onClick={() => onPageChange(currentPage + 1)}
-          className={`relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 ${
-            currentPage === totalPages ? "cursor-not-allowed opacity-50" : "hover:bg-gray-50"
-          }`}
-        >
-          Next
-        </button>
-      </div>
+    <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+      {/* ... (Previous button) */}
+      {/* ... (Next button) */}
       <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
         <div>
           <p className="text-sm text-gray-700">
-            Menampilkan <span className="font-medium">{(currentPage - 1) * itemsPerPage + 1}</span> -{" "}
-            <span className="font-medium">{currentPage * itemsPerPage > totalCount ? totalCount : currentPage * itemsPerPage}</span> dari{" "}
-            <span className="font-medium">{totalCount}</span> hasil
+            Showing <span className="font-medium">{currentPage * itemsPerPage - itemsPerPage + 1}</span> to <span className="font-medium">{currentPage * itemsPerPage}</span> of{" "}
+            <span className="font-medium">{totalItems}</span> results
           </p>
         </div>
         <div>
           <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-            {displayedPageNumbers.map((pageNumber, index) => (
-              <Fragment key={pageNumber}>
-                {index === 0 && pageNumber !== 1 && (
-                  <button
-                    onClick={() => onPageChange(pageNumber - 5)}
-                    className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-                  >
-                    <span className="sr-only">Previous</span>
-                    <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
-                  </button>
-                )}
-                <button
-                  onClick={currentPage === pageNumber ? undefined : () => onPageChange(pageNumber)}
-                  className={`relative ${
-                    currentPage === pageNumber
+            {/* Previous and next buttons */}
+            <a
+              href="#"
+              className={`relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 ${currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                }`}
+              onClick={() => onPageChange(currentPage - 1)}>
+              <span className="sr-only">Previous</span>
+              <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
+            </a>
+            {generatePageNumbers().map((page, i) =>
+              page === "..." ? (
+                <span key={i} className="relative inline-flex cursor-default items-center border border-gray-300 bg-gray-100 px-4 py-2 text-sm text-gray-700">
+                  ...
+                </span>
+              ) : (
+                <a
+                  key={i}
+                  href="#"
+                  aria-current={page === currentPage ? "page" : undefined}
+                  className={`relative ${page === currentPage
                       ? "z-10 bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                       : "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0"
-                  } inline-flex items-center px-4 py-2 text-sm font-semibold`}
-                >
-                  {pageNumber}
-                </button>
-                {index === displayedPageNumbers.length - 1 && pageNumber !== totalPages && (
-                  <button
-                    className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-                    onClick={() => onPageChange(pageNumber + 5)}
-                  >
-                    <span className="sr-only">Next</span>
-                    <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
-                  </button>
-                )}
-              </Fragment>
-            ))}
+                    } inline-flex items-center px-4 py-2 text-sm font-semibold`}
+                  onClick={() => onPageChange(page)}>
+                  {page}
+                </a>
+              ),
+            )}
+            <a
+              href="#"
+              className={`relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 ${currentPage === totalPages ? "pointer-events-none opacity-50" : ""
+                }`}
+              onClick={() => onPageChange(currentPage + 1)}>
+              <span className="sr-only">Next</span>
+              <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
+            </a>
           </nav>
         </div>
       </div>

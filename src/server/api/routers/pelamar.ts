@@ -28,10 +28,11 @@ import type { TBrevo } from "~/types/brevo";
 export const pelamarRouter = createTRPCRouter({
   getAll: publicProcedure.input(filterPelamarSchema).query(async ({ ctx, input }) => {
     const where = input;
+    const itemsPerPage = typeof where?.take === "number" ? where?.take : undefined;
 
     const pelamar = ctx.prisma.pelamar.findMany({
-      take: typeof where?.take === "number" ? where?.take : undefined,
-      skip: where?.skip,
+      take: itemsPerPage === undefined ? undefined : itemsPerPage,
+      skip: itemsPerPage === undefined ? undefined : (where?.currentPage || 1 - 1) * itemsPerPage,
       where: {
         createdAt: {
           gte: where?.createdAt && dayjs(where?.createdAt).isValid() ? dayjs(where?.createdAt).startOf("day").toDate() : undefined,

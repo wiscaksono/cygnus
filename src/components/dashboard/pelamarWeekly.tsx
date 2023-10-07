@@ -1,5 +1,5 @@
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
-import { RouterOutputs } from "~/utils/api";
+import type { RouterOutputs } from "~/utils/api";
 
 type DataProps = RouterOutputs["chart"]["pelamarWeekly"]["result"];
 
@@ -15,8 +15,7 @@ export const PelamarWeekly = ({ data }: { data: DataProps }) => {
             right: 30,
             top: 30,
             bottom: 5,
-          }}
-        >
+          }}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey="day"

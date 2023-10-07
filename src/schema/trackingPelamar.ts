@@ -31,6 +31,7 @@ export const filterTrackingPelamarSchema = z
     take: z.number().or(z.string()).optional(),
     name: z.string().optional(),
     createdAt: z.date().optional(),
+    currentPage: z.number().optional(),
   })
   .optional();
 

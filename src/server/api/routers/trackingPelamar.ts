@@ -13,15 +13,17 @@ import { createTrackingPelamar, updateTrackingPelamar, deleteTrackingPelamar, fi
 export const trackingPelamarRouter = createTRPCRouter({
   getAll: protectedProcedure.input(filterTrackingPelamarSchema).query(async ({ ctx, input }) => {
     const where = input;
+    const itemsPerPage = typeof where?.take === "number" ? where?.take : undefined;
 
     const trackingPelamar = ctx.prisma.trackingPelamar.findMany({
-      take: typeof where?.take === "number" ? where?.take : undefined,
+      // take: itemsPerPage === undefined ? undefined : itemsPerPage,
+      // skip: itemsPerPage === undefined ? undefined : (where?.currentPage || 1 - 1) * itemsPerPage,
       where: {
-        userId: ctx.session.user.id,
         createdAt: {
           gte: where?.createdAt && dayjs(where?.createdAt).isValid() ? dayjs(where?.createdAt).startOf("day").toDate() : undefined,
           lte: where?.createdAt && dayjs(where?.createdAt).isValid() ? dayjs(where?.createdAt).endOf("day").toDate() : undefined,
         },
+        userId: ctx.session.user.id,
         name: {
           contains: where?.name,
           mode: "insensitive",

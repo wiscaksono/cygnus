@@ -15,6 +15,7 @@ import { Loader } from "~/components/Loader";
 import { ConvertToCSV } from "~/components/tracking-pelamar/convertToCSV";
 import { Delete } from "~/components/tracking-pelamar/delete";
 import { SearchBar, SelectPerPage, DateFilter } from "~/components/tracking-pelamar/filter";
+import { Pagination } from "~/components/Pagination";
 import { deepEqual } from "~/utils/deepEqual";
 
 import type { GetServerSideProps } from "next";
@@ -26,20 +27,23 @@ export interface FilterTrackingPelamarProps {
     name?: string;
     take?: number;
     createdAt?: Date;
+    currentPage: number;
   };
   setFilter: Dispatch<
     SetStateAction<{
       name?: string;
       take?: number;
       createdAt?: Date;
+      currentPage: number;
     }>
   >;
 }
 
 export default function TrackingPelamar() {
   const [filter, setFilter] = useState<FilterTrackingPelamarProps["filter"]>({
-    createdAt: dayjs().tz("Asia/Jakarta").toDate(),
     take: 10,
+    currentPage: 1,
+    createdAt: dayjs().tz("Asia/Jakarta").toDate(),
   });
 
   const { data, isLoading, refetch } = api.trackingPelamar.getAll.useQuery(filter);
@@ -96,6 +100,18 @@ export default function TrackingPelamar() {
                     ))}
                   </tbody>
                 </table>
+                <Pagination
+                  currentPage={filter.currentPage}
+                  onPageChange={(val) => {
+                    setFilter({
+                      ...filter,
+                      currentPage: val,
+                    });
+                  }}
+                  itemsPerPage={filter.take || 0}
+                  totalItems={data?.result.count || 0}
+                  totalPages={Math.ceil((data?.result.count || 0) / 10)}
+                />
               </div>
             </div>
           </div>

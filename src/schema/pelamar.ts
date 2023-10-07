@@ -12,6 +12,7 @@ export const filterPelamarSchema = z
     invitedByEmail: z.boolean().optional(),
     hasWhatsapp: z.boolean().optional(),
     createdAt: z.date().optional(),
+    currentPage: z.number().optional(),
   })
   .optional();
 

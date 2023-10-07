@@ -24,6 +24,7 @@ import { SendEmail } from "~/components/pelamar/sendEmail";
 import { SendEmailAll } from "~/components/pelamar/sendEmailAll";
 import { DeleteAll } from "~/components/pelamar/deleteAll";
 import { AddToTracking } from "~/components/pelamar/addToTracking";
+import { Pagination } from "~/components/Pagination";
 
 import { WhatsAppIcon } from "~/components/Icons";
 import { Loader } from "~/components/Loader";
@@ -41,6 +42,7 @@ export interface FilterProps {
     invitedByWhatsapp?: boolean;
     invitedByEmail?: boolean;
     createdAt?: Date;
+    currentPage: number;
   };
   setFilter: Dispatch<
     SetStateAction<{
@@ -51,6 +53,7 @@ export interface FilterProps {
       invitedByWhatsapp?: boolean;
       invitedByEmail?: boolean;
       createdAt?: Date;
+      currentPage: number;
     }>
   >;
 }
@@ -62,6 +65,7 @@ export default function Pelamar() {
   const [selectedPelamar, setSelectedPelamar] = useState<Pelamar[]>([]);
   const [filter, setFilter] = useState<FilterProps["filter"]>({
     take: 10,
+    currentPage: 1,
     createdAt: dayjs().tz("Asia/Jakarta").toDate(),
   });
 
@@ -232,6 +236,18 @@ export default function Pelamar() {
                     ))}
                   </tbody>
                 </table>
+                <Pagination
+                  currentPage={filter.currentPage}
+                  onPageChange={(val) => {
+                    setFilter({
+                      ...filter,
+                      currentPage: val,
+                    });
+                  }}
+                  itemsPerPage={filter.take || 0}
+                  totalItems={pelamar?.result.count || 0}
+                  totalPages={Math.ceil((pelamar?.result.count || 0) / filter.take!)}
+                />
               </div>
             </div>
           </div>
