@@ -7,10 +7,13 @@ import type { Pelamar } from "@prisma/client";
 interface ISendEmailAll {
   refetch: () => void;
   selectedPelamar: Pelamar[];
+  setSelectedPelamar: (value: Pelamar[]) => void;
 }
 
-export const SendEmailAll = ({ refetch, selectedPelamar }: ISendEmailAll) => {
+export const SendEmailAll = ({ refetch, selectedPelamar, setSelectedPelamar }: ISendEmailAll) => {
   if (!selectedPelamar.length) return;
+
+  const cleanedPelamar = removeDuplicatesByEmail(selectedPelamar);
 
   const mutation = api.pelamar.sendEmail.useMutation({
     onSuccess: () => {
@@ -21,9 +24,10 @@ export const SendEmailAll = ({ refetch, selectedPelamar }: ISendEmailAll) => {
   const handleSend = async () => {
     const promises = [];
 
-    for (const person of selectedPelamar) {
+    for (const person of cleanedPelamar) {
       promises.push(
         mutation.mutateAsync({
+          id: person.id,
           email: person.email,
           interviewDate: person.interviewDate,
           position: person.position,
@@ -34,6 +38,7 @@ export const SendEmailAll = ({ refetch, selectedPelamar }: ISendEmailAll) => {
     }
 
     await Promise.all(promises);
+    setSelectedPelamar([]);
     toast.success(`Mengirim undangan ke pelamar yang dipilih`);
   };
 
@@ -47,3 +52,17 @@ export const SendEmailAll = ({ refetch, selectedPelamar }: ISendEmailAll) => {
     </button>
   );
 };
+
+function removeDuplicatesByEmail(arr: Pelamar[]): Pelamar[] {
+  const uniqueApplicants: Record<string, boolean> = {};
+  const result: Pelamar[] = [];
+
+  for (const applicant of arr) {
+    if (!uniqueApplicants[applicant.email]) {
+      uniqueApplicants[applicant.email] = true;
+      result.push(applicant);
+    }
+  }
+
+  return result;
+}

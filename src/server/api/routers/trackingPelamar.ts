@@ -8,26 +8,54 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.locale("id-ID");
 
-import { createTrackingPelamar, updateTrackingPelamar, deleteTrackingPelamar } from "~/schema/trackingPelamar";
+import { createTrackingPelamar, updateTrackingPelamar, deleteTrackingPelamar, filterTrackingPelamarSchema } from "~/schema/trackingPelamar";
 
 export const trackingPelamarRouter = createTRPCRouter({
-  getAll: protectedProcedure.query(async ({ ctx }) => {
-    const trackingPelamar = await ctx.prisma.trackingPelamar.findMany({
+  getAll: protectedProcedure.input(filterTrackingPelamarSchema).query(async ({ ctx, input }) => {
+    const where = input;
+
+    const trackingPelamar = ctx.prisma.trackingPelamar.findMany({
+      take: typeof where?.take === "number" ? where?.take : undefined,
       where: {
         userId: ctx.session.user.id,
+        createdAt: {
+          gte: where?.createdAt && dayjs(where?.createdAt).isValid() ? dayjs(where?.createdAt).startOf("day").toDate() : undefined,
+          lte: where?.createdAt && dayjs(where?.createdAt).isValid() ? dayjs(where?.createdAt).endOf("day").toDate() : undefined,
+        },
+        name: {
+          contains: where?.name,
+          mode: "insensitive",
+        },
       },
       orderBy: {
         createdAt: "asc",
       },
     });
 
-    return {
-      status: 200,
-      message: "Success",
-      result: {
-        trackingPelamar,
+    const count = ctx.prisma.trackingPelamar.count({
+      where: {
+        userId: ctx.session.user.id,
+        createdAt: {
+          gte: where?.createdAt && dayjs(where?.createdAt).isValid() ? dayjs(where?.createdAt).startOf("day").toDate() : undefined,
+          lte: where?.createdAt && dayjs(where?.createdAt).isValid() ? dayjs(where?.createdAt).endOf("day").toDate() : undefined,
+        },
+        name: {
+          contains: where?.name,
+          mode: "insensitive",
+        },
       },
-    };
+    });
+
+    return ctx.prisma.$transaction([trackingPelamar, count]).then(([trackingPelamar, count]) => {
+      return {
+        status: 200,
+        message: "Berhasil mendapatkan data tracking pelamar",
+        result: {
+          trackingPelamar,
+          count,
+        },
+      };
+    });
   }),
 
   create: protectedProcedure.input(createTrackingPelamar).mutation(async ({ ctx, input }) => {
@@ -37,6 +65,7 @@ export const trackingPelamarRouter = createTRPCRouter({
         name: input.name,
         phone: input.phone,
         userId: ctx.session.user.id,
+        createdAt: input.createdAt,
       },
     });
 

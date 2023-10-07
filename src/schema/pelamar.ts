@@ -15,6 +15,10 @@ export const filterPelamarSchema = z
   })
   .optional();
 
+export const findManyPelamarSchema = z.object({
+  phone: z.array(z.string()).optional(),
+});
+
 export const createPelamarSchema = z.object({
   name: z.string(),
   email: z.string(),
@@ -22,6 +26,8 @@ export const createPelamarSchema = z.object({
   position: z.string(),
   interviewDate: z.date(),
   hasWhatsapp: z.boolean().optional(),
+  invitedByWhatsapp: z.boolean().optional(),
+  invitedByEmail: z.boolean().optional(),
   portal: z.string(),
   createdAt: z.string().or(z.date()).optional(),
 });
@@ -37,6 +43,7 @@ export const updatePelamarSchema = z.object({
   interviewDate: z.string().or(z.date()).optional(),
   invitedByWhatsapp: z.boolean().optional(),
   invitedByEmail: z.boolean().optional(),
+  portal: z.string().optional(),
 });
 
 export const deletePelamarSchema = z.object({
@@ -51,3 +58,4 @@ export type ICreateManyPelamar = z.infer<typeof createManyPelamarSchema>;
 export type IUpdatePelamar = z.infer<typeof updatePelamarSchema>;
 export type IDeletePelamar = z.infer<typeof deletePelamarSchema>;
 export type IDeleteAllPelamar = z.infer<typeof deleteAllPelamarSchema>;
+export type IFindManyPelamar = z.infer<typeof findManyPelamarSchema>;

@@ -23,6 +23,7 @@ export const AddToTracking = ({ person, refetch }: ISendWhatsApp) => {
       id: person.id,
       name: person.name,
       phone: person.phone,
+      createdAt: person.createdAt,
     });
   };
 

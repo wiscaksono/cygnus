@@ -6,6 +6,7 @@ export const createTrackingPelamar = z.object({
   id: z.string(),
   name: z.string(),
   phone: z.string(),
+  createdAt: z.date(),
 });
 
 export const updateTrackingPelamar = z.object({
@@ -25,6 +26,15 @@ export const deleteTrackingPelamar = z.object({
   id: z.string(),
 });
 
+export const filterTrackingPelamarSchema = z
+  .object({
+    take: z.number().or(z.string()).optional(),
+    name: z.string().optional(),
+    createdAt: z.date().optional(),
+  })
+  .optional();
+
 export type IcreateTrackingPelamar = z.infer<typeof updateTrackingPelamar>;
 export type IUpdateTrackingPelamar = z.infer<typeof updateTrackingPelamar>;
 export type IDeleteTrackingPelamar = z.infer<typeof deleteTrackingPelamar>;
+export type IFilterTrackingPelamar = z.infer<typeof filterTrackingPelamarSchema>;

@@ -9,7 +9,15 @@ dayjs.extend(timezone);
 dayjs.locale("id-ID");
 
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/api/trpc";
-import { filterPelamarSchema, createPelamarSchema, deletePelamarSchema, updatePelamarSchema, deleteAllPelamarSchema, createManyPelamarSchema } from "~/schema/pelamar";
+import {
+  filterPelamarSchema,
+  createPelamarSchema,
+  deletePelamarSchema,
+  updatePelamarSchema,
+  deleteAllPelamarSchema,
+  createManyPelamarSchema,
+  findManyPelamarSchema,
+} from "~/schema/pelamar";
 import { sendMessage } from "~/schema/whatsApp";
 import { sendEmail } from "~/schema/email";
 import whatsApp from "~/server/whatsApp";
@@ -31,8 +39,8 @@ export const pelamarRouter = createTRPCRouter({
         },
         userId: ctx.session?.user.id,
         hasWhatsapp: where?.hasWhatsapp === true ? true : undefined,
-        invitedByWhatsapp: where?.invitedByWhatsapp === true ? true : undefined,
-        invitedByEmail: where?.invitedByEmail === true ? true : undefined,
+        invitedByWhatsapp: where?.invitedByWhatsapp === true ? false : undefined,
+        invitedByEmail: where?.invitedByEmail === true ? false : undefined,
         name: {
           contains: where?.name,
           mode: "insensitive",
@@ -56,8 +64,8 @@ export const pelamarRouter = createTRPCRouter({
         },
         userId: ctx.session?.user.id,
         hasWhatsapp: where?.hasWhatsapp === true ? true : undefined,
-        invitedByWhatsapp: where?.invitedByWhatsapp === true ? true : undefined,
-        invitedByEmail: where?.invitedByEmail === true ? true : undefined,
+        invitedByWhatsapp: where?.invitedByWhatsapp === true ? false : undefined,
+        invitedByEmail: where?.invitedByEmail === true ? false : undefined,
         name: {
           contains: where?.name,
           mode: "insensitive",
@@ -157,7 +165,7 @@ export const pelamarRouter = createTRPCRouter({
   }),
 
   update: protectedProcedure.input(updatePelamarSchema).mutation(async ({ input, ctx }) => {
-    const { id, name, email, phone, position, interviewDate, invitedByWhatsapp, invitedByEmail } = input;
+    const { id, name, email, phone, position, interviewDate, invitedByWhatsapp, invitedByEmail, portal } = input;
 
     const existingPelamar = await ctx.prisma.pelamar.findUnique({
       where: { id },
@@ -205,6 +213,7 @@ export const pelamarRouter = createTRPCRouter({
           interviewDate,
           invitedByEmail,
           invitedByWhatsapp,
+          portal,
         },
       });
 
@@ -253,13 +262,33 @@ export const pelamarRouter = createTRPCRouter({
     };
   }),
 
+  findMany: protectedProcedure.input(findManyPelamarSchema).mutation(async ({ ctx, input }) => {
+    const { phone } = input;
+
+    const pelamars = await ctx.prisma.pelamar.findMany({
+      where: {
+        phone: {
+          in: phone,
+        },
+      },
+    });
+
+    return {
+      status: 200,
+      message: "Berhasil mendapatkan data pelamar",
+      result: {
+        pelamars,
+      },
+    };
+  }),
+
   sendWhatsApp: protectedProcedure.input(sendMessage).mutation(async ({ input, ctx }) => {
-    const { number } = input;
+    const { number, id } = input;
 
     return await ctx.prisma.$transaction(async (prisma) => {
-      const pelamar = await prisma.pelamar.findFirst({
+      const pelamar = await prisma.pelamar.findUnique({
         where: {
-          phone: number,
+          id,
         },
       });
 
@@ -310,6 +339,7 @@ export const pelamarRouter = createTRPCRouter({
         .replace(/{{interviewDate}}/g, dayjs(pelamar.interviewDate).tz("Asia/Jakarta").format("dddd, DD MMMM YYYY"));
 
       const { status: sendWhatsappStatus } = (await whatsApp.sendMessage({
+        id,
         number,
         token: user.whatsAppToken,
         message: templateMessage,
@@ -324,9 +354,9 @@ export const pelamarRouter = createTRPCRouter({
         };
       }
 
-      const updateUser = await prisma.pelamar.update({
+      const updateUser = await prisma.pelamar.updateMany({
         where: {
-          id: pelamar.id,
+          phone: number,
         },
         data: {
           invitedByWhatsapp: true,

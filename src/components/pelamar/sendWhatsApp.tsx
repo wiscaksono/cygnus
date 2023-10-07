@@ -20,6 +20,7 @@ export const SendWhatsApp = ({ person, refetch }: ISendWhatsApp) => {
 
   const handleSend = async () => {
     await mutation.mutateAsync({
+      id: person.id,
       number: person.phone,
     });
   };

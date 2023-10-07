@@ -12,9 +12,10 @@ import type { Pelamar } from "@prisma/client";
 interface IDeleteAll {
   refetch: () => void;
   selectedPelamar: Pelamar[];
+  setSelectedPelamar: (value: Pelamar[]) => void;
 }
 
-export const DeleteAll = ({ refetch, selectedPelamar }: IDeleteAll) => {
+export const DeleteAll = ({ refetch, selectedPelamar, setSelectedPelamar }: IDeleteAll) => {
   const { isOpen, openModal, closeModal } = useModal();
 
   if (!selectedPelamar.length) return;
@@ -28,7 +29,7 @@ export const DeleteAll = ({ refetch, selectedPelamar }: IDeleteAll) => {
         disabled={!selectedPelamar.length}>
         Hapus
       </button>
-      <ConfirmationModal isOpen={isOpen} closeModal={closeModal} refetch={() => void refetch()} selectedPelamar={selectedPelamar} />
+      <ConfirmationModal isOpen={isOpen} closeModal={closeModal} refetch={() => void refetch()} selectedPelamar={selectedPelamar} setSelectedPelamar={setSelectedPelamar} />
     </>
   );
 };
@@ -38,7 +39,7 @@ interface IConfirmationModal extends IDeleteAll {
   closeModal: () => void;
 }
 
-const ConfirmationModal = ({ isOpen, closeModal, refetch, selectedPelamar }: IConfirmationModal) => {
+const ConfirmationModal = ({ isOpen, closeModal, refetch, selectedPelamar, setSelectedPelamar }: IConfirmationModal) => {
   const cancelButtonRef = useRef(null);
   const router = useRouter();
 
@@ -53,6 +54,7 @@ const ConfirmationModal = ({ isOpen, closeModal, refetch, selectedPelamar }: ICo
 
   const handleSend = async () => {
     await mutation.mutateAsync(selectedPelamar.map((item) => item.id));
+    setSelectedPelamar([]);
   };
 
   return (

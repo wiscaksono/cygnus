@@ -7,10 +7,13 @@ import type { Pelamar } from "@prisma/client";
 interface ISendWhatsAppAll {
   refetch: () => void;
   selectedPelamar: Pelamar[];
+  setSelectedPelamar: (value: Pelamar[]) => void;
 }
 
-export const SendWhatsAppAll = ({ refetch, selectedPelamar }: ISendWhatsAppAll) => {
+export const SendWhatsAppAll = ({ refetch, selectedPelamar, setSelectedPelamar }: ISendWhatsAppAll) => {
   if (!selectedPelamar.length) return;
+
+  const cleanedPelamar = removeDuplicatesByPhone(selectedPelamar);
 
   const mutation = api.pelamar.sendWhatsApp.useMutation({
     onSuccess: () => {
@@ -19,13 +22,16 @@ export const SendWhatsAppAll = ({ refetch, selectedPelamar }: ISendWhatsAppAll) 
   });
 
   const handleSend = async () => {
-    for (const person of selectedPelamar) {
+    for (const person of cleanedPelamar) {
       await mutation.mutateAsync({
+        id: person.id,
         number: person.phone,
       });
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
+
     toast.success(`Mengirim undangan ke pelamar yang dipilih`);
+    setSelectedPelamar([]);
   };
 
   return (
@@ -38,3 +44,17 @@ export const SendWhatsAppAll = ({ refetch, selectedPelamar }: ISendWhatsAppAll) 
     </button>
   );
 };
+
+function removeDuplicatesByPhone(arr: Pelamar[]): Pelamar[] {
+  const uniqueApplicants: Record<string, boolean> = {};
+  const result: Pelamar[] = [];
+
+  for (const applicant of arr) {
+    if (!uniqueApplicants[applicant.phone]) {
+      uniqueApplicants[applicant.phone] = true;
+      result.push(applicant);
+    }
+  }
+
+  return result;
+}

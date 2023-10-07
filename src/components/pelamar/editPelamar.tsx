@@ -30,6 +30,7 @@ export const EditPelamar = ({ refetch, person }: IEditPelamar) => {
       interviewDate: convertToDateTimeLocalString(person.interviewDate),
       invitedByEmail: person.invitedByEmail,
       invitedByWhatsapp: person.invitedByWhatsapp,
+      portal: person.portal,
     },
   });
 
@@ -112,6 +113,20 @@ export const EditPelamar = ({ refetch, person }: IEditPelamar) => {
                               autoComplete="given-name"
                               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                               {...register("name", { required: true })}
+                            />
+                          </div>
+                        </div>
+                        <div className="col-span-2">
+                          <label htmlFor="portal" className="block text-sm font-medium leading-6 text-gray-900">
+                            Portal
+                          </label>
+                          <div className="mt-2">
+                            <input
+                              type="text"
+                              id="portal"
+                              autoComplete="portal"
+                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                              {...register("portal", { required: true })}
                             />
                           </div>
                         </div>

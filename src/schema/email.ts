@@ -1,6 +1,7 @@
 import z from "zod";
 
 export const sendEmail = z.object({
+  id: z.string(),
   email: z.string().email(),
   namaPelamar: z.string(),
   position: z.string(),

@@ -25,6 +25,7 @@ export const ImportFromCSV = ({ refetch }: { refetch: () => void }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const mutation = api.pelamar.createMany.useMutation();
+  const existingPelamarMutation = api.pelamar.findMany.useMutation();
   const { data: user } = api.user.getSelf.useQuery();
 
   const handleSubmit = () => {
@@ -37,6 +38,11 @@ export const ImportFromCSV = ({ refetch }: { refetch: () => void }) => {
 
         if (text) {
           const candidates = parseData(text);
+          const { result: existing } = await existingPelamarMutation.mutateAsync({
+            phone: candidates.map((candidate) => candidate.phone),
+          });
+
+          console.log(existing.pelamars);
 
           if (!user?.result.whatsAppToken) {
             toast.error("Token WhatsApp belum diatur");
@@ -54,6 +60,8 @@ export const ImportFromCSV = ({ refetch }: { refetch: () => void }) => {
               }),
             );
 
+            // console.log(existing.pelamars.find((pelamar) => pelamar.phone === candidate.phone)?.invitedByWhatsapp);
+
             mutationData.push({
               name: candidate.name,
               phone: candidate.phone || "-",
@@ -61,6 +69,9 @@ export const ImportFromCSV = ({ refetch }: { refetch: () => void }) => {
               portal: candidate.portal,
               position: candidate.position,
               interviewDate: candidate.interviewDate,
+              invitedByWhatsapp: existing.pelamars.find((pelamar) => pelamar.phone === candidate.phone)?.invitedByWhatsapp,
+              invitedByEmail: existing.pelamars.find((pelamar) => pelamar.phone === candidate.phone)?.invitedByEmail,
+              // createdAt: dayjs("2023-10-09 08:30:00").tz("Asia/Jakarta").toDate(),
             });
           }
 
@@ -108,8 +119,7 @@ export const ImportFromCSV = ({ refetch }: { refetch: () => void }) => {
       <button
         type="button"
         className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-        onClick={openModal}
-      >
+        onClick={openModal}>
         Import from CSV
       </button>
 
@@ -122,8 +132,7 @@ export const ImportFromCSV = ({ refetch }: { refetch: () => void }) => {
             enterTo="opacity-100"
             leave="ease-in duration-200"
             leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
+            leaveTo="opacity-0">
             <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
           </Transition.Child>
 
@@ -136,8 +145,7 @@ export const ImportFromCSV = ({ refetch }: { refetch: () => void }) => {
                 enterTo="opacity-100 translate-y-0 sm:scale-100"
                 leave="ease-in duration-200"
                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              >
+                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
                 <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-xl">
                   <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                     <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
@@ -174,16 +182,14 @@ export const ImportFromCSV = ({ refetch }: { refetch: () => void }) => {
                       type="submit"
                       className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-70 sm:ml-3"
                       onClick={handleSubmit}
-                      disabled={isLoading || !file}
-                    >
+                      disabled={isLoading || !file}>
                       {isLoading ? "Loading..." : "Submit"}
                     </button>
                     <button
                       type="button"
                       className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
                       onClick={closeModal}
-                      ref={cancelButtonRef}
-                    >
+                      ref={cancelButtonRef}>
                       Cancel
                     </button>
                   </div>

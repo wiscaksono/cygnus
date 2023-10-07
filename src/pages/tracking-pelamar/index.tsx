@@ -1,18 +1,48 @@
 import Head from "next/head";
 import { useEffect, useState } from "react";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+import "dayjs/locale/id";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.locale("id-ID");
 
 import { api } from "~/utils/api";
 import { getServerAuthSession } from "~/server/auth";
 import { Loader } from "~/components/Loader";
-import { Delete } from "~/components/tracking-pelamar/delete";
-import { deepEqual } from "~/utils/deepEqual";
 import { ConvertToCSV } from "~/components/tracking-pelamar/convertToCSV";
+import { Delete } from "~/components/tracking-pelamar/delete";
+import { SearchBar, SelectPerPage, DateFilter } from "~/components/tracking-pelamar/filter";
+import { deepEqual } from "~/utils/deepEqual";
 
 import type { GetServerSideProps } from "next";
 import type { HadirType, TrackingPelamar } from "@prisma/client";
+import type { Dispatch, SetStateAction } from "react";
+
+export interface FilterTrackingPelamarProps {
+  filter: {
+    name?: string;
+    take?: number;
+    createdAt?: Date;
+  };
+  setFilter: Dispatch<
+    SetStateAction<{
+      name?: string;
+      take?: number;
+      createdAt?: Date;
+    }>
+  >;
+}
 
 export default function TrackingPelamar() {
-  const { data, isLoading, refetch } = api.trackingPelamar.getAll.useQuery();
+  const [filter, setFilter] = useState<FilterTrackingPelamarProps["filter"]>({
+    createdAt: dayjs().tz("Asia/Jakarta").toDate(),
+    take: 10,
+  });
+
+  const { data, isLoading, refetch } = api.trackingPelamar.getAll.useQuery(filter);
 
   if (isLoading) return <Loader />;
 
@@ -25,7 +55,7 @@ export default function TrackingPelamar() {
       <div className="px-4 sm:px-0">
         <div className="sm:flex sm:items-center">
           <div className="sm:flex-auto">
-            <h1 className="text-base font-semibold leading-6 text-gray-900">Tracking Pelamar ({0} results)</h1>
+            <h1 className="text-base font-semibold leading-6 text-gray-900">Tracking Pelamar ({data?.result.count} results)</h1>
             <p className="mt-2 text-sm text-gray-700">Tracking pelamar yang sudah diundang interview, psikotest, compro, interview 2, dan OJT.</p>
           </div>
           <div className="mt-4 flex gap-x-2 sm:ml-16 sm:mt-0 sm:flex-none">
@@ -33,6 +63,13 @@ export default function TrackingPelamar() {
           </div>
         </div>
         <div className="mt-1 flow-root sm:mt-8">
+          <div className="mb-4 flex flex-col items-center gap-x-2 gap-y-1 sm:flex-row">
+            <SearchBar filter={filter} setFilter={setFilter} />
+            <div className="flex w-full items-center gap-x-2 sm:w-auto">
+              <DateFilter filter={filter} setFilter={setFilter} />
+              <SelectPerPage filter={filter} setFilter={setFilter} />
+            </div>
+          </div>
           <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
               <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">

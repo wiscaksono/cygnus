@@ -1,11 +1,11 @@
 import Head from "next/head";
 import { useLayoutEffect, useRef, useState, useEffect } from "react";
 import { CheckCircleIcon, XMarkIcon, EnvelopeIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import "dayjs/locale/id";
-import Link from "next/link";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -99,13 +99,15 @@ export default function Pelamar() {
       <div className="px-4 sm:px-0">
         <div className="sm:flex sm:items-center">
           <div className="sm:flex-auto">
-            <h1 className="text-base font-semibold leading-6 text-gray-900">Pelamar ({pelamar?.result.count} results)</h1>
+            <h1 className="text-base font-semibold leading-6 text-gray-900">
+              Pelamar ({pelamar?.result.count} results) {selectedPelamar.length > 0 && ` | (${selectedPelamar.length} selected)`}
+            </h1>
             <p className="mt-2 text-sm text-gray-700">Daftar pelamar yang telah mengisi form pendaftaran.</p>
           </div>
           <div className="mt-4 flex gap-x-2 sm:ml-16 sm:mt-0 sm:flex-none">
-            <DeleteAll refetch={() => void refetch()} selectedPelamar={selectedPelamar} />
-            <SendEmailAll refetch={() => void refetch()} selectedPelamar={selectedPelamar} />
-            <SendWhatsAppAll refetch={() => void refetch()} selectedPelamar={selectedPelamar} />
+            <DeleteAll refetch={() => void refetch()} selectedPelamar={selectedPelamar} setSelectedPelamar={setSelectedPelamar} />
+            <SendEmailAll refetch={() => void refetch()} selectedPelamar={selectedPelamar} setSelectedPelamar={setSelectedPelamar} />
+            <SendWhatsAppAll refetch={() => void refetch()} selectedPelamar={selectedPelamar} setSelectedPelamar={setSelectedPelamar} />
             <ImportFromCSV refetch={() => void refetch()} />
             <CreatePelamar refetch={() => void refetch()} />
           </div>
@@ -121,9 +123,10 @@ export default function Pelamar() {
                     invitedByEmail: !filter.invitedByEmail,
                   });
                 }}
-                className={`block ${filter.invitedByEmail ? "bg-indigo-600 text-white" : "text-gray-800"
-                  } w-full rounded-md border-0 px-2.5 py-1.5 text-xs shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:w-auto sm:text-sm sm:leading-6`}>
-                Invited by Email
+                className={`block ${
+                  filter.invitedByEmail ? "bg-indigo-600 text-white" : "text-gray-800"
+                } w-full rounded-md border-0 px-2.5 py-1.5 text-xs shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:w-auto sm:text-sm sm:leading-6`}>
+                Not Invited by Email
               </button>
               <button
                 onClick={() => {
@@ -132,9 +135,10 @@ export default function Pelamar() {
                     invitedByWhatsapp: !filter.invitedByWhatsapp,
                   });
                 }}
-                className={`block ${filter.invitedByWhatsapp ? "bg-indigo-600 text-white" : "text-gray-800"
-                  } w-full rounded-md border-0 px-2.5 py-1.5 text-xs shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:w-auto sm:text-sm sm:leading-6`}>
-                Invited by WhatsApp
+                className={`block ${
+                  filter.invitedByWhatsapp ? "bg-indigo-600 text-white" : "text-gray-800"
+                } w-full rounded-md border-0 px-2.5 py-1.5 text-xs shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:w-auto sm:text-sm sm:leading-6`}>
+                Not Invited by WhatsApp
               </button>
             </div>
             <div className="flex w-full items-center gap-x-2 sm:w-auto">
