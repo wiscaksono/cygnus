@@ -339,7 +339,7 @@ export const pelamarRouter = createTRPCRouter({
       }
 
       const templateMessage = user.templateWhatsApp
-        .replace(/{{namaPelamar}}/g, pelamar.name)
+        .replace(/{{namaPelamar}}/g, pelamar.name.trim())
         .replace(/{{position}}/g, pelamar.position)
         .replace(/{{portal}}/g, pelamar.portal)
         .replace(/{{namaPengirim}}/g, ctx.session?.user.fullName)
