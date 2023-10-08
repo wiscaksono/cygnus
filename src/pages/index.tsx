@@ -22,8 +22,8 @@ export default function Page() {
       </Head>
 
       <section className="grid h-[calc(100vh-80px-64px)] grid-cols-6 grid-rows-2 gap-5 lg:h-[calc(100vh-80px)]">
-        <PelamarYearly data={pelamarYearly?.result!} />
-        <PelamarWeekly data={pelamarWeekly?.result!} />
+        <PelamarYearly data={pelamarYearly?.result || []} />
+        <PelamarWeekly data={pelamarWeekly?.result || []} />
       </section>
     </>
   );
