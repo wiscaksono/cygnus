@@ -1,4 +1,5 @@
 import Head from "next/head";
+import validator from "validator";
 import { useLayoutEffect, useRef, useState, useEffect } from "react";
 import { CheckCircleIcon, XMarkIcon, EnvelopeIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
@@ -123,10 +124,8 @@ export default function Pelamar() {
                     invitedByEmail: !filter.invitedByEmail,
                   });
                 }}
-                className={`block ${
-                  filter.invitedByEmail ? "bg-indigo-600 text-white" : "text-gray-800"
-                } w-full rounded-md border-0 px-2.5 py-1.5 text-xs shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:w-auto sm:text-sm sm:leading-6`}
-              >
+                className={`block ${filter.invitedByEmail ? "bg-indigo-600 text-white" : "text-gray-800"
+                  } w-full rounded-md border-0 px-2.5 py-1.5 text-xs shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:w-auto sm:text-sm sm:leading-6`}>
                 Not Invited by Email
               </button>
               <button
@@ -136,10 +135,8 @@ export default function Pelamar() {
                     invitedByWhatsapp: !filter.invitedByWhatsapp,
                   });
                 }}
-                className={`block ${
-                  filter.invitedByWhatsapp ? "bg-indigo-600 text-white" : "text-gray-800"
-                } w-full rounded-md border-0 px-2.5 py-1.5 text-xs shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:w-auto sm:text-sm sm:leading-6`}
-              >
+                className={`block ${filter.invitedByWhatsapp ? "bg-indigo-600 text-white" : "text-gray-800"
+                  } w-full rounded-md border-0 px-2.5 py-1.5 text-xs shadow-sm ring-1 ring-inset ring-gray-300 transition-colors placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:w-auto sm:text-sm sm:leading-6`}>
                 Not Invited by WhatsApp
               </button>
             </div>
@@ -167,8 +164,7 @@ export default function Pelamar() {
                         <th
                           scope="col"
                           className={`whitespace-nowrap px-3 py-3.5 text-left text-sm font-semibold text-gray-900 ${item === "Invited" ? "text-center" : "text-left"}`}
-                          key={i}
-                        >
+                          key={i}>
                           {item}
                         </th>
                       ))}
@@ -199,7 +195,10 @@ export default function Pelamar() {
                           </Link>
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          <Link href={`mailto:${person.email}`} target="_blank" className="underline">
+                          <Link
+                            href={` ${validator.isEmail(person.email) ? `mailto:${person.email}` : `#`} `}
+                            target={validator.isEmail(person.email) ? "_blank" : "_self"}
+                            className={`${validator.isEmail(person.email) && "underline"}`}>
                             {person.email}
                           </Link>
                         </td>
