@@ -198,7 +198,7 @@ export default function Pelamar() {
                           <Link
                             href={` ${validator.isEmail(person.email) ? `mailto:${person.email}` : `#`} `}
                             target={validator.isEmail(person.email) ? "_blank" : "_self"}
-                            className={`${validator.isEmail(person.email) && "underline"}`}>
+                            className={`${validator.isEmail(person.email) ? "underline" : "no-underline"}`}>
                             {person.email}
                           </Link>
                         </td>
