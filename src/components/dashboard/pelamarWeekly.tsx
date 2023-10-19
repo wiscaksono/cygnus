@@ -27,7 +27,7 @@ export const PelamarWeekly = ({ data }: { data: DataProps }) => {
           />
           <YAxis
             allowDecimals={false}
-            dataKey="total"
+            dataKey="pelamar"
             tickLine={false}
             tick={{
               fontSize: 12,
@@ -35,7 +35,8 @@ export const PelamarWeekly = ({ data }: { data: DataProps }) => {
             }}
           />
           <Tooltip />
-          <Bar type="monotone" dataKey="total" stroke="#6366f1" fill="#e0e7ff" />
+          <Bar stackId={1} type="monotone" dataKey="pelamar" stroke="#6366f1" fill="#e0e7ff" />
+          <Bar stackId={1} type="monotone" dataKey="diterima" stroke="#54a170" fill="#82ca9d" />
         </BarChart>
       </ResponsiveContainer>
     </div>

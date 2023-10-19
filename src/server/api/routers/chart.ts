@@ -47,7 +47,7 @@ export const chartRouter = createTRPCRouter({
   }),
 
   pelamarWeekly: protectedProcedure.query(async ({ ctx }) => {
-    const pelamar = await ctx.prisma.pelamar.findMany({
+    const pelamars = await ctx.prisma.pelamar.findMany({
       where: {
         userId: ctx.session.user.id,
         createdAt: {
@@ -60,29 +60,54 @@ export const chartRouter = createTRPCRouter({
       },
     });
 
-    const countsByWeek: Record<string, number> = {};
+    const diterima = await ctx.prisma.trackingPelamar.findMany({
+      where: {
+        userId: ctx.session.user.id,
+        createdAt: {
+          gte: dayjs().tz("Asia/Jakarta").subtract(7, "day").toDate(),
+          lte: dayjs().tz("Asia/Jakarta").toDate(),
+        },
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
 
-    // Iterate through the test array and count items by month
-    pelamar.forEach((item) => {
+    const pelamarCounts: Record<string, number> = {};
+    const diterimaCounts: Record<string, number> = {};
+
+    pelamars.forEach((item) => {
       const createdAt = new Date(item.createdAt);
       const day = dayjs(createdAt).tz("Asia/Jakarta").locale("id").format("dddd");
 
-      if (countsByWeek[day]) {
-        countsByWeek[day]++;
+      if (pelamarCounts[day]) {
+        pelamarCounts[day]++;
       } else {
-        countsByWeek[day] = 1;
+        pelamarCounts[day] = 1;
       }
     });
 
-    const result = Object.keys(countsByWeek).map((day) => ({
+    diterima.forEach((item) => {
+      const createdAt = new Date(item.createdAt);
+      const day = dayjs(createdAt).tz("Asia/Jakarta").locale("id").format("dddd");
+
+      if (diterimaCounts[day]) {
+        diterimaCounts[day]++;
+      } else {
+        diterimaCounts[day] = 1;
+      }
+    });
+
+    const mergedResults = Object.keys(pelamarCounts).map((day) => ({
       day,
-      total: countsByWeek[day],
+      pelamar: pelamarCounts[day],
+      diterima: diterimaCounts[day] || 0, // Handle days with no diterima
     }));
 
     return {
       status: 200,
       message: "Berhasil mendapatkan data pelelamar",
-      result,
+      result: mergedResults,
     };
   }),
 
